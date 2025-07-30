@@ -1,0 +1,48 @@
+{
+  "name": "edu-sage",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "EDU-SAGE - Academic Writing & Tutoring Platform",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "clean": "rm -rf frontend/node_modules backend/node_modules frontend/dist backend/uploads/ai-files/* && npm install",
+    "test": "echo \"No tests specified\" && exit 0",
+    "lint": "cd frontend && npm run lint",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "setup": "npm run install:all && echo \"Setup complete! Run 'npm run dev' to start the development servers.\""
+  },
+  "dependencies": {
+    "bfg": "^0.3.0",
+    "concurrently": "^8.2.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/edu-sage.git"
+  },
+  "keywords": [
+    "education",
+    "tutoring",
+    "academic-writing",
+    "ai",
+    "react",
+    "node",
+    "express",
+    "mongodb"
+  ],
+  "author": "EDU-SAGE Team",
+  "license": "MIT"
+}
