@@ -7,7 +7,6 @@ import userRoutes from './routes/user.js';
 import writerRoutes from './routes/writer.js';
 import paymentRoutes from './routes/payment.js';
 import chatRoutes from './routes/chat.js';
-import aiChatRoutes from './routes/aiChat.js';
 
 import adminRoutes from './routes/admin.js';
 import orderRoutes from './routes/order.js';
@@ -31,7 +30,7 @@ const app = express();
 // Middlewares
 // Updated CORS configuration in app.js
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['https://thinqscribe.com', 'https://www.thinqscribe.com', 'http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -73,7 +72,6 @@ app.use('/api/user', userRoutes);
 app.use('/api/writer', writerRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/ai-chat', aiChatRoutes);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/order', orderRoutes);
