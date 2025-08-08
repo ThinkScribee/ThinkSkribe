@@ -151,11 +151,13 @@ export const upload = multer({
 });
 
 export const uploadToS3 = async (file, folder = 'uploads') => {
+  // Normalize MIME type to a base type without codec parameters for broader compatibility
+  const normalizedContentType = (file.mimetype || 'application/octet-stream').split(';')[0].trim();
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: `${folder}/${uuidv4()}-${file.originalname}`, // Categorize uploads by folder
     Body: file.buffer,
-    ContentType: file.mimetype,
+    ContentType: normalizedContentType,
   };
 
   try {
