@@ -68,7 +68,6 @@ const fileFilter = (req, file, cb) => {
     'audio/aac',
     'audio/flac',
     'audio/m4a',
-    'audio/mp4',
     'audio/wma',
     'audio/webm',
     
@@ -134,11 +133,11 @@ const fileFilter = (req, file, cb) => {
   
   // Allow file if MIME type is allowed, or if extension is allowed, or if no MIME type is set
   if (isAllowedMimeType || isAllowedExtension || hasNoMimeType) {
-    console.log(`✅ File accepted: ${file.originalname} (${file.mimetype || 'unknown MIME type'} -> ${baseMimeType || 'unknown'})`);
+    console.log(`✅ File accepted: ${file.originalname} (${file.mimetype || 'unknown MIME type'})`);
     cb(null, true);
   } else {
-    console.log(`❌ File rejected: ${file.originalname} (${file.mimetype}) - base: ${baseMimeType} - extension: ${fileExtension}`);
-    cb(new Error(`Unsupported file type: ${baseMimeType || file.mimetype || 'unknown'} (.${fileExtension})`), false);
+    console.log(`❌ File rejected: ${file.originalname} (${file.mimetype}) - extension: ${fileExtension}`);
+    cb(new Error(`Unsupported file type: ${file.mimetype || 'unknown'} (.${fileExtension})`), false);
   }
 };
 
@@ -152,14 +151,11 @@ export const upload = multer({
 });
 
 export const uploadToS3 = async (file, folder = 'uploads') => {
-  // Normalize MIME type to a base type without codec parameters for broader compatibility
-  const normalizedContentType = (file.mimetype || 'application/octet-stream').split(';')[0].trim();
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: `${folder}/${uuidv4()}-${file.originalname}`, // Categorize uploads by folder
     Body: file.buffer,
-    ContentType: normalizedContentType,
-    ContentDisposition: 'inline'
+    ContentType: file.mimetype,
   };
 
   try {
