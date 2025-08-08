@@ -693,7 +693,7 @@ const initSocket = (server) => {
 
     // WebRTC Audio Call Events
     socket.on('webrtc:call-request', (data) => {
-      const { to, from, fromName, toName, callId, chatId } = data;
+      const { to, from, fromName, toName, callId, chatId, callType } = data;
       console.log(`📞 WebRTC: Call request from ${fromName} to ${toName}`);
       
       // Send call request to target user
@@ -703,6 +703,7 @@ const initSocket = (server) => {
         toName,
         callId,
         chatId,
+        callType,
         timestamp: Date.now()
       });
     });
