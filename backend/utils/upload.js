@@ -158,6 +158,8 @@ export const uploadToS3 = async (file, folder = 'uploads') => {
     Key: `${folder}/${uuidv4()}-${file.originalname}`, // Categorize uploads by folder
     Body: file.buffer,
     ContentType: normalizedContentType,
+    ACL: 'public-read',
+    ContentDisposition: 'inline'
   };
 
   try {
