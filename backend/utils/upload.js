@@ -68,6 +68,7 @@ const fileFilter = (req, file, cb) => {
     'audio/aac',
     'audio/flac',
     'audio/m4a',
+    'audio/mp4',
     'audio/wma',
     'audio/webm',
     
@@ -133,11 +134,11 @@ const fileFilter = (req, file, cb) => {
   
   // Allow file if MIME type is allowed, or if extension is allowed, or if no MIME type is set
   if (isAllowedMimeType || isAllowedExtension || hasNoMimeType) {
-    console.log(`✅ File accepted: ${file.originalname} (${file.mimetype || 'unknown MIME type'})`);
+    console.log(`✅ File accepted: ${file.originalname} (${file.mimetype || 'unknown MIME type'} -> ${baseMimeType || 'unknown'})`);
     cb(null, true);
   } else {
-    console.log(`❌ File rejected: ${file.originalname} (${file.mimetype}) - extension: ${fileExtension}`);
-    cb(new Error(`Unsupported file type: ${file.mimetype || 'unknown'} (.${fileExtension})`), false);
+    console.log(`❌ File rejected: ${file.originalname} (${file.mimetype}) - base: ${baseMimeType} - extension: ${fileExtension}`);
+    cb(new Error(`Unsupported file type: ${baseMimeType || file.mimetype || 'unknown'} (.${fileExtension})`), false);
   }
 };
 
@@ -158,7 +159,6 @@ export const uploadToS3 = async (file, folder = 'uploads') => {
     Key: `${folder}/${uuidv4()}-${file.originalname}`, // Categorize uploads by folder
     Body: file.buffer,
     ContentType: normalizedContentType,
-    ACL: 'public-read',
     ContentDisposition: 'inline'
   };
 
