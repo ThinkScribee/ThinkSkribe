@@ -186,8 +186,8 @@ class PaymentGatewayService {
           quantity: 1,
         }],
         metadata,
-        success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&agreement=${metadata.agreementId}&status=success`,
-        cancel_url: `${process.env.FRONTEND_URL}/payment/cancelled?agreement=${metadata.agreementId}`,
+        success_url: `https://thinqscribe.com/payment/success}/payment/success?session_id={CHECKOUT_SESSION_ID}&agreement=${metadata.agreementId}&status=success`,
+        cancel_url: `https://thinqscribe.com/payment/cancelled?agreement=${metadata.agreementId}`,
         client_reference_id: metadata.agreementId,
       });
       
