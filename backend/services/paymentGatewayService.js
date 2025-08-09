@@ -233,8 +233,8 @@ class PaymentGatewayService {
             ...metadata,
             agreementId: metadata.agreementId // Ensure agreement ID is passed
           },
-          callback_url: `${process.env.FRONTEND_URL}/payment/success`,
-          cancel_url: `${process.env.FRONTEND_URL}/payment/cancelled`
+          callback_url: `https://thinqscribe.com/payment/success`,
+          cancel_url: `https://thinqscribe.com/payment/cancelled`
         },
         {
           headers: {
