@@ -36,314 +36,98 @@ const ensureStripeCustomer = async (user) => {
  * @route   POST /api/payment/checkout
  * @access  Private
  */
-// Fixed section of paymentController.js - createEnhancedCheckoutSession function
-
-export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
-  const {
-    agreementId,
-    paymentType = 'next',
-    installmentId,
-    gateway = 'stripe',
-    currency: requestedCurrency,
-    amount: customAmount
-  } = req.body;
-
-  console.log('🔄 [Enhanced Checkout] Request received:', {
-    agreementId,
-    paymentType,
-    installmentId,
-    gateway,
-    requestedCurrency,
-    customAmount,
-    userId: req.user._id
-  });
-
-  // Get agreement with populated data
-  const agreement = await ServiceAgreement.findOne({
-    _id: agreementId,
-    student: req.user._id
-  }).populate('writer', 'name email stripeAccountId').populate('student', 'name email');
-
-  if (!agreement) {
-    return res.status(404).json({
-      message: 'Agreement not found or access denied'
-    });
-  }
-
-  // Determine which installment to pay
-  let installmentToUpdate = null;
-  let paymentAmount = 0;
-
-  if (paymentType === 'installment' && installmentId) {
-    installmentToUpdate = agreement.installments.id(installmentId);
-    if (!installmentToUpdate) {
-      return res.status(404).json({ message: 'Installment not found' });
-    }
-    if (installmentToUpdate.status === 'paid') {
-      return res.status(400).json({ message: 'Installment already paid' });
-    }
-    paymentAmount = installmentToUpdate.amount;
-  } else if (paymentType === 'next') {
-    // Find next unpaid installment
-    installmentToUpdate = agreement.installments.find(inst => 
-      inst.status === 'pending' || inst.status === 'overdue'
-    );
-    if (!installmentToUpdate) {
-      return res.status(400).json({ message: 'No pending installments found' });
-    }
-    paymentAmount = installmentToUpdate.amount;
-  } else if (paymentType === 'full') {
-    // Pay all remaining amount
-    const paidAmount = agreement.paidAmount || 0;
-    paymentAmount = agreement.totalAmount - paidAmount;
-    if (paymentAmount <= 0) {
-      return res.status(400).json({ message: 'Agreement is already fully paid' });
-    }
-  } else if (paymentType === 'custom' && customAmount) {
-    paymentAmount = customAmount;
-  }
-
-  if (paymentAmount <= 0) {
-    return res.status(400).json({ message: 'Invalid payment amount' });
-  }
-
-  // Get user location for currency and gateway determination
-  const ipAddress = locationService.getClientIP(req);
-  const userLocation = await locationService.getLocationFromIP(ipAddress);
-  const isNigerian = userLocation?.countryCode === 'ng';
-  const isAfrican = userLocation?.isAfrican || false;
-
-  // **FIXED CURRENCY LOGIC** - No more double conversion!
-  let transactionCurrency = requestedCurrency;
-  let transactionAmount = paymentAmount; // This is the key fix!
-  let exchangeRate = 1;
-  let dashboardCurrency = 'usd';
-  let dashboardAmount = paymentAmount;
-
-  // Determine currency and amounts based on agreement's stored currency preference
-  const agreementCurrency = agreement.paymentPreferences?.currency || 'ngn';
-  
-  console.log('💱 [FIXED] Currency determination:', {
-    agreementStoredCurrency: agreementCurrency,
-    requestedCurrency,
-    paymentAmountFromDB: paymentAmount,
-    isNigerian
-  });
-
-  // If no currency explicitly requested, use agreement's currency
-  if (!transactionCurrency) {
-    transactionCurrency = agreementCurrency;
-  }
-
-  // **KEY FIX**: Check if payment amount is already in the target currency
-  if (agreementCurrency === 'ngn' && transactionCurrency === 'ngn') {
-    // Amount is already in NGN, no conversion needed!
-    transactionAmount = paymentAmount;
-    // Convert to USD for dashboard tracking
-    const rates = await currencyService.getExchangeRates();
-    exchangeRate = rates['NGN'] || 1500;
-    dashboardAmount = paymentAmount / exchangeRate; // Convert NGN to USD for dashboard
-    
-    console.log('💱 [FIXED] NGN to NGN - no conversion:', {
-      transactionAmount,
-      dashboardAmount,
-      exchangeRate
-    });
-  } else if (agreementCurrency === 'usd' && transactionCurrency === 'usd') {
-    // Amount is already in USD, no conversion needed!
-    transactionAmount = paymentAmount;
-    dashboardAmount = paymentAmount;
-    
-    console.log('💱 [FIXED] USD to USD - no conversion needed');
-  } else if (agreementCurrency === 'usd' && transactionCurrency === 'ngn') {
-    // Convert USD to NGN
-    const rates = await currencyService.getExchangeRates();
-    exchangeRate = rates['NGN'] || 1500;
-    transactionAmount = paymentAmount * exchangeRate;
-    dashboardAmount = paymentAmount; // Keep USD for dashboard
-    
-    console.log('💱 [FIXED] USD to NGN conversion:', {
-      usdAmount: paymentAmount,
-      ngnAmount: transactionAmount,
-      exchangeRate
-    });
-  } else if (agreementCurrency === 'ngn' && transactionCurrency === 'usd') {
-    // Convert NGN to USD
-    const rates = await currencyService.getExchangeRates();
-    exchangeRate = rates['NGN'] || 1500;
-    transactionAmount = paymentAmount / exchangeRate;
-    dashboardAmount = transactionAmount; // USD for dashboard
-    
-    console.log('💱 [FIXED] NGN to USD conversion:', {
-      ngnAmount: paymentAmount,
-      usdAmount: transactionAmount,
-      exchangeRate
-    });
-  }
-
-  // Smart gateway selection based on currency compatibility
-  let finalGateway = gateway;
-  if (transactionCurrency === 'usd') {
-    finalGateway = 'stripe'; // USD → Always use Stripe (global support)
-    console.log('💳 [Enhanced Checkout] Auto-selected Stripe for USD payment');
-  } else if (transactionCurrency === 'ngn') {
-    finalGateway = 'paystack'; // NGN → Always use Paystack (optimized for Nigeria)
-    console.log('💳 [Enhanced Checkout] Auto-selected Paystack for NGN payment');
-  }
-
-  console.log('💳 [FIXED] Final payment details:', {
-    originalAmount: paymentAmount,
-    transactionCurrency,
-    transactionAmount,
-    exchangeRate,
-    finalGateway,
-    agreementCurrency
-  });
-
+export const createCheckoutSession = async (req, res, next) => {
   try {
-    // Create payment based on gateway
-    let paymentResult;
-    
-    if (finalGateway === 'paystack') {
-      paymentResult = await paymentGatewayService.createPaystackPayment(
-        transactionAmount, // This should now be the correct NGN amount
-        transactionCurrency,
-        req.user.email,
-        {
-          agreementId: agreement._id.toString(),
-          installmentId: installmentToUpdate?._id?.toString() || 'full',
-          studentId: req.user._id.toString(),
-          writerId: agreement.writer._id.toString(),
-          paymentType,
-          originalAmount: paymentAmount,
-          originalCurrency: agreementCurrency, // Use agreement's currency, not hardcoded USD
-          dashboardAmount,
-          dashboardCurrency,
-          exchangeRate,
-          isNigerian,
-          isAfrican
-        }
-      );
+    const { agreementId, installmentId, paymentType = 'full' } = req.body;
+
+    const agreement = await ServiceAgreement.findById(agreementId)
+      .populate('student', 'name email stripeCustomerId')
+      .populate('writer', 'name email stripeAccountId');
+
+    if (!agreement) {
+      return res.status(404).json({ message: 'Agreement not found' });
+    }
+
+    if (agreement.student._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized access to this agreement' });
+    }
+
+    // Ensure customer exists
+    await ensureStripeCustomer(req.user);
+
+    let paymentAmount;
+    let installmentToUpdate;
+    let description;
+
+    if (paymentType === 'installment' && installmentId) {
+      installmentToUpdate = agreement.installments.id(installmentId);
+      if (!installmentToUpdate) {
+        return res.status(404).json({ message: 'Installment not found' });
+      }
+      if (installmentToUpdate.isPaid) {
+        return res.status(400).json({ message: 'Installment already paid' });
+      }
+      paymentAmount = installmentToUpdate.amount;
+      description = `Installment payment for ${agreement.projectDetails.title}`;
     } else {
-      paymentResult = await paymentGatewayService.createStripeCheckoutSession(
-        transactionAmount,
-        transactionCurrency,
-        {
-          agreementId: agreement._id.toString(),
-          installmentId: installmentToUpdate?._id?.toString() || 'full',
-          studentId: req.user._id.toString(),
-          writerId: agreement.writer._id.toString(),
-          paymentType,
-          originalAmount: paymentAmount,
-          originalCurrency: agreementCurrency, // Use agreement's currency
-          dashboardAmount,
-          dashboardCurrency,
-          exchangeRate,
-          isNigerian,
-          isAfrican
-        }
-      );
+      const unpaidAmount = agreement.totalAmount - (agreement.paidAmount || 0);
+      if (unpaidAmount <= 0) {
+        return res.status(400).json({ message: 'Agreement already fully paid' });
+      }
+      paymentAmount = unpaidAmount;
+      description = `Full payment for ${agreement.projectDetails.title}`;
     }
 
-    if (!paymentResult.success) {
-      return res.status(500).json({
-        message: 'Failed to create payment',
-        error: paymentResult.error
-      });
-    }
-    
-    // Calculate platform fee and writer amount based on dashboard amount (USD)
-    const feeRate = finalGateway === 'paystack' ? 0.05 : 0.10;
-    const platformFee = dashboardAmount * feeRate;
-    const writerAmount = dashboardAmount - platformFee;
-
-    // Create payment record with enhanced currency tracking
-    const paymentRecord = await Payment.create({
-      paymentId: paymentResult.paymentIntentId || paymentResult.sessionId || paymentResult.reference,
-      student: req.user._id,
-      writer: agreement.writer._id,
-      agreement: agreement._id,
-      amount: dashboardAmount, // Store in USD for consistency
-      originalAmount: paymentAmount,
-      originalCurrency: agreementCurrency, // Store the agreement's native currency
-      transactionAmount,
-      transactionCurrency,
-      dashboardAmount,
-      dashboardCurrency,
-      exchangeRate,
-      platformFee,
-      writerAmount,
-      status: 'pending',
-      paymentGateway: finalGateway,
-      installment: installmentToUpdate ? {
-        installmentId: installmentToUpdate._id,
-        amount: installmentToUpdate.amount,
-        dueDate: installmentToUpdate.dueDate
-      } : null,
-      paymentMethod: finalGateway === 'stripe' ? 'card' : 'card_ng',
-      location: userLocation,
+    // Create Stripe session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: agreement.projectDetails.title,
+            description: description
+          },
+          unit_amount: Math.round(paymentAmount * 100) // Convert to cents
+        },
+        quantity: 1
+      }],
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&agreement_id=${agreement._id}`,
+      cancel_url: `${process.env.FRONTEND_URL}/agreements/${agreement._id}?payment=cancelled`,
       metadata: {
-        paymentType,
-        isNigerian,
-        isAfrican,
-        userAgent: req.headers['user-agent']
-      },
-      ...(finalGateway === 'stripe' ? {
-        stripeSessionId: paymentResult.sessionId
-      } : {
-        paystackReference: paymentResult.reference,
-        paystackPaymentId: paymentResult.paymentId
-      })
-    });
-
-    console.log('💾 [FIXED] Payment record created:', {
-      paymentId: paymentRecord.paymentId,
-      gateway: finalGateway,
-      transactionAmount,
-      transactionCurrency,
-      dashboardAmount,
-      dashboardCurrency
-    });
-
-    // Return response with payment details
-    res.json({
-      success: true,
-      gateway: finalGateway,
-      paymentId: paymentResult.paymentIntentId || paymentResult.sessionId || paymentResult.reference,
-      ...(finalGateway === 'stripe' ? {
-        sessionUrl: paymentResult.sessionUrl,
-        sessionId: paymentResult.sessionId
-      } : {
-        authorizationUrl: paymentResult.authorizationUrl,
-        reference: paymentResult.reference
-      }),
-      amount: {
-        dashboard: dashboardAmount,
-        transaction: transactionAmount,
-        currency: transactionCurrency,
-        exchangeRate
-      },
-      installment: installmentToUpdate ? {
-        id: installmentToUpdate._id,
-        amount: installmentToUpdate.amount,
-        dueDate: installmentToUpdate.dueDate,
-        description: installmentToUpdate.description
-      } : null,
-      fees: {
-        platformFee,
-        writerAmount,
-        feeRate
+        agreementId: agreement._id.toString(),
+        installmentId: installmentToUpdate?._id?.toString() || 'full',
+        studentId: req.user._id.toString(),
+        writerId: agreement.writer._id.toString(),
+        paymentType
       }
     });
 
-  } catch (error) {
-    console.error('🔴 [Enhanced Checkout] Error:', error);
-    res.status(500).json({
-      message: 'Payment creation failed',
-      error: error.message
+    // Update installment status to processing if it's an installment payment
+    if (installmentToUpdate) {
+      installmentToUpdate.status = 'processing';
+      await agreement.save();
+    }
+
+    res.json({ 
+      sessionId: session.id,
+      sessionUrl: session.url,
+      installment: installmentToUpdate ? {
+        id: installmentToUpdate._id,
+        amount: installmentToUpdate.amount,
+        dueDate: installmentToUpdate.dueDate
+      } : null,
+      paymentAmount
+    });
+  } catch (err) {
+    console.error('Error creating checkout session:', err);
+    res.status(500).json({ 
+      message: 'Failed to create payment session',
+      error: err.message 
     });
   }
-});
+};
 
 /**
  * @desc    Handle successful payment webhook
@@ -708,6 +492,8 @@ export const getPaymentSession = async (req, res, next) => {
  * @route   POST /api/payment/enhanced-checkout
  * @access  Private
  */
+// Fixed section of paymentController.js - createEnhancedCheckoutSession function
+
 export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
   const {
     agreementId,
@@ -783,24 +569,73 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
   const isNigerian = userLocation?.countryCode === 'ng';
   const isAfrican = userLocation?.isAfrican || false;
 
-  // Currency and gateway determination
+  // **FIXED CURRENCY LOGIC** - No more double conversion!
   let transactionCurrency = requestedCurrency;
-  let transactionAmount = paymentAmount;
+  let transactionAmount = paymentAmount; // This is the key fix!
   let exchangeRate = 1;
   let dashboardCurrency = 'usd';
   let dashboardAmount = paymentAmount;
 
-  // Only default to NGN if NO currency was explicitly requested
-  if (!transactionCurrency) {
-    transactionCurrency = isNigerian ? 'ngn' : 'usd';
-  }
-  // If user explicitly chose a currency (like USD), respect their choice
-  console.log('💱 [Enhanced Checkout] Currency choice:', {
+  // Determine currency and amounts based on agreement's stored currency preference
+  const agreementCurrency = agreement.paymentPreferences?.currency || 'ngn';
+  
+  console.log('💱 [FIXED] Currency determination:', {
+    agreementStoredCurrency: agreementCurrency,
     requestedCurrency,
-    transactionCurrency,
-    isNigerian,
-    respectingUserChoice: !!requestedCurrency
+    paymentAmountFromDB: paymentAmount,
+    isNigerian
   });
+
+  // If no currency explicitly requested, use agreement's currency
+  if (!transactionCurrency) {
+    transactionCurrency = agreementCurrency;
+  }
+
+  // **KEY FIX**: Check if payment amount is already in the target currency
+  if (agreementCurrency === 'ngn' && transactionCurrency === 'ngn') {
+    // Amount is already in NGN, no conversion needed!
+    transactionAmount = paymentAmount;
+    // Convert to USD for dashboard tracking
+    const rates = await currencyService.getExchangeRates();
+    exchangeRate = rates['NGN'] || 1500;
+    dashboardAmount = paymentAmount / exchangeRate; // Convert NGN to USD for dashboard
+    
+    console.log('💱 [FIXED] NGN to NGN - no conversion:', {
+      transactionAmount,
+      dashboardAmount,
+      exchangeRate
+    });
+  } else if (agreementCurrency === 'usd' && transactionCurrency === 'usd') {
+    // Amount is already in USD, no conversion needed!
+    transactionAmount = paymentAmount;
+    dashboardAmount = paymentAmount;
+    
+    console.log('💱 [FIXED] USD to USD - no conversion needed');
+  } else if (agreementCurrency === 'usd' && transactionCurrency === 'ngn') {
+    // Convert USD to NGN
+    const rates = await currencyService.getExchangeRates();
+    exchangeRate = rates['NGN'] || 1500;
+    transactionAmount = paymentAmount * exchangeRate;
+    dashboardAmount = paymentAmount; // Keep USD for dashboard
+    
+    console.log('💱 [FIXED] USD to NGN conversion:', {
+      usdAmount: paymentAmount,
+      ngnAmount: transactionAmount,
+      exchangeRate
+    });
+  } else if (agreementCurrency === 'ngn' && transactionCurrency === 'usd') {
+    // Convert NGN to USD
+    const rates = await currencyService.getExchangeRates();
+    exchangeRate = rates['NGN'] || 1500;
+    transactionAmount = paymentAmount / exchangeRate;
+    dashboardAmount = transactionAmount; // USD for dashboard
+    
+    console.log('💱 [FIXED] NGN to USD conversion:', {
+      ngnAmount: paymentAmount,
+      usdAmount: transactionAmount,
+      exchangeRate
+    });
+  }
 
   // Smart gateway selection based on currency compatibility
   let finalGateway = gateway;
@@ -812,32 +647,13 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
     console.log('💳 [Enhanced Checkout] Auto-selected Paystack for NGN payment');
   }
 
-  console.log('💳 [Enhanced Checkout] Gateway selection:', {
-    originalGateway: gateway,
-    finalGateway,
-    currency: transactionCurrency,
-    reason: transactionCurrency === 'usd' ? 'USD requires Stripe' : 
-            transactionCurrency === 'ngn' ? 'NGN optimized for Paystack' : 'User choice'
-  });
-
-  if (transactionCurrency !== 'usd') {
-    // Get exchange rate
-    const rates = await currencyService.getExchangeRates();
-    exchangeRate = rates[transactionCurrency.toUpperCase()] || 1;
-    transactionAmount = paymentAmount * exchangeRate;
-  }
-
-  // Dashboard always shows USD equivalent
-  dashboardCurrency = 'usd';
-  dashboardAmount = paymentAmount; // This is already in USD base
-
-  console.log('💱 [Enhanced Checkout] Currency conversion:', {
+  console.log('💳 [FIXED] Final payment details:', {
     originalAmount: paymentAmount,
     transactionCurrency,
     transactionAmount,
     exchangeRate,
-    dashboardCurrency,
-    dashboardAmount
+    finalGateway,
+    agreementCurrency
   });
 
   try {
@@ -846,7 +662,7 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
     
     if (finalGateway === 'paystack') {
       paymentResult = await paymentGatewayService.createPaystackPayment(
-        transactionAmount,
+        transactionAmount, // This should now be the correct NGN amount
         transactionCurrency,
         req.user.email,
         {
@@ -856,7 +672,7 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
           writerId: agreement.writer._id.toString(),
           paymentType,
           originalAmount: paymentAmount,
-          originalCurrency: 'usd',
+          originalCurrency: agreementCurrency, // Use agreement's currency, not hardcoded USD
           dashboardAmount,
           dashboardCurrency,
           exchangeRate,
@@ -875,7 +691,7 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
           writerId: agreement.writer._id.toString(),
           paymentType,
           originalAmount: paymentAmount,
-          originalCurrency: 'usd',
+          originalCurrency: agreementCurrency, // Use agreement's currency
           dashboardAmount,
           dashboardCurrency,
           exchangeRate,
@@ -891,11 +707,8 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
         error: paymentResult.error
       });
     }
-
-    // DO NOT update installment status here - only update after payment is verified
-    // Removed: installmentToUpdate.status = 'processing'
     
-    // Calculate platform fee and writer amount
+    // Calculate platform fee and writer amount based on dashboard amount (USD)
     const feeRate = finalGateway === 'paystack' ? 0.05 : 0.10;
     const platformFee = dashboardAmount * feeRate;
     const writerAmount = dashboardAmount - platformFee;
@@ -908,7 +721,7 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
       agreement: agreement._id,
       amount: dashboardAmount, // Store in USD for consistency
       originalAmount: paymentAmount,
-      originalCurrency: 'usd', // Base currency for the system
+      originalCurrency: agreementCurrency, // Store the agreement's native currency
       transactionAmount,
       transactionCurrency,
       dashboardAmount,
@@ -917,7 +730,7 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
       platformFee,
       writerAmount,
       status: 'pending',
-      paymentGateway: finalGateway, // Fixed: was 'gateway', now 'paymentGateway'
+      paymentGateway: finalGateway,
       installment: installmentToUpdate ? {
         installmentId: installmentToUpdate._id,
         amount: installmentToUpdate.amount,
@@ -939,11 +752,13 @@ export const createEnhancedCheckoutSession = asyncHandler(async (req, res) => {
       })
     });
 
-    console.log('💾 [Enhanced Checkout] Payment record created:', {
+    console.log('💾 [FIXED] Payment record created:', {
       paymentId: paymentRecord.paymentId,
       gateway: finalGateway,
-      amount: dashboardAmount,
-      currency: dashboardCurrency
+      transactionAmount,
+      transactionCurrency,
+      dashboardAmount,
+      dashboardCurrency
     });
 
     // Return response with payment details
