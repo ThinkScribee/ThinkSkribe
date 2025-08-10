@@ -693,10 +693,10 @@ const initSocket = (server) => {
 
     // WebRTC Audio Call Events
     socket.on('webrtc:call-request', (data) => {
-      const { to, from, fromName, toName, callId, chatId, callType } = data;
+      const { to, from, fromName, toName, callId, chatId, callType, timestamp } = data;
       console.log(`📞 WebRTC: Call request from ${fromName} to ${toName}`);
       
-      // Send call request to target user
+      // Send call request to target user IMMEDIATELY with minimal processing
       io.to(`user-${to}`).emit('webrtc:call-request', {
         from,
         fromName,
@@ -704,19 +704,18 @@ const initSocket = (server) => {
         callId,
         chatId,
         callType,
-        timestamp: Date.now()
+        timestamp: timestamp || Date.now()
       });
     });
 
     socket.on('webrtc:call-accepted', (data) => {
-      const { to, from, callId } = data;
-      console.log(`✅ WebRTC: Call accepted - ID: ${callId}`);
+      const { to, from, callId, timestamp } = data;
       
-      // Notify caller that call was accepted
+      // Notify caller that call was accepted IMMEDIATELY
       io.to(`user-${to}`).emit('webrtc:call-accepted', {
         from,
         callId,
-        timestamp: Date.now()
+        timestamp: timestamp || Date.now()
       });
     });
 
@@ -733,26 +732,86 @@ const initSocket = (server) => {
     });
 
     socket.on('webrtc:call-ended', (data) => {
-      const { from, callId } = data;
-      console.log(`📞 WebRTC: Call ended - ID: ${callId}`);
+      const { from, callId, duration, chatId, toUserId, fromName, toName } = data;
+      console.log(`📞 WebRTC: Call ended - ID: ${callId}, Duration: ${duration}s`);
       
       // Broadcast call ended to all participants
       socket.broadcast.emit('webrtc:call-ended', {
         from,
         callId,
+        duration,
         timestamp: Date.now()
       });
+
+      // Send call duration message to chat if we have the required data
+      if (chatId && duration && toUserId && fromName) {
+        handleCallDurationMessage(chatId, from, toUserId, duration, fromName, toName);
+      }
     });
 
+    // Handle call duration messages
+    const handleCallDurationMessage = async (chatId, fromUserId, toUserId, duration, fromName, toName) => {
+      try {
+        const formatDuration = (seconds) => {
+          if (seconds < 60) return `${seconds} second${seconds === 1 ? '' : 's'}`;
+          const mins = Math.floor(seconds / 60);
+          const secs = seconds % 60;
+          return secs > 0 ? `${mins}:${String(secs).padStart(2, '0')}` : `${mins} minute${mins === 1 ? '' : 's'}`;
+        };
+
+        const durationText = formatDuration(duration);
+        const messageContent = `📞 Audio call • ${durationText}`;
+
+        // Import Chat model at the top if not already imported
+        const Chat = require('./models/Chat');
+
+        // Find the chat and add call duration message
+        const chat = await Chat.findById(chatId);
+        if (!chat) {
+          console.error('Chat not found:', chatId);
+          return;
+        }
+
+        // Create call message
+        const newMessage = {
+          sender: fromUserId,
+          content: messageContent,
+          type: 'call',
+          callDuration: duration,
+          timestamp: new Date(),
+          read: false
+        };
+
+        // Add message to chat
+        chat.messages.push(newMessage);
+        chat.updatedAt = new Date();
+        await chat.save();
+
+        // Get the saved message with populated sender
+        await chat.populate('messages.sender', 'name avatar role');
+        const message = chat.messages[chat.messages.length - 1];
+
+        // Broadcast to chat room
+        io.to(chatId.toString()).emit('messageBroadcast', {
+          chatId,
+          message
+        });
+
+        console.log(`📞 Call duration message sent: ${messageContent}`);
+      } catch (error) {
+        console.error('Error sending call duration message:', error);
+      }
+    };
+
     socket.on('webrtc:signal', (data) => {
-      const { to, signal, callId } = data;
-      console.log(`📡 WebRTC: Signaling data for call ${callId}`);
+      const { to, signal, callId, from, timestamp } = data;
       
-      // Forward signaling data to target user
+      // Forward signaling data to target user IMMEDIATELY (minimal logging for speed)
       io.to(`user-${to}`).emit('webrtc:signal', {
+        from: from || socket.userId,
         signal,
         callId,
-        timestamp: Date.now()
+        timestamp: timestamp || Date.now()
       });
     });
   });
