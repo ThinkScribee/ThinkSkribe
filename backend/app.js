@@ -30,7 +30,7 @@ const app = express();
 // Middlewares
 // Updated CORS configuration in app.js
 app.use(cors({
-  origin: ['https://thinqscribe.com', 'https://www.thinqscribe.com', 'http://localhost:5173,'http://localhost:8081','http://localhost:8082'],
+  origin: ['https://thinqscribe.com', 'https://www.thinqscribe.com', 'http://localhost:8081'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -93,3 +93,4 @@ app.use(errorHandler);
 
 
 export default app;
+
