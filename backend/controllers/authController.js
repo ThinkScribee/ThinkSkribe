@@ -27,6 +27,8 @@ const sendTokenResponse = (user, statusCode, res) => {
 export const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role, referralCode } = req.body;
   
+  console.log('Registration attempt:', { name, email, role, referralCode });
+  
   // Validate role - only student and writer are allowed for registration
   if (role && !['student', 'writer'].includes(role)){
     return next(new ErrorResponse('Invalid role. Only student and writer registration is allowed.', 400));
@@ -40,14 +42,19 @@ export const register = asyncHandler(async (req, res, next) => {
   // Check referral code if provided
   let influencer = null;
   if (referralCode) {
+    console.log('Checking referral code:', referralCode);
+    
     influencer = await Influencer.findOne({ 
       referralCode: referralCode.toUpperCase(),
       isActive: true
     });
     
     if (!influencer) {
+      console.log('Invalid referral code provided:', referralCode);
       return next(new ErrorResponse('Invalid referral code', 400));
     }
+    
+    console.log('Found valid influencer for referral:', influencer.name);
   }
 
   const verificationToken = crypto.randomBytes(20).toString('hex');
@@ -61,14 +68,24 @@ export const register = asyncHandler(async (req, res, next) => {
     referredBy: influencer?._id,
     referralCode: influencer?.referralCode
   });
+  
+  console.log('User created successfully:', user._id);
     
   // Create subscription based on role
   if (role === 'student' || role === 'writer') {
     await Subscription.create({ user: user._id, plan: 'free' });
+    console.log('Subscription created for user:', user._id);
   }
 
+  // Track referral signup
   if (influencer) {
-    await influencer.incrementSignup();
+    try {
+      await influencer.incrementSignup();
+      console.log('Referral signup tracked for influencer:', influencer.name);
+    } catch (error) {
+      console.error('Error tracking referral signup:', error);
+      // Don't fail registration if referral tracking fails
+    }
   }
 
   sendTokenResponse(user, 201, res);
@@ -77,29 +94,39 @@ export const register = asyncHandler(async (req, res, next) => {
 export const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   
+  if (!email || !password) {
+    return next(new ErrorResponse('Please provide email and password', 400));
+  }
+  
   const user = await User.findOne({ email }).select('+password');
-    if (!user || !(await user.matchPassword(password))) {
+  
+  if (!user || !(await user.matchPassword(password))) {
     return next(new ErrorResponse('Invalid credentials', 401));
   }
+
+  // Update last login
+  user.lastLogin = new Date();
+  await user.save({ validateBeforeSave: false });
 
   sendTokenResponse(user, 200, res);
 });
 
 export const logout = asyncHandler(async (req, res, next) => {
   res.status(200).json({ 
-      success: true,
+    success: true,
     message: 'Logged out successfully!' 
   });
-})
+});
 
 export const getMe = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id).select('-password'); 
-    if (!user) {
+  
+  if (!user) {
     return next(new ErrorResponse('User not found', 404));
   }
 
   res.status(200).json({
-      success: true,
+    success: true,
     data: user
   });
 });
@@ -145,20 +172,20 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
     .update(req.params.resetToken)
     .digest('hex');
 
-    const user = await User.findOne({ 
+  const user = await User.findOne({ 
     resetPasswordToken,
-      resetPasswordExpire: { $gt: Date.now() }
-    });
+    resetPasswordExpire: { $gt: Date.now() }
+  });
 
-    if (!user) {
+  if (!user) {
     return next(new ErrorResponse('Invalid token', 400));
-    }
+  }
 
   // Set new password
   user.password = req.body.password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-    await user.save();
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
 
   sendTokenResponse(user, 200, res);
 });
@@ -178,8 +205,8 @@ export const verifyEmail = asyncHandler(async (req, res, next) => {
   user.emailVerificationExpire = undefined;
   await user.save();
 
-    res.status(200).json({
-      success: true,
+  res.status(200).json({
+    success: true,
     message: 'Email verified successfully'
   });
 });
