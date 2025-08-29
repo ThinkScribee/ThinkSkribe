@@ -1,6 +1,7 @@
 // authController.js - Fixed version
 import User from '../models/User.js';
 import Subscription from '../models/Subscription.js';
+import Influencer from '../models/Influencer.js';
 import { generateToken } from '../utils/generateToken.js';
 import asyncHandler from '../middlewares/async.js';
 import ErrorResponse from '../utils/errorResponse.js';
@@ -24,7 +25,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 };
 
 export const register = asyncHandler(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, referralCode } = req.body;
   
   // Validate role - only student and writer are allowed for registration
   if (role && !['student', 'writer'].includes(role)) {
@@ -36,6 +37,19 @@ export const register = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('User already exists', 400));
   }
 
+  // Check referral code if provided
+  let influencer = null;
+  if (referralCode) {
+    influencer = await Influencer.findOne({ 
+      referralCode: referralCode.toUpperCase(),
+      isActive: true
+    });
+    
+    if (!influencer) {
+      return next(new ErrorResponse('Invalid referral code', 400));
+    }
+  }
+
   const verificationToken = crypto.randomBytes(20).toString('hex');
   const user = await User.create({ 
     name, 
@@ -43,12 +57,19 @@ export const register = asyncHandler(async (req, res, next) => {
     password, 
     role: role || 'student', // Default to student if no role provided
     verificationToken,
-    isVerified: true
+    isVerified: true,
+    referredBy: influencer?._id,
+    referralCode: influencer?.referralCode
   });
     
   // Create subscription based on role
   if (role === 'student' || role === 'writer') {
     await Subscription.create({ user: user._id, plan: 'free' });
+  }
+
+  // Increment influencer stats if referral code was used
+  if (influencer) {
+    await influencer.incrementSignup();
   }
 
   sendTokenResponse(user, 201, res);
