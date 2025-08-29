@@ -26,12 +26,7 @@ export const createInfluencer = asyncHandler(async (req, res, next) => {
     followers: followers || 0,
     commission: commission || 10,
     notes,
-    isActive: true,
-    stats: {
-      totalSignups: 0,
-      totalRevenue: 0,
-      totalCommission: 0
-    }
+    isActive: true
   });
 
   res.status(201).json({
@@ -44,42 +39,22 @@ export const createInfluencer = asyncHandler(async (req, res, next) => {
 // @route   GET /api/influencers
 // @access  Private (Admin only)
 export const getInfluencers = asyncHandler(async (req, res, next) => {
-  console.log('📊 [Influencer Controller] Fetching all influencers...');
-  
-  const influencers = await Influencer.find()
-    .sort({ createdAt: -1 })
-    .lean();
+  try {
+    console.log('Fetching all influencers...');
+    
+    const influencers = await Influencer.find().sort({ createdAt: -1 });
+    
+    console.log(`Found ${influencers.length} influencers`);
 
-  console.log(`📊 [Influencer Controller] Found ${influencers.length} influencers`);
-
-  // Ensure each influencer has required fields with defaults
-  const formattedInfluencers = influencers.map(influencer => ({
-    _id: influencer._id,
-    name: influencer.name || 'Unknown',
-    email: influencer.email || '',
-    referralCode: influencer.referralCode || '',
-    platform: influencer.platform || 'other',
-    followers: influencer.followers || 0,
-    commission: influencer.commission || 10,
-    isActive: influencer.isActive !== false, // Default to true if undefined
-    notes: influencer.notes || '',
-    stats: {
-      totalSignups: influencer.stats?.totalSignups || 0,
-      totalRevenue: influencer.stats?.totalRevenue || 0,
-      totalCommission: influencer.stats?.totalCommission || 0,
-      lastSignup: influencer.stats?.lastSignup || null
-    },
-    createdAt: influencer.createdAt,
-    updatedAt: influencer.updatedAt
-  }));
-
-  console.log('📊 [Influencer Controller] Formatted influencers:', formattedInfluencers.length);
-
-  res.status(200).json({
-    success: true,
-    count: formattedInfluencers.length,
-    data: formattedInfluencers
-  });
+    res.status(200).json({
+      success: true,
+      count: influencers.length,
+      data: influencers
+    });
+  } catch (error) {
+    console.error('Error in getInfluencers:', error);
+    return next(new ErrorResponse('Failed to fetch influencers', 500));
+  }
 });
 
 // @desc    Get single influencer
@@ -110,16 +85,15 @@ export const updateInfluencer = asyncHandler(async (req, res, next) => {
 
   // If updating referral code, check for uniqueness
   if (req.body.referralCode) {
+    req.body.referralCode = req.body.referralCode.toUpperCase();
     const existingInfluencer = await Influencer.findOne({ 
-      referralCode: req.body.referralCode.toUpperCase(),
+      referralCode: req.body.referralCode,
       _id: { $ne: req.params.id }
     });
 
     if (existingInfluencer) {
       return next(new ErrorResponse('Referral code already exists', 400));
     }
-    
-    req.body.referralCode = req.body.referralCode.toUpperCase();
   }
 
   influencer = await Influencer.findByIdAndUpdate(req.params.id, req.body, {
@@ -143,6 +117,7 @@ export const deleteInfluencer = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Influencer not found with id of ${req.params.id}`, 404));
   }
 
+  // Use deleteOne instead of remove (deprecated)
   await Influencer.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
@@ -161,8 +136,8 @@ export const getInfluencerDashboard = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Influencer not found with id of ${req.params.id}`, 404));
   }
 
-  // Get referred users
-  const referredUsers = await User.find({ referredBy: req.params.id })
+  // Get referred users using the influencer's _id (not req.params.id as string)
+  const referredUsers = await User.find({ referredBy: influencer._id })
     .select('name email role createdAt')
     .sort({ createdAt: -1 });
 
@@ -172,14 +147,14 @@ export const getInfluencerDashboard = asyncHandler(async (req, res, next) => {
   const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
   const monthlySignups = await User.countDocuments({
-    referredBy: req.params.id,
+    referredBy: influencer._id,
     createdAt: { $gte: startOfMonth, $lte: endOfMonth }
   });
 
   // Get recent signups (last 30 days)
   const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
   const recentSignups = await User.countDocuments({
-    referredBy: req.params.id,
+    referredBy: influencer._id,
     createdAt: { $gte: thirtyDaysAgo }
   });
 
@@ -188,13 +163,13 @@ export const getInfluencerDashboard = asyncHandler(async (req, res, next) => {
     data: {
       influencer,
       stats: {
-        totalSignups: influencer.stats?.totalSignups || 0,
-        totalRevenue: influencer.stats?.totalRevenue || 0,
-        totalCommission: influencer.stats?.totalCommission || 0,
+        totalSignups: influencer.stats.totalSignups,
+        totalRevenue: influencer.stats.totalRevenue,
+        totalCommission: influencer.stats.totalCommission,
         monthlySignups,
         recentSignups,
         conversionRate: influencer.followers > 0 ? 
-          (((influencer.stats?.totalSignups || 0) / influencer.followers) * 100).toFixed(2) : 0
+          ((influencer.stats.totalSignups / influencer.followers) * 100).toFixed(2) : 0
       },
       referredUsers
     }
@@ -207,36 +182,29 @@ export const getInfluencerDashboard = asyncHandler(async (req, res, next) => {
 export const getInfluencerByReferralCode = asyncHandler(async (req, res, next) => {
   const { code } = req.params;
 
-  console.log('🔍 [Influencer Controller] Looking up referral code:', code);
-
-  if (!code || code.length !== 5) {
-    return next(new ErrorResponse('Invalid referral code format', 400));
-  }
+  console.log('Looking for influencer with code:', code.toUpperCase());
 
   const influencer = await Influencer.findOne({ 
     referralCode: code.toUpperCase(),
     isActive: true
-  }).lean();
-
-  console.log('🔍 [Influencer Controller] Found influencer:', influencer ? 'Yes' : 'No');
+  });
 
   if (!influencer) {
+    console.log('Influencer not found for code:', code.toUpperCase());
     return next(new ErrorResponse('Invalid referral code', 404));
   }
 
-  // Ensure all required fields are present with defaults
-  const responseData = {
-    name: influencer.name || 'Unknown Influencer',
-    platform: influencer.platform || 'other',
-    referralCode: influencer.referralCode,
-    referralUrl: `https://thinqscribe.com/ref/${influencer.referralCode.toLowerCase()}`
-  };
-
-  console.log('🔍 [Influencer Controller] Sending response:', responseData);
+  console.log('Found influencer:', influencer.name, influencer.platform);
 
   res.status(200).json({
     success: true,
-    data: responseData
+    data: {
+      _id: influencer._id,
+      name: influencer.name,
+      platform: influencer.platform || 'other', // Provide default if platform is missing
+      referralCode: influencer.referralCode,
+      referralUrl: influencer.referralUrl
+    }
   });
 });
 
@@ -246,7 +214,7 @@ export const getInfluencerByReferralCode = asyncHandler(async (req, res, next) =
 export const trackReferralSignup = asyncHandler(async (req, res, next) => {
   const { referralCode, userId } = req.body;
 
-  console.log('📈 [Influencer Controller] Tracking signup:', { referralCode, userId });
+  console.log('Tracking referral signup:', { referralCode, userId });
 
   if (!referralCode || !userId) {
     return next(new ErrorResponse('Referral code and user ID are required', 400));
@@ -258,7 +226,7 @@ export const trackReferralSignup = asyncHandler(async (req, res, next) => {
   });
 
   if (!influencer) {
-    console.log('❌ [Influencer Controller] Invalid referral code:', referralCode);
+    console.log('Influencer not found for referral tracking:', referralCode);
     return next(new ErrorResponse('Invalid referral code', 404));
   }
 
@@ -273,12 +241,9 @@ export const trackReferralSignup = asyncHandler(async (req, res, next) => {
   }
 
   // Increment influencer stats
-  try {
-    await influencer.incrementSignup();
-    console.log('✅ [Influencer Controller] Successfully tracked referral');
-  } catch (error) {
-    console.error('❌ [Influencer Controller] Error incrementing signup:', error);
-  }
+  await influencer.incrementSignup();
+
+  console.log('Referral tracked successfully for:', influencer.name);
 
   res.status(200).json({
     success: true,
@@ -294,60 +259,47 @@ export const trackReferralSignup = asyncHandler(async (req, res, next) => {
 // @route   GET /api/influencers/analytics/overview
 // @access  Private (Admin only)
 export const getInfluencerAnalytics = asyncHandler(async (req, res, next) => {
-  console.log('📊 [Influencer Controller] Fetching analytics overview...');
-  
-  const influencers = await Influencer.find({ isActive: true }).lean();
+  try {
+    const influencers = await Influencer.find({ isActive: true });
 
-  console.log(`📊 [Influencer Controller] Found ${influencers.length} active influencers`);
+    console.log(`Found ${influencers.length} active influencers for analytics`);
 
-  const totalSignups = influencers.reduce((sum, inf) => sum + (inf.stats?.totalSignups || 0), 0);
-  const totalRevenue = influencers.reduce((sum, inf) => sum + (inf.stats?.totalRevenue || 0), 0);
-  const totalCommission = influencers.reduce((sum, inf) => sum + (inf.stats?.totalCommission || 0), 0);
+    const totalSignups = influencers.reduce((sum, inf) => sum + (inf.stats?.totalSignups || 0), 0);
+    const totalRevenue = influencers.reduce((sum, inf) => sum + (inf.stats?.totalRevenue || 0), 0);
+    const totalCommission = influencers.reduce((sum, inf) => sum + (inf.stats?.totalCommission || 0), 0);
 
-  // Get top performing influencers
-  const topInfluencers = influencers
-    .sort((a, b) => (b.stats?.totalSignups || 0) - (a.stats?.totalSignups || 0))
-    .slice(0, 5)
-    .map(inf => ({
-      _id: inf._id,
-      name: inf.name || 'Unknown',
-      stats: {
-        totalSignups: inf.stats?.totalSignups || 0,
-        totalRevenue: inf.stats?.totalRevenue || 0,
-        totalCommission: inf.stats?.totalCommission || 0
+    // Get top performing influencers
+    const topInfluencers = influencers
+      .sort((a, b) => (b.stats?.totalSignups || 0) - (a.stats?.totalSignups || 0))
+      .slice(0, 5);
+
+    // Get recent signups (last 7 days)
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const recentSignups = await User.countDocuments({
+      referredBy: { $exists: true, $ne: null },
+      createdAt: { $gte: sevenDaysAgo }
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        overview: {
+          totalInfluencers: influencers.length,
+          totalSignups,
+          totalRevenue,
+          totalCommission,
+          recentSignups
+        },
+        topInfluencers,
+        platformBreakdown: influencers.reduce((acc, inf) => {
+          const platform = inf.platform || 'other';
+          acc[platform] = (acc[platform] || 0) + (inf.stats?.totalSignups || 0);
+          return acc;
+        }, {})
       }
-    }));
-
-  // Get recent signups (last 7 days)
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const recentSignups = await User.countDocuments({
-    referredBy: { $exists: true, $ne: null },
-    createdAt: { $gte: sevenDaysAgo }
-  });
-
-  // Platform breakdown
-  const platformBreakdown = influencers.reduce((acc, inf) => {
-    const platform = inf.platform || 'other';
-    acc[platform] = (acc[platform] || 0) + (inf.stats?.totalSignups || 0);
-    return acc;
-  }, {});
-
-  const analyticsData = {
-    overview: {
-      totalInfluencers: influencers.length,
-      totalSignups,
-      totalRevenue,
-      totalCommission,
-      recentSignups
-    },
-    topInfluencers,
-    platformBreakdown
-  };
-
-  console.log('📊 [Influencer Controller] Analytics data:', analyticsData);
-
-  res.status(200).json({
-    success: true,
-    data: analyticsData
-  });
+    });
+  } catch (error) {
+    console.error('Error in getInfluencerAnalytics:', error);
+    return next(new ErrorResponse('Failed to fetch analytics', 500));
+  }
 });
