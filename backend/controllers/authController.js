@@ -28,7 +28,7 @@ export const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role, referralCode } = req.body;
   
   // Validate role - only student and writer are allowed for registration
-  if (role && !['student', 'writer'].includes(role)) {
+  if (role && !['student', 'writer'].includes(role)){
     return next(new ErrorResponse('Invalid role. Only student and writer registration is allowed.', 400));
   }
   
@@ -67,7 +67,6 @@ export const register = asyncHandler(async (req, res, next) => {
     await Subscription.create({ user: user._id, plan: 'free' });
   }
 
-  // Increment influencer stats if referral code was used
   if (influencer) {
     await influencer.incrementSignup();
   }
@@ -91,7 +90,7 @@ export const logout = asyncHandler(async (req, res, next) => {
       success: true,
     message: 'Logged out successfully!' 
   });
-});
+})
 
 export const getMe = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id).select('-password'); 
