@@ -22,6 +22,7 @@ import messageRoutes from './routes/messages.js';
 import agreementRoutes from './routes/agreement.js';
 import locationRoutes from './routes/location.js';
 import webhookRoutes from './routes/webhooks.js';
+import influencerRoutes from './routes/influencers.js';
 
 // Database connection
 connectDB();
@@ -81,6 +82,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/agreements', agreementRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/influencers', influencerRoutes);
 // Removed: app.use('/api/student', studentRoutes); // No longer needed
 
 // Health check endpoint
@@ -91,6 +93,4 @@ app.get('/api/health', (req, res) => {
 // Error handling
 app.use(errorHandler);
 
-
 export default app;
-
