@@ -195,6 +195,16 @@ const UserSchema = new mongoose.Schema({
       type: String,
       default: 'en'
     }
+  },
+  
+  // Referral tracking
+  referredBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Influencer'
+  },
+  referralCode: {
+    type: String,
+    uppercase: true
   }
 }, {
   timestamps: true,
