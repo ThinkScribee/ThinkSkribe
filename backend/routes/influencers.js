@@ -1,55 +1,37 @@
 import express from 'express';
-// import {
-//   createInfluencer,
-//   getInfluencers,
-//   getInfluencer,
-//   updateInfluencer,
-//   deleteInfluencer,
-//   getInfluencerDashboard,
-//   getInfluencerByReferralCode,
-//   trackReferralSignup,
-//   getInfluencerAnalytics
-// } from '../controllers/influencerController.js';
-// import { protect, authorize } from '../middlewares/auth.js';
+import {
+  createInfluencer,
+  getInfluencers,
+  getInfluencer,
+  updateInfluencer,
+  deleteInfluencer,
+  getInfluencerDashboard,
+  getInfluencerByReferralCode,
+  trackReferralSignup,
+  getInfluencerAnalytics
+} from '../controllers/influencerController.js';
+import { protect, authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// Temporary placeholder routes to fix the export issue
-router.get('/', (req, res) => {
-  res.json({ message: 'Influencers route working' });
-});
+// Public routes
+router.get('/referral/:code', getInfluencerByReferralCode);
 
-router.get('/referral/:code', (req, res) => {
-  res.json({ message: 'Referral route working', code: req.params.code });
-});
+// Protected routes (require authentication)
+router.use(protect);
 
-router.post('/track-signup', (req, res) => {
-  res.json({ message: 'Track signup route working' });
-});
+// Admin only routes
+router.get('/', authorize('admin'), getInfluencers);
+router.post('/', authorize('admin'), createInfluencer);
 
-// Placeholder admin routes
-router.post('/', (req, res) => {
-  res.json({ message: 'Create influencer route working' });
-});
+router.get('/:id', authorize('admin'), getInfluencer);
+router.put('/:id', authorize('admin'), updateInfluencer);
+router.delete('/:id', authorize('admin'), deleteInfluencer);
 
-router.get('/:id', (req, res) => {
-  res.json({ message: 'Get influencer route working', id: req.params.id });
-});
+router.get('/:id/dashboard', authorize('admin'), getInfluencerDashboard);
+router.get('/analytics/overview', authorize('admin'), getInfluencerAnalytics);
 
-router.put('/:id', (req, res) => {
-  res.json({ message: 'Update influencer route working', id: req.params.id });
-});
-
-router.delete('/:id', (req, res) => {
-  res.json({ message: 'Delete influencer route working', id: req.params.id });
-});
-
-router.get('/:id/dashboard', (req, res) => {
-  res.json({ message: 'Dashboard route working', id: req.params.id });
-});
-
-router.get('/analytics/overview', (req, res) => {
-  res.json({ message: 'Analytics route working' });
-});
+// Track referral signup (for authenticated users)
+router.post('/track-signup', trackReferralSignup);
 
 export default router;
