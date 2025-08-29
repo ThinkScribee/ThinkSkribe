@@ -22,7 +22,7 @@ import messageRoutes from './routes/messages.js';
 import agreementRoutes from './routes/agreement.js';
 import locationRoutes from './routes/location.js';
 import webhookRoutes from './routes/webhooks.js';
-import {influencerRoutes} from './routes/influencers.js';
+import influencerRoutes from './routes/influencers.js';
 
 // Database connection
 connectDB();
@@ -94,5 +94,6 @@ app.get('/api/health', (req, res) => {
 app.use(errorHandler);
 
 export default app;
+
 
 
