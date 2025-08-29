@@ -1,4 +1,4 @@
-// authController.js - Fixed version
+// authController.js - Fixed version without duplicate referral tracking
 import User from '../models/User.js';
 import Subscription from '../models/Subscription.js';
 import Influencer from '../models/Influencer.js';
@@ -77,16 +77,15 @@ export const register = asyncHandler(async (req, res, next) => {
     console.log('Subscription created for user:', user._id);
   }
 
-  // Track referral signup
-  if (influencer) {
-    try {
-      await influencer.incrementSignup();
-      console.log('Referral signup tracked for influencer:', influencer.name);
-    } catch (error) {
-      console.error('Error tracking referral signup:', error);
-      // Don't fail registration if referral tracking fails
-    }
-  }
+  // REMOVED: Duplicate referral tracking - this should be handled by trackReferralSignup endpoint
+  // if (influencer) {
+  //   try {
+  //     await influencer.incrementSignup();
+  //     console.log('Referral signup tracked for influencer:', influencer.name);
+  //   } catch (error) {
+  //     console.error('Error tracking referral signup:', error);
+  //   }
+  // }
 
   sendTokenResponse(user, 201, res);
 });
