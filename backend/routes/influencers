@@ -21,14 +21,12 @@ router.get('/referral/:code', getInfluencerByReferralCode);
 router.use(protect);
 
 // Admin only routes
-router.route('/')
-  .get(authorize('admin'), getInfluencers)
-  .post(authorize('admin'), createInfluencer);
+router.get('/', authorize('admin'), getInfluencers);
+router.post('/', authorize('admin'), createInfluencer);
 
-router.route('/:id')
-  .get(authorize('admin'), getInfluencer)
-  .put(authorize('admin'), updateInfluencer)
-  .delete(authorize('admin'), deleteInfluencer);
+router.get('/:id', authorize('admin'), getInfluencer);
+router.put('/:id', authorize('admin'), updateInfluencer);
+router.delete('/:id', authorize('admin'), deleteInfluencer);
 
 router.get('/:id/dashboard', authorize('admin'), getInfluencerDashboard);
 router.get('/analytics/overview', authorize('admin'), getInfluencerAnalytics);
