@@ -94,3 +94,4 @@ app.get('/api/health', (req, res) => {
 app.use(errorHandler);
 
 export default app;
+
