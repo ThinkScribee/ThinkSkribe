@@ -9,8 +9,7 @@ const WriterProfileSchema = new mongoose.Schema({
     maxlength: 1000
   },
   specialties: [{
-    type: String,
-    required: true
+    type: String
   }],
   education: [{
     degree: String,
@@ -71,6 +70,12 @@ const WriterProfileSchema = new mongoose.Schema({
   },
   publishedAt: {
     type: Date
+  },
+  responseTime: {
+    type: Number,
+    default: 24, // Default to 24 hours
+    min: 1, // Minimum 1 hour
+    max: 168 // Maximum 1 week (168 hours)
   }
 });
 
