@@ -413,7 +413,8 @@ export const getRecommendedWriters = asyncHandler(async (req, res, next) => {
       avatar: writer.avatar,
       writerProfile: {
         bio: writer.writerProfile?.bio || 'Experienced academic writer',
-        specialization: writer.writerProfile?.specialization || ['General Writing'],
+        specialties: writer.writerProfile?.specialties || ['General Writing'],
+        responseTime: writer.writerProfile?.responseTime || 24,
         rating: {
           average: writer.writerProfile?.rating?.average || 4.5,
           count: writer.writerProfile?.rating?.count || 5
