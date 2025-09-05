@@ -102,6 +102,31 @@ export const updateProfile = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse('User not found', 404));
     }
 
+    // Emit socket event for real-time updates (especially for writer profiles)
+    if (user.role === 'writer' && req.body.writerProfile) {
+      try {
+        const { getIO } = await import('../socket.js');
+        const io = getIO();
+        
+        // Broadcast writer profile update to all connected clients
+        io.emit('writerProfileUpdated', {
+          writerId: user._id,
+          updatedFields: {
+            name: user.name,
+            avatar: user.avatar,
+            bio: user.writerProfile?.bio,
+            specialties: user.writerProfile?.specialties,
+            responseTime: user.writerProfile?.responseTime
+          },
+          timestamp: Date.now()
+        });
+        
+        console.log('📡 Writer profile update broadcasted globally:', user._id);
+      } catch (socketError) {
+        console.warn('⚠️ Socket broadcast failed:', socketError.message);
+      }
+    }
+
     res.status(200).json({
       success: true,
       data: user
