@@ -148,6 +148,22 @@ const initSocket = (server) => {
       socket.emit('onlineStatuses', onlineStatuses);
     });
 
+    // Writer profile updates for marketplace real-time sync
+    socket.on('writerProfileUpdate', (data) => {
+      try {
+        console.log('📝 Writer profile update received:', data);
+        // Broadcast to all connected clients (for marketplace updates)
+        socket.broadcast.emit('writerProfileUpdated', {
+          writerId: data.writerId,
+          updatedFields: data.updatedFields,
+          timestamp: Date.now()
+        });
+        console.log('✅ Writer profile update broadcasted');
+      } catch (error) {
+        console.error('❌ Error handling writer profile update:', error);
+      }
+    });
+
     // Join chat room - CRITICAL FIX
     socket.on('joinChat', (chatId) => {
       if (chatId) {
@@ -762,8 +778,7 @@ const initSocket = (server) => {
         const durationText = formatDuration(duration);
         const messageContent = `📞 Audio call • ${durationText}`;
 
-        // Import Chat model at the top if not already imported
-        const Chat = require('./models/Chat');
+        // Use the already imported Chat model
 
         // Find the chat and add call duration message
         const chat = await Chat.findById(chatId);
