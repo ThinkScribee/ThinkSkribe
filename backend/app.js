@@ -7,7 +7,7 @@ import userRoutes from './routes/user.js';
 import writerRoutes from './routes/writer.js';
 import paymentRoutes from './routes/payment.js';
 import chatRoutes from './routes/chat.js';
-
+import compression from 'compression';
 import adminRoutes from './routes/admin.js';
 import orderRoutes from './routes/order.js';
 import supportRoutes from './routes/support.js';
@@ -62,6 +62,7 @@ app.use(cors({
   preflightContinue: false,
   optionsSuccessStatus: 204
 }));
+app.use(compression());
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json({ limit: '350mb' }));
@@ -94,6 +95,7 @@ app.get('/api/health', (req, res) => {
 app.use(errorHandler);
 
 export default app;
+
 
 
 
