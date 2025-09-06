@@ -320,7 +320,7 @@ export const getStats = async (req, res, next) => {
  */
 export const getWriters = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, status, search } = req.query;
+    const { page = 1, limit = 1000, status, search } = req.query;
     
     let query = { role: 'writer' };
     
