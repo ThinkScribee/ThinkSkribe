@@ -401,7 +401,7 @@ export const getRecommendedWriters = asyncHandler(async (req, res, next) => {
     })
     .select('name email avatar writerProfile createdAt')
     .sort({ 'writerProfile.rating.average': -1, createdAt: -1 })
-    .limit(10);
+    .limit(150); // Increased from 10 to 50 to show more published writers
     
     console.log(`Found ${writers.length} recommended published writers`);
     
