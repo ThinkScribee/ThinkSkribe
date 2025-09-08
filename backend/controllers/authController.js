@@ -1,211 +1,160 @@
-// authController.js - Fixed version without duplicate referral tracking
-import User from '../models/User.js';
-import Subscription from '../models/Subscription.js';
-import Influencer from '../models/Influencer.js';
-import { generateToken } from '../utils/generateToken.js';
-import asyncHandler from '../middlewares/async.js';
-import ErrorResponse from '../utils/errorResponse.js';
-import crypto from 'crypto';
+import client from './client.js';
 
-// Helper function for sending token response
-const sendTokenResponse = (user, statusCode, res) => {
-  const token = generateToken(user._id);
-
-  res.status(statusCode).json({
-    success: true,
-    token,
-    user: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      isVerified: user.isVerified
+export const influencerApi = {
+  // Get all influencers (admin only)
+  getInfluencers: async () => {
+    try {
+      console.log('🎯 [Influencer API] Fetching influencers...');
+      const response = await client.get('/influencers');
+      console.log('✅ [Influencer API] Raw response:', response);
+      console.log('✅ [Influencer API] Response data:', response.data);
+      console.log('✅ [Influencer API] Response structure:', {
+        hasData: !!response.data,
+        hasSuccess: !!response.data?.success,
+        dataType: typeof response.data,
+        isArray: Array.isArray(response.data),
+        dataKeys: response.data ? Object.keys(response.data) : []
+      });
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error fetching influencers:', error);
+      throw error;
     }
-  });
+  },
+
+  // Get single influencer (admin only)
+  getInfluencer: async (id) => {
+    try {
+      console.log('🎯 [Influencer API] Fetching influencer:', id);
+      const response = await client.get(`/influencers/${id}`);
+      console.log('✅ [Influencer API] Influencer received:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error fetching influencer:', error);
+      throw error;
+    }
+  },
+
+  // Get single influencer by ID (alias for getInfluencer)
+  getInfluencerById: async (id) => {
+    try {
+      console.log('🎯 [Influencer API] Fetching influencer by ID:', id);
+      const response = await client.get(`/influencers/${id}`);
+      console.log('✅ [Influencer API] Influencer received:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error fetching influencer by ID:', error);
+      throw error;
+    }
+  },
+
+  // Create new influencer (admin only)
+  createInfluencer: async (influencerData) => {
+    try {
+      console.log('🎯 [Influencer API] Creating influencer:', influencerData);
+      const response = await client.post('/influencers', influencerData);
+      console.log('✅ [Influencer API] Influencer created:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error creating influencer:', error);
+      throw error;
+    }
+  },
+
+  // Update influencer (admin only)
+  updateInfluencer: async (id, influencerData) => {
+    try {
+      console.log('🎯 [Influencer API] Updating influencer:', id, influencerData);
+      const response = await client.put(`/influencers/${id}`, influencerData);
+      console.log('✅ [Influencer API] Influencer updated:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error updating influencer:', error);
+      throw error;
+    }
+  },
+
+  // Delete influencer (admin only)
+  deleteInfluencer: async (id) => {
+    try {
+      console.log('🎯 [Influencer API] Deleting influencer:', id);
+      const response = await client.delete(`/influencers/${id}`);
+      console.log('✅ [Influencer API] Influencer deleted:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error deleting influencer:', error);
+      throw error;
+    }
+  },
+
+  // Get influencer dashboard (admin only)
+  getInfluencerDashboard: async (id) => {
+    try {
+      console.log('🎯 [Influencer API] Fetching influencer dashboard:', id);
+      const response = await client.get(`/influencers/${id}/dashboard`);
+      console.log('✅ [Influencer API] Raw dashboard response:', response);
+      console.log('✅ [Influencer API] Dashboard data:', response.data);
+      console.log('✅ [Influencer API] Dashboard structure:', {
+        hasData: !!response.data,
+        hasSuccess: !!response.data?.success,
+        dataType: typeof response.data,
+        dataKeys: response.data ? Object.keys(response.data) : []
+      });
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error fetching dashboard:', error);
+      throw error;
+    }
+  },
+
+  // Get influencer analytics overview (admin only)
+  getInfluencerAnalytics: async () => {
+    try {
+      console.log('🎯 [Influencer API] Fetching analytics overview...');
+      const response = await client.get('/influencers/analytics/overview');
+      console.log('✅ [Influencer API] Raw analytics response:', response);
+      console.log('✅ [Influencer API] Analytics data:', response.data);
+      console.log('✅ [Influencer API] Analytics structure:', {
+        hasData: !!response.data,
+        hasSuccess: !!response.data?.success,
+        dataType: typeof response.data,
+        dataKeys: response.data ? Object.keys(response.data) : []
+      });
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error fetching analytics:', error);
+      throw error;
+    }
+  },
+
+  // Get influencer by referral code (public)
+  getInfluencerByReferralCode: async (code) => {
+    try {
+      console.log('🎯 [Influencer API] Fetching influencer by code:', code);
+      const response = await client.get(`/influencers/referral/${code}`);
+      console.log('✅ [Influencer API] Influencer found:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error fetching influencer by code:', error);
+      throw error;
+    }
+  },
+
+  // Track referral signup
+  trackReferralSignup: async (referralCode, userId) => {
+    try {
+      console.log('🎯 [Influencer API] Tracking referral signup:', { referralCode, userId });
+      const response = await client.post('/influencers/track-signup', {
+        referralCode,
+        userId
+      });
+      console.log('✅ [Influencer API] Referral tracked:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Influencer API] Error tracking referral:', error);
+      throw error;
+    }
+  }
 };
 
-export const register = asyncHandler(async (req, res, next) => {
-  const { name, email, password, role, referralCode } = req.body;
-  
-  console.log('Registration attempt:', { name, email, role, referralCode });
-  
-  // Validate role - only student and writer are allowed for registration
-  if (role && !['student', 'writer'].includes(role)){
-    return next(new ErrorResponse('Invalid role. Only student and writer registration is allowed.', 400));
-  }
-  
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    return next(new ErrorResponse('User already exists', 400));
-  }
-
-  // Check referral code if provided
-  let influencer = null;
-  if (referralCode) {
-    console.log('Checking referral code:', referralCode);
-    
-    influencer = await Influencer.findOne({ 
-      referralCode: referralCode.toUpperCase(),
-      isActive: true
-    });
-    
-    if (!influencer) {
-      console.log('Invalid referral code provided:', referralCode);
-      return next(new ErrorResponse('Invalid referral code', 400));
-    }
-    
-    console.log('Found valid influencer for referral:', influencer.name);
-  }
-
-  const verificationToken = crypto.randomBytes(20).toString('hex');
-  const user = await User.create({ 
-    name, 
-    email, 
-    password, 
-    role: role || 'student', // Default to student if no role provided
-    verificationToken,
-    isVerified: true,
-    referredBy: influencer?._id,
-    referralCode: influencer?.referralCode
-  });
-  
-  console.log('User created successfully:', user._id);
-    
-  // Create subscription based on role
-  if (role === 'student' || role === 'writer') {
-    await Subscription.create({ user: user._id, plan: 'free' });
-    console.log('Subscription created for user:', user._id);
-  }
-
-  // REMOVED: Duplicate referral tracking - this should be handled by trackReferralSignup endpoint
-  // if (influencer) {
-  //   try {
-  //     await influencer.incrementSignup();
-  //     console.log('Referral signup tracked for influencer:', influencer.name);
-  //   } catch (error) {
-  //     console.error('Error tracking referral signup:', error);
-  //   }
-  // }
-
-  sendTokenResponse(user, 201, res);
-});
-
-export const login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
-  
-  if (!email || !password) {
-    return next(new ErrorResponse('Please provide email and password', 400));
-  }
-  
-  const user = await User.findOne({ email }).select('+password');
-  
-  if (!user || !(await user.matchPassword(password))) {
-    return next(new ErrorResponse('Invalid credentials', 401));
-  }
-
-  // Update last login
-  user.lastLogin = new Date();
-  await user.save({ validateBeforeSave: false });
-
-  sendTokenResponse(user, 200, res);
-});
-
-export const logout = asyncHandler(async (req, res, next) => {
-  res.status(200).json({ 
-    success: true,
-    message: 'Logged out successfully!' 
-  });
-});
-
-export const getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select('-password'); 
-  
-  if (!user) {
-    return next(new ErrorResponse('User not found', 404));
-  }
-
-  res.status(200).json({
-    success: true,
-    data: user
-  });
-});
-
-export const forgotPassword = asyncHandler(async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
-
-  if (!user) {
-    return next(new ErrorResponse('There is no user with that email', 404));
-  }
-
-  // Get reset token
-  const resetToken = user.getResetPasswordToken();
-
-  await user.save({ validateBeforeSave: false });
-
-  // Create reset url
-  const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
-
-  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
-
-  try {
-    // Here you would send email
-    console.log('Password reset email would be sent to:', user.email);
-    console.log('Reset URL:', resetUrl);
-
-    res.status(200).json({ success: true, data: 'Email sent' });
-  } catch (err) {
-    console.log(err);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-
-    await user.save({ validateBeforeSave: false });
-
-    return next(new ErrorResponse('Email could not be sent', 500));
-  }
-});
-
-export const resetPassword = asyncHandler(async (req, res, next) => {
-  // Get hashed token
-  const resetPasswordToken = crypto
-    .createHash('sha256')
-    .update(req.params.resetToken)
-    .digest('hex');
-
-  const user = await User.findOne({ 
-    resetPasswordToken,
-    resetPasswordExpire: { $gt: Date.now() }
-  });
-
-  if (!user) {
-    return next(new ErrorResponse('Invalid token', 400));
-  }
-
-  // Set new password
-  user.password = req.body.password;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpire = undefined;
-  await user.save();
-
-  sendTokenResponse(user, 200, res);
-});
-
-export const verifyEmail = asyncHandler(async (req, res, next) => {
-  const user = await User.findOne({
-    emailVerificationToken: req.params.token,
-    emailVerificationExpire: { $gt: Date.now() }
-  });
-
-  if (!user) {
-    return next(new ErrorResponse('Invalid verification token', 400));
-  }
-
-  user.isVerified = true;
-  user.emailVerificationToken = undefined;
-  user.emailVerificationExpire = undefined;
-  await user.save();
-
-  res.status(200).json({
-    success: true,
-    message: 'Email verified successfully'
-  });
-});
+export default influencerApi;
