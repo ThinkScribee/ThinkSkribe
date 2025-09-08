@@ -8,7 +8,8 @@ import {
   getInfluencerDashboard,
   getInfluencerByReferralCode,
   trackReferralSignup,
-  getInfluencerAnalytics
+  getInfluencerAnalytics,
+  syncReferralCounts
 } from '../controllers/influencerController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -30,6 +31,7 @@ router.delete('/:id', authorize('admin'), deleteInfluencer);
 
 router.get('/:id/dashboard', authorize('admin'), getInfluencerDashboard);
 router.get('/analytics/overview', authorize('admin'), getInfluencerAnalytics);
+router.post('/sync-referral-counts', authorize('admin'), syncReferralCounts);
 
 // Track referral signup (for authenticated users)
 router.post('/track-signup', trackReferralSignup);
