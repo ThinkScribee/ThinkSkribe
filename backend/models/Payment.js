@@ -46,7 +46,7 @@ const PaymentSchema = new mongoose.Schema({
     amount: {
       type: Number,
       required: true,
-      min: 0.01
+      min: 0.002
     },
     dueDate: {
       type: Date,
@@ -56,7 +56,7 @@ const PaymentSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true,
-    min: 0.01
+    min: 0.002
   },
   // Enhanced currency support
   currency: {
@@ -74,7 +74,7 @@ const PaymentSchema = new mongoose.Schema({
   originalAmount: {
     type: Number,
     required: true,
-    min: 0.01
+    min: 0.002
   },
   originalCurrency: {
     type: String,
