@@ -46,10 +46,33 @@ export const getInfluencers = asyncHandler(async (req, res, next) => {
     
     console.log(`Found ${influencers.length} influencers`);
 
+    // Update each influencer with actual signup counts
+    const influencersWithActualCounts = [];
+    
+    for (const influencer of influencers) {
+      // Get actual signup count from database
+      const actualSignupCount = await User.countDocuments({ 
+        referredBy: influencer._id 
+      });
+      
+      // Create influencer object with actual counts
+      const influencerWithActualCount = {
+        ...influencer.toObject(),
+        stats: {
+          ...influencer.stats,
+          totalSignups: actualSignupCount // Use actual count instead of recorded
+        }
+      };
+      
+      influencersWithActualCounts.push(influencerWithActualCount);
+    }
+
+    console.log(`📊 Updated influencers with actual signup counts`);
+
     res.status(200).json({
       success: true,
       count: influencers.length,
-      data: influencers
+      data: influencersWithActualCounts
     });
   } catch (error) {
     console.error('Error in getInfluencers:', error);
@@ -158,18 +181,34 @@ export const getInfluencerDashboard = asyncHandler(async (req, res, next) => {
     createdAt: { $gte: thirtyDaysAgo }
   });
 
+  // Calculate actual signup count from database
+  const actualSignupCount = referredUsers.length;
+  const recordedSignupCount = influencer.stats?.totalSignups || 0;
+
+  // Log any discrepancies for debugging
+  if (actualSignupCount !== recordedSignupCount) {
+    console.log(`⚠️ [Dashboard] Signup count discrepancy for ${influencer.name}:`);
+    console.log(`   Recorded: ${recordedSignupCount}, Actual: ${actualSignupCount}`);
+  }
+
   res.status(200).json({
     success: true,
     data: {
       influencer,
       stats: {
-        totalSignups: influencer.stats.totalSignups,
-        totalRevenue: influencer.stats.totalRevenue,
-        totalCommission: influencer.stats.totalCommission,
+        totalSignups: actualSignupCount, // Use actual count from database
+        totalRevenue: influencer.stats?.totalRevenue || 0,
+        totalCommission: influencer.stats?.totalCommission || 0,
         monthlySignups,
         recentSignups,
         conversionRate: influencer.followers > 0 ? 
-          ((influencer.stats.totalSignups / influencer.followers) * 100).toFixed(2) : 0
+          ((actualSignupCount / influencer.followers) * 100).toFixed(2) : 0,
+        // Add discrepancy info for debugging
+        discrepancy: actualSignupCount !== recordedSignupCount ? {
+          recorded: recordedSignupCount,
+          actual: actualSignupCount,
+          difference: actualSignupCount - recordedSignupCount
+        } : null
       },
       referredUsers
     }
@@ -264,13 +303,41 @@ export const getInfluencerAnalytics = asyncHandler(async (req, res, next) => {
 
     console.log(`Found ${influencers.length} active influencers for analytics`);
 
-    const totalSignups = influencers.reduce((sum, inf) => sum + (inf.stats?.totalSignups || 0), 0);
-    const totalRevenue = influencers.reduce((sum, inf) => sum + (inf.stats?.totalRevenue || 0), 0);
-    const totalCommission = influencers.reduce((sum, inf) => sum + (inf.stats?.totalCommission || 0), 0);
+    // Calculate actual signup counts from database instead of using recorded stats
+    let totalSignups = 0;
+    let totalRevenue = 0;
+    let totalCommission = 0;
+    const influencersWithActualCounts = [];
 
-    // Get top performing influencers
-    const topInfluencers = influencers
-      .sort((a, b) => (b.stats?.totalSignups || 0) - (a.stats?.totalSignups || 0))
+    for (const influencer of influencers) {
+      // Get actual signup count from database
+      const actualSignupCount = await User.countDocuments({ 
+        referredBy: influencer._id 
+      });
+      
+      // Create influencer object with actual counts
+      const influencerWithActualCount = {
+        ...influencer.toObject(),
+        actualSignupCount,
+        stats: {
+          ...influencer.stats,
+          totalSignups: actualSignupCount // Use actual count
+        }
+      };
+      
+      influencersWithActualCounts.push(influencerWithActualCount);
+      
+      // Add to totals
+      totalSignups += actualSignupCount;
+      totalRevenue += influencer.stats?.totalRevenue || 0;
+      totalCommission += influencer.stats?.totalCommission || 0;
+    }
+
+    console.log(`📊 Analytics totals: ${totalSignups} total signups, ${totalRevenue} revenue, ${totalCommission} commission`);
+
+    // Get top performing influencers using actual counts
+    const topInfluencers = influencersWithActualCounts
+      .sort((a, b) => b.actualSignupCount - a.actualSignupCount)
       .slice(0, 5);
 
     // Get recent signups (last 7 days)
@@ -291,9 +358,9 @@ export const getInfluencerAnalytics = asyncHandler(async (req, res, next) => {
           recentSignups
         },
         topInfluencers,
-        platformBreakdown: influencers.reduce((acc, inf) => {
+        platformBreakdown: influencersWithActualCounts.reduce((acc, inf) => {
           const platform = inf.platform || 'other';
-          acc[platform] = (acc[platform] || 0) + (inf.stats?.totalSignups || 0);
+          acc[platform] = (acc[platform] || 0) + inf.actualSignupCount;
           return acc;
         }, {})
       }
@@ -301,5 +368,80 @@ export const getInfluencerAnalytics = asyncHandler(async (req, res, next) => {
   } catch (error) {
     console.error('Error in getInfluencerAnalytics:', error);
     return next(new ErrorResponse('Failed to fetch analytics', 500));
+  }
+});
+
+// @desc    Sync referral counts for all influencers
+// @route   POST /api/influencers/sync-referral-counts
+// @access  Private (Admin only)
+export const syncReferralCounts = asyncHandler(async (req, res, next) => {
+  try {
+    console.log('🔄 Starting referral count sync...');
+    
+    const influencers = await Influencer.find({});
+    const syncResults = [];
+    
+    for (const influencer of influencers) {
+      console.log(`\n📊 Syncing ${influencer.name} (${influencer.referralCode}):`);
+      
+      // Count actual users referred by this influencer
+      const actualReferredUsers = await User.find({ 
+        referredBy: influencer._id 
+      });
+      
+      const actualSignupCount = actualReferredUsers.length;
+      const recordedSignupCount = influencer.stats?.totalSignups || 0;
+      
+      console.log(`   - Recorded: ${recordedSignupCount}, Actual: ${actualSignupCount}`);
+      
+      if (actualSignupCount !== recordedSignupCount) {
+        console.log(`   🔧 Updating count from ${recordedSignupCount} to ${actualSignupCount}`);
+        
+        // Update the influencer's stats
+        await Influencer.findByIdAndUpdate(influencer._id, {
+          $set: {
+            'stats.totalSignups': actualSignupCount,
+            'stats.lastSignup': actualReferredUsers.length > 0 
+              ? new Date(Math.max(...actualReferredUsers.map(u => new Date(u.createdAt)))) 
+              : undefined,
+            updatedAt: new Date()
+          }
+        });
+        
+        syncResults.push({
+          influencer: influencer.name,
+          referralCode: influencer.referralCode,
+          oldCount: recordedSignupCount,
+          newCount: actualSignupCount,
+          updated: true
+        });
+      } else {
+        console.log(`   ✅ Count is accurate`);
+        syncResults.push({
+          influencer: influencer.name,
+          referralCode: influencer.referralCode,
+          oldCount: recordedSignupCount,
+          newCount: actualSignupCount,
+          updated: false
+        });
+      }
+    }
+    
+    const updatedCount = syncResults.filter(r => r.updated).length;
+    
+    console.log(`\n✅ Sync completed! Updated ${updatedCount} out of ${influencers.length} influencers`);
+    
+    res.status(200).json({
+      success: true,
+      message: `Referral counts synced successfully. Updated ${updatedCount} influencers.`,
+      data: {
+        totalInfluencers: influencers.length,
+        updatedInfluencers: updatedCount,
+        results: syncResults
+      }
+    });
+  } catch (error) {
+    console.error('Error in syncReferralCounts:', error);
+    return next(new ErrorResponse('Failed to sync referral counts', 500));
   }
 });
