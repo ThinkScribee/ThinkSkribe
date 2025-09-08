@@ -175,7 +175,7 @@ export const handlePaymentWebhook = async (req, res, next) => {
       agreement.remainingAmount = agreement.totalAmount - agreement.paidAmount;
 
       // Update overall payment status
-      if (Math.abs(agreement.remainingAmount) < 0.01) {
+      if (Math.abs(agreement.remainingAmount) < 0.002) {
         agreement.paymentStatus = 'completed';
       } else if (agreement.paidAmount > 0) {
         agreement.paymentStatus = 'partial';
@@ -1062,7 +1062,7 @@ async function handlePaystackPaymentSuccess(data) {
       agreement.paidAmount = (agreement.paidAmount || 0) + payment.amount;
       agreement.remainingAmount = agreement.totalAmount - agreement.paidAmount;
       
-      if (agreement.remainingAmount <= 0.01) {
+      if (agreement.remainingAmount <= 0.002) {
         agreement.paymentStatus = 'completed';
         agreement.status = 'active';
       } else {
@@ -1116,7 +1116,7 @@ async function handleStripeCheckoutCompleted(session) {
       agreement.paidAmount = (agreement.paidAmount || 0) + payment.amount;
       agreement.remainingAmount = agreement.totalAmount - agreement.paidAmount;
       
-      if (agreement.remainingAmount <= 0.01) {
+      if (agreement.remainingAmount <= 0.002) {
         agreement.paymentStatus = 'completed';
         agreement.status = 'active';
       } else {
@@ -1174,7 +1174,7 @@ async function updateAgreementFromPayment(payment) {
     agreement.paidAmount = (agreement.paidAmount || 0) + payment.amount;
     agreement.remainingAmount = agreement.totalAmount - agreement.paidAmount;
     
-    if (agreement.remainingAmount <= 0.01) {
+    if (agreement.remainingAmount <= 0.002) {
       agreement.paymentStatus = 'completed';
       agreement.status = 'active';
     } else {
