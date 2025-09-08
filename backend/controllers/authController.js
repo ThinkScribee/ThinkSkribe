@@ -80,11 +80,23 @@ export const register = asyncHandler(async (req, res, next) => {
   // Track referral signup for influencer
   if (influencer) {
     try {
-      await influencer.incrementSignup();
-      console.log('✅ Referral signup tracked for influencer:', influencer.name, 'Code:', influencer.referralCode);
+      console.log('🔄 Tracking referral signup for influencer:', influencer.name, 'Code:', influencer.referralCode);
+      
+      // Ensure we have the latest influencer data
+      const freshInfluencer = await Influencer.findById(influencer._id);
+      if (!freshInfluencer) {
+        console.error('❌ Influencer not found during tracking:', influencer._id);
+        return;
+      }
+      
+      // Increment signup count and save
+      await freshInfluencer.incrementSignup();
+      console.log('✅ Referral signup tracked successfully for influencer:', freshInfluencer.name, 'Code:', freshInfluencer.referralCode);
+      console.log('📊 New signup count:', freshInfluencer.stats.totalSignups);
     } catch (error) {
       console.error('❌ Error tracking referral signup:', error);
-      // Don't fail registration if referral tracking fails
+      console.error('❌ Error details:', error.message);
+      // Don't fail registration if referral tracking fails, but log the issue
     }
   }
 
