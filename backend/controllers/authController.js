@@ -1,265 +1,212 @@
-// scripts/auditReferralTracking.js - Database audit and fix script
-import mongoose from 'mongoose';
+// authController.js - Fixed version without duplicate referral tracking
 import User from '../models/User.js';
+import Subscription from '../models/Subscription.js';
 import Influencer from '../models/Influencer.js';
-import dotenv from 'dotenv';
+import { generateToken } from '../utils/generateToken.js';
+import asyncHandler from '../middlewares/async.js';
+import ErrorResponse from '../utils/errorResponse.js';
+import crypto from 'crypto';
 
-dotenv.config();
+// Helper function for sending token response
+const sendTokenResponse = (user, statusCode, res) => {
+  const token = generateToken(user._id);
 
-// Connect to database
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
+  res.status(statusCode).json({
+    success: true,
+    token,
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isVerified: user.isVerified
+    }
+  });
+};
+
+export const register = asyncHandler(async (req, res, next) => {
+  const { name, email, password, role, referralCode } = req.body;
+  
+  console.log('Registration attempt:', { name, email, role, referralCode });
+  
+  // Validate role - only student and writer are allowed for registration
+  if (role && !['student', 'writer'].includes(role)){
+    return next(new ErrorResponse('Invalid role. Only student and writer registration is allowed.', 400));
+  }
+  
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    return next(new ErrorResponse('User already exists', 400));
+  }
+
+  // Check referral code if provided
+  let influencer = null;
+  if (referralCode) {
+    console.log('Checking referral code:', referralCode);
+    
+    influencer = await Influencer.findOne({ 
+      referralCode: referralCode.toUpperCase(),
+      isActive: true
     });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error('Database connection failed:', error);
-    process.exit(1);
-  }
-};
-
-// Audit and fix referral tracking
-const auditReferralTracking = async () => {
-  console.log('🔍 Starting referral tracking audit...\n');
-  
-  try {
-    // Get all influencers
-    const influencers = await Influencer.find({});
-    console.log(`Found ${influencers.length} influencers in database\n`);
     
-    const auditResults = [];
-    
-    for (const influencer of influencers) {
-      console.log(`\n📊 Auditing ${influencer.name} (${influencer.referralCode}):`);
-      
-      // Count actual users referred by this influencer
-      const actualReferredUsers = await User.find({ 
-        referredBy: influencer._id 
-      }).select('name email createdAt role');
-      
-      const actualSignupCount = actualReferredUsers.length;
-      const recordedSignupCount = influencer.stats?.totalSignups || 0;
-      
-      console.log(`   - Recorded signups: ${recordedSignupCount}`);
-      console.log(`   - Actual signups: ${actualSignupCount}`);
-      
-      // Check for discrepancy
-      const hasDiscrepancy = recordedSignupCount !== actualSignupCount;
-      
-      if (hasDiscrepancy) {
-        console.log(`   ❌ DISCREPANCY FOUND! Difference: ${actualSignupCount - recordedSignupCount}`);
-      } else {
-        console.log(`   ✅ Stats are accurate`);
-      }
-      
-      // Also check by referralCode (alternative referral method)
-      const referralCodeUsers = await User.find({ 
-        referralCode: influencer.referralCode 
-      }).select('name email createdAt role');
-      
-      console.log(`   - Users with referralCode "${influencer.referralCode}": ${referralCodeUsers.length}`);
-      
-      // Collect audit data
-      auditResults.push({
-        influencer: {
-          id: influencer._id,
-          name: influencer.name,
-          referralCode: influencer.referralCode
-        },
-        recorded: recordedSignupCount,
-        actual: actualSignupCount,
-        byReferralCode: referralCodeUsers.length,
-        discrepancy: hasDiscrepancy,
-        difference: actualSignupCount - recordedSignupCount,
-        referredUsers: actualReferredUsers.map(user => ({
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          createdAt: user.createdAt
-        }))
-      });
-      
-      // List referred users
-      if (actualReferredUsers.length > 0) {
-        console.log(`   👥 Referred users:`);
-        actualReferredUsers.forEach(user => {
-          console.log(`      - ${user.name} (${user.email}) - ${user.role} - ${user.createdAt.toDateString()}`);
-        });
-      }
+    if (!influencer) {
+      console.log('Invalid referral code provided:', referralCode);
+      return next(new ErrorResponse('Invalid referral code', 400));
     }
     
-    // Summary
-    console.log('\n' + '='.repeat(60));
-    console.log('📋 AUDIT SUMMARY:');
-    console.log('='.repeat(60));
-    
-    const totalInfluencers = auditResults.length;
-    const influencersWithDiscrepancies = auditResults.filter(r => r.discrepancy).length;
-    const totalRecordedSignups = auditResults.reduce((sum, r) => sum + r.recorded, 0);
-    const totalActualSignups = auditResults.reduce((sum, r) => sum + r.actual, 0);
-    
-    console.log(`Total Influencers: ${totalInfluencers}`);
-    console.log(`Influencers with discrepancies: ${influencersWithDiscrepancies}`);
-    console.log(`Total recorded signups: ${totalRecordedSignups}`);
-    console.log(`Total actual signups: ${totalActualSignups}`);
-    console.log(`Overall difference: ${totalActualSignups - totalRecordedSignups}`);
-    
-    if (influencersWithDiscrepancies > 0) {
-      console.log('\n❌ DISCREPANCIES FOUND:');
-      auditResults
-        .filter(r => r.discrepancy)
-        .forEach(r => {
-          console.log(`   ${r.influencer.name} (${r.influencer.referralCode}): Recorded=${r.recorded}, Actual=${r.actual}, Diff=${r.difference}`);
-        });
-    }
-    
-    return auditResults;
-    
-  } catch (error) {
-    console.error('❌ Error during audit:', error);
-    throw error;
+    console.log('Found valid influencer for referral:', influencer.name);
   }
-};
 
-// Fix referral tracking discrepancies
-const fixReferralTracking = async (auditResults) => {
-  console.log('\n🔧 Starting referral tracking fixes...\n');
+  const verificationToken = crypto.randomBytes(20).toString('hex');
+  const user = await User.create({ 
+    name, 
+    email, 
+    password, 
+    role: role || 'student', // Default to student if no role provided
+    verificationToken,
+    isVerified: true,
+    referredBy: influencer?._id,
+    referralCode: influencer?.referralCode
+  });
   
-  const discrepancies = auditResults.filter(r => r.discrepancy);
-  
-  if (discrepancies.length === 0) {
-    console.log('✅ No discrepancies found. Nothing to fix.');
-    return;
-  }
-  
-  for (const result of discrepancies) {
-    console.log(`\n🔧 Fixing ${result.influencer.name} (${result.influencer.referralCode}):`);
-    console.log(`   Updating signup count from ${result.recorded} to ${result.actual}`);
+  console.log('User created successfully:', user._id);
     
+  // Create subscription based on role
+  if (role === 'student' || role === 'writer') {
+    await Subscription.create({ user: user._id, plan: 'free' });
+    console.log('Subscription created for user:', user._id);
+  }
+
+  // Track referral signup for influencer
+  if (influencer) {
     try {
-      const updatedInfluencer = await Influencer.findByIdAndUpdate(
-        result.influencer.id,
-        {
-          $set: {
-            'stats.totalSignups': result.actual,
-            'stats.lastSignupDate': result.referredUsers.length > 0 
-              ? new Date(Math.max(...result.referredUsers.map(u => new Date(u.createdAt)))) 
-              : undefined,
-            updatedAt: new Date()
-          }
-        },
-        { new: true }
-      );
-      
-      if (updatedInfluencer) {
-        console.log(`   ✅ Successfully updated ${result.influencer.name}`);
-        console.log(`   📊 New stats: ${updatedInfluencer.stats.totalSignups} signups`);
-      } else {
-        console.log(`   ❌ Failed to find and update influencer`);
-      }
+      await influencer.incrementSignup();
+      console.log('✅ Referral signup tracked for influencer:', influencer.name, 'Code:', influencer.referralCode);
     } catch (error) {
-      console.log(`   ❌ Error updating ${result.influencer.name}:`, error.message);
+      console.error('❌ Error tracking referral signup:', error);
+      // Don't fail registration if referral tracking fails
     }
   }
-  
-  console.log('\n✅ Referral tracking fixes completed!');
-};
 
-// Verify users have proper referral attribution
-const verifyUserReferralAttribution = async () => {
-  console.log('\n🔍 Verifying user referral attribution...\n');
-  
-  // Find users with referralCode but no referredBy
-  const usersWithCodeButNoRef = await User.find({
-    referralCode: { $exists: true, $ne: null },
-    referredBy: { $exists: false }
-  }).select('name email referralCode');
-  
-  console.log(`Found ${usersWithCodeButNoRef.length} users with referralCode but no referredBy`);
-  
-  for (const user of usersWithCodeButNoRef) {
-    console.log(`\n🔧 Fixing user ${user.name} (${user.email}):`);
-    console.log(`   ReferralCode: ${user.referralCode}`);
-    
-    // Find the influencer with this referral code
-    const influencer = await Influencer.findOne({ 
-      referralCode: user.referralCode 
-    });
-    
-    if (influencer) {
-      console.log(`   Found influencer: ${influencer.name}`);
-      
-      // Update user with referredBy
-      await User.findByIdAndUpdate(user._id, {
-        $set: { referredBy: influencer._id }
-      });
-      
-      console.log(`   ✅ Updated user's referredBy field`);
-    } else {
-      console.log(`   ❌ No influencer found for referralCode: ${user.referralCode}`);
-    }
-  }
-  
-  // Find users with referredBy but no referralCode
-  const usersWithRefButNoCode = await User.find({
-    referredBy: { $exists: true, $ne: null },
-    referralCode: { $exists: false }
-  }).populate('referredBy', 'referralCode name');
-  
-  console.log(`\nFound ${usersWithRefButNoCode.length} users with referredBy but no referralCode`);
-  
-  for (const user of usersWithRefButNoCode) {
-    if (user.referredBy && user.referredBy.referralCode) {
-      console.log(`\n🔧 Adding referralCode to user ${user.name}:`);
-      
-      await User.findByIdAndUpdate(user._id, {
-        $set: { referralCode: user.referredBy.referralCode }
-      });
-      
-      console.log(`   ✅ Added referralCode: ${user.referredBy.referralCode}`);
-    }
-  }
-};
+  sendTokenResponse(user, 201, res);
+});
 
-// Main execution
-const main = async () => {
-  await connectDB();
+export const login = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
   
+  if (!email || !password) {
+    return next(new ErrorResponse('Please provide email and password', 400));
+  }
+  
+  const user = await User.findOne({ email }).select('+password');
+  
+  if (!user || !(await user.matchPassword(password))) {
+    return next(new ErrorResponse('Invalid credentials', 401));
+  }
+
+  // Update last login
+  user.lastLogin = new Date();
+  await user.save({ validateBeforeSave: false });
+
+  sendTokenResponse(user, 200, res);
+});
+
+export const logout = asyncHandler(async (req, res, next) => {
+  res.status(200).json({ 
+    success: true,
+    message: 'Logged out successfully!' 
+  });
+});
+
+export const getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('-password'); 
+  
+  if (!user) {
+    return next(new ErrorResponse('User not found', 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
+
+export const forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ErrorResponse('There is no user with that email', 404));
+  }
+
+  // Get reset token
+  const resetToken = user.getResetPasswordToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  // Create reset url
+  const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
+
+  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+
   try {
-    // Step 1: Audit current state
-    const auditResults = await auditReferralTracking();
-    
-    // Step 2: Fix user attribution issues
-    await verifyUserReferralAttribution();
-    
-    // Step 3: Fix influencer stats
-    await fixReferralTracking(auditResults);
-    
-    // Step 4: Re-audit to verify fixes
-    console.log('\n🔍 Re-auditing after fixes...');
-    await auditReferralTracking();
-    
-  } catch (error) {
-    console.error('❌ Script failed:', error);
-  } finally {
-    await mongoose.connection.close();
-    console.log('\n👋 Database connection closed');
+    // Here you would send email
+    console.log('Password reset email would be sent to:', user.email);
+    console.log('Reset URL:', resetUrl);
+
+    res.status(200).json({ success: true, data: 'Email sent' });
+  } catch (err) {
+    console.log(err);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorResponse('Email could not be sent', 500));
   }
-};
+});
 
-// Run the script
-if (process.argv[2] === 'run') {
-  main();
-} else {
-  console.log('Usage: node auditReferralTracking.js run');
-  console.log('This script will:');
-  console.log('1. Audit all influencer referral stats');
-  console.log('2. Compare recorded vs actual signup counts');
-  console.log('3. Fix any discrepancies found');
-  console.log('4. Ensure proper user referral attribution');
-}
+export const resetPassword = asyncHandler(async (req, res, next) => {
+  // Get hashed token
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.resetToken)
+    .digest('hex');
 
-export { auditReferralTracking, fixReferralTracking, verifyUserReferralAttribution };
+  const user = await User.findOne({ 
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid token', 400));
+  }
+
+  // Set new password
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
+});
+
+export const verifyEmail = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({
+    emailVerificationToken: req.params.token,
+    emailVerificationExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid verification token', 400));
+  }
+
+  user.isVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpire = undefined;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Email verified successfully'
+  });
+});
