@@ -47,6 +47,70 @@ export const updateUser = async (req, res, next) => {
 };
 
 /**
+ * @desc    Delete a user
+ * @route   DELETE /api/admin/users/:id
+ * @access  Private (Admin)
+ */
+export const deleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Prevent admin from deleting themselves
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete your own account'
+      });
+    }
+
+    // Delete related data
+    await Promise.all([
+      // Delete user's agreements
+      ServiceAgreement.deleteMany({ 
+        $or: [
+          { student: user._id },
+          { writer: user._id }
+        ]
+      }),
+      // Delete user's payments
+      Payment.deleteMany({ 
+        $or: [
+          { student: user._id },
+          { writer: user._id }
+        ]
+      }),
+      // Delete user's chats
+      Chat.deleteMany({ 
+        $or: [
+          { student: user._id },
+          { writer: user._id }
+        ]
+      }),
+      // Delete user's notifications
+      Notification.deleteMany({ user: user._id })
+    ]);
+
+    // Delete the user
+    await User.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    next(err);
+  }
+};
+
+/**
  * @desc    Get admin dashboard statistics
  * @route   GET /api/admin/stats
  * @access  Private (Admin)
