@@ -4,6 +4,7 @@ import {
   getUsers, 
   getUser, 
   updateUser, 
+  deleteUser,
   getStats, 
   getWriters,
   approveWriter,
@@ -25,6 +26,7 @@ router.use(protect, role('admin'));
 router.get('/users', getUsers);
 router.get('/users/:id', getUser);
 router.put('/users/:id', updateUser);
+router.delete('/users/:id', deleteUser);
 
 // Dashboard Statistics
 router.get('/stats', getStats);
