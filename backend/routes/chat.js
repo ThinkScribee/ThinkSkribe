@@ -9,6 +9,7 @@ import {
   getChatMessages,
   sendMessage,
   sendFileMessage,    // 🔧 new controller function
+  exportWriterChats,  // 🔧 new export function
 } from '../controllers/chatController.js';
 
 const router = express.Router();
@@ -32,8 +33,12 @@ router.get('/:id/messages', getChatMessages);
 router.post('/send', sendMessage);
 
 // 6) 🔧 Send a FILE or IMAGE in a chat
-//    Use Multer to read the single “file” from the client.
+//    Use Multer to read the single "file" from the client.
 //    We will write sendFileMessage() below in chatController.
 router.post('/send-file', upload.single('file'), sendFileMessage);
+
+// 7) 🔧 Export writer chats (Admin/Writer access)
+//    Supports JSON, CSV, and XLSX formats with optional filtering
+router.get('/export/writer-chats', exportWriterChats);
 
 export default router;
