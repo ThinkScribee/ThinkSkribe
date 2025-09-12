@@ -485,3 +485,235 @@ export const sendFileMessage = async (req, res, next) => {
     next(err);
   }
 };
+
+// ────────────────────────────────────────────────────────────────────────────────
+// 5) Export all writer chats (Admin/Writer access)
+// ────────────────────────────────────────────────────────────────────────────────
+export const exportWriterChats = async (req, res, next) => {
+  try {
+    const { format = 'json', startDate, endDate, writerId } = req.query;
+    
+    // Build query filter
+    const filter = {};
+    
+    // Filter by date range if provided
+    if (startDate || endDate) {
+      filter.updatedAt = {};
+      if (startDate) {
+        filter.updatedAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        filter.updatedAt.$lte = new Date(endDate);
+      }
+    }
+    
+    // Filter by writer if provided
+    if (writerId) {
+      filter.participants = writerId;
+    } else if (req.user.role === 'writer') {
+      // If user is a writer, only export their chats
+      filter.participants = req.user._id;
+    }
+    
+    // Find all chats with messages
+    const chats = await Chat.find(filter)
+      .populate('participants', 'name email role')
+      .populate('messages.sender', 'name email role')
+      .sort({ updatedAt: -1 });
+    
+    // Filter to only include chats with writers
+    const writerChats = chats.filter(chat => 
+      chat.participants.some(participant => participant.role === 'writer')
+    );
+    
+    if (writerChats.length === 0) {
+      return res.status(404).json({ 
+        message: 'No writer chats found for the specified criteria' 
+      });
+    }
+    
+    // Format the data for export
+    const exportData = {
+      exportInfo: {
+        timestamp: new Date().toISOString(),
+        totalChats: writerChats.length,
+        totalMessages: writerChats.reduce((sum, chat) => sum + chat.messages.length, 0),
+        format: format,
+        exportedBy: req.user.name,
+        exportedByEmail: req.user.email
+      },
+      chats: writerChats.map(chat => ({
+        chatId: chat._id,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
+        participants: chat.participants.map(p => ({
+          id: p._id,
+          name: p.name,
+          email: p.email,
+          role: p.role
+        })),
+        messages: chat.messages.map(msg => ({
+          id: msg._id,
+          sender: {
+            id: msg.sender._id,
+            name: msg.sender.name,
+            email: msg.sender.email,
+            role: msg.sender.role
+          },
+          content: msg.content,
+          timestamp: msg.timestamp,
+          read: msg.read,
+          type: msg.type || 'text',
+          fileUrl: msg.fileUrl || null,
+          fileName: msg.fileName || null,
+          fileType: msg.fileType || null,
+          voiceDuration: msg.voiceDuration || null,
+          callDuration: msg.callDuration || null,
+          replyTo: msg.replyTo || null
+        }))
+      }))
+    };
+    
+    // Set appropriate headers based on format
+    if (format === 'csv') {
+      // Convert to CSV format
+      const csvData = convertToCSV(exportData);
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="writer_chats_${new Date().toISOString().split('T')[0]}.csv"`);
+      return res.send(csvData);
+    } else if (format === 'xlsx') {
+      // Convert to Excel format
+      const xlsxBuffer = await convertToXLSX(exportData);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="writer_chats_${new Date().toISOString().split('T')[0]}.xlsx"`);
+      return res.send(xlsxBuffer);
+    } else {
+      // Default to JSON
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="writer_chats_${new Date().toISOString().split('T')[0]}.json"`);
+      return res.json(exportData);
+    }
+    
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Helper function to convert data to CSV format
+const convertToCSV = (data) => {
+  const headers = [
+    'Chat ID',
+    'Created At',
+    'Updated At',
+    'Participant 1 Name',
+    'Participant 1 Email',
+    'Participant 1 Role',
+    'Participant 2 Name',
+    'Participant 2 Email',
+    'Participant 2 Role',
+    'Message ID',
+    'Sender Name',
+    'Sender Email',
+    'Sender Role',
+    'Message Content',
+    'Message Timestamp',
+    'Message Read',
+    'Message Type',
+    'File Name',
+    'File Type',
+    'Voice Duration',
+    'Call Duration',
+    'Reply To Message ID'
+  ];
+  
+  const rows = data.chats.flatMap(chat => 
+    chat.messages.map(msg => [
+      chat.chatId,
+      chat.createdAt,
+      chat.updatedAt,
+      chat.participants[0]?.name || '',
+      chat.participants[0]?.email || '',
+      chat.participants[0]?.role || '',
+      chat.participants[1]?.name || '',
+      chat.participants[1]?.email || '',
+      chat.participants[1]?.role || '',
+      msg.id,
+      msg.sender.name,
+      msg.sender.email,
+      msg.sender.role,
+      `"${msg.content.replace(/"/g, '""')}"`, // Escape quotes in content
+      msg.timestamp,
+      msg.read,
+      msg.type,
+      msg.fileName || '',
+      msg.fileType || '',
+      msg.voiceDuration || '',
+      msg.callDuration || '',
+      msg.replyTo || ''
+    ])
+  );
+  
+  return [headers, ...rows].map(row => row.join(',')).join('\n');
+};
+
+// Helper function to convert data to XLSX format
+const convertToXLSX = async (data) => {
+  const XLSX = await import('xlsx');
+  
+  // Create worksheets
+  const worksheets = {};
+  
+  // Summary sheet
+  worksheets['Summary'] = XLSX.utils.json_to_sheet([{
+    'Export Date': data.exportInfo.timestamp,
+    'Total Chats': data.exportInfo.totalChats,
+    'Total Messages': data.exportInfo.totalMessages,
+    'Exported By': data.exportInfo.exportedBy,
+    'Exported By Email': data.exportInfo.exportedByEmail
+  }]);
+  
+  // Chats sheet
+  const chatData = data.chats.map(chat => ({
+    'Chat ID': chat.chatId,
+    'Created At': chat.createdAt,
+    'Updated At': chat.updatedAt,
+    'Participant 1': chat.participants[0]?.name || '',
+    'Participant 1 Email': chat.participants[0]?.email || '',
+    'Participant 1 Role': chat.participants[0]?.role || '',
+    'Participant 2': chat.participants[1]?.name || '',
+    'Participant 2 Email': chat.participants[1]?.email || '',
+    'Participant 2 Role': chat.participants[1]?.role || '',
+    'Total Messages': chat.messages.length
+  }));
+  worksheets['Chats'] = XLSX.utils.json_to_sheet(chatData);
+  
+  // Messages sheet
+  const messageData = data.chats.flatMap(chat => 
+    chat.messages.map(msg => ({
+      'Chat ID': chat.chatId,
+      'Message ID': msg.id,
+      'Sender Name': msg.sender.name,
+      'Sender Email': msg.sender.email,
+      'Sender Role': msg.sender.role,
+      'Content': msg.content,
+      'Timestamp': msg.timestamp,
+      'Read': msg.read,
+      'Type': msg.type,
+      'File Name': msg.fileName || '',
+      'File Type': msg.fileType || '',
+      'Voice Duration': msg.voiceDuration || '',
+      'Call Duration': msg.callDuration || '',
+      'Reply To': msg.replyTo || ''
+    }))
+  );
+  worksheets['Messages'] = XLSX.utils.json_to_sheet(messageData);
+  
+  // Create workbook
+  const workbook = XLSX.utils.book_new();
+  Object.keys(worksheets).forEach(name => {
+    XLSX.utils.book_append_sheet(workbook, worksheets[name], name);
+  });
+  
+  // Generate buffer
+  return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+};
