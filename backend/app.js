@@ -23,6 +23,9 @@ import agreementRoutes from './routes/agreement.js';
 import locationRoutes from './routes/location.js';
 import webhookRoutes from './routes/webhooks.js';
 import influencerRoutes from './routes/influencers.js';
+import unreadMessageRoutes from './routes/unreadMessages.js';
+import testEmailRoutes from './routes/testEmail.js';
+import { startScheduledJobs } from './services/schedulerService.js';
 
 // Database connection
 connectDB();
@@ -31,7 +34,7 @@ const app = express();
 // Middlewares
 // Updated CORS configuration in app.js
 app.use(cors({
-  origin: ['https://thinqscribe.com', 'https://www.thinqscribe.com', 'http://localhost:8081'],
+  origin: ['https://thinqscribe.com', 'https://www.thinqscribe.com', 'http://localhost:8081', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -84,11 +87,20 @@ app.use('/api/agreements', agreementRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/influencers', influencerRoutes);
+app.use('/api/unread', unreadMessageRoutes);
+app.use('/api/test-email', testEmailRoutes);
 // Removed: app.use('/api/student', studentRoutes); // No longer needed
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'healthy' });
+  res.status(200).json({
+    success: true,
+    message: 'Server is healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    uptime: process.uptime(),
+    version: '1.0.0'
+  });
 });
 
 // Error handling
