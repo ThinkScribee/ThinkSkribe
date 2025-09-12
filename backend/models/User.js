@@ -210,6 +210,20 @@ const UserSchema = new mongoose.Schema({
   referralCode: {
     type: String,
     uppercase: true
+  },
+  
+  // Email notification settings
+  emailNotifications: {
+    type: Boolean,
+    default: true
+  },
+  lastEmailNotification: {
+    type: Date
+  },
+  emailNotificationFrequency: {
+    type: String,
+    enum: ['immediate', 'hourly', 'daily', 'weekly'],
+    default: 'immediate'
   }
 }, {
   timestamps: true,
