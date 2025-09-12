@@ -717,3 +717,71 @@ const convertToXLSX = async (data) => {
   // Generate buffer
   return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
 };
+
+// ────────────────────────────────────────────────────────────────────────────────
+// 6) Get export history and statistics
+// ────────────────────────────────────────────────────────────────────────────────
+export const getExportHistory = async (req, res, next) => {
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    const { fileURLToPath } = await import('url');
+    
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const exportsDir = path.join(__dirname, '..', 'exports');
+    
+    // Check if exports directory exists
+    if (!fs.existsSync(exportsDir)) {
+      return res.json({ exports: [], stats: { totalExports: 0, totalSize: 0 } });
+    }
+    
+    // Read all files in exports directory
+    const files = fs.readdirSync(exportsDir);
+    const exportFiles = files
+      .filter(file => file.startsWith('writer_chats_'))
+      .map(file => {
+        const filePath = path.join(exportsDir, file);
+        const stats = fs.statSync(filePath);
+        const format = file.split('.').pop();
+        
+        return {
+          filename: file,
+          format: format,
+          size: stats.size,
+          sizeFormatted: formatBytes(stats.size),
+          createdAt: stats.birthtime,
+          modifiedAt: stats.mtime
+        };
+      })
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    // Calculate total size
+    const totalSize = exportFiles.reduce((sum, file) => sum + file.size, 0);
+    
+    res.json({
+      exports: exportFiles,
+      stats: {
+        totalExports: exportFiles.length,
+        totalSize: totalSize,
+        totalSizeFormatted: formatBytes(totalSize)
+      }
+    });
+    
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Helper function to format bytes
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+  
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
