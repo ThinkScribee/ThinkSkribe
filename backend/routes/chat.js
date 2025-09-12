@@ -10,6 +10,8 @@ import {
   sendMessage,
   sendFileMessage,    // 🔧 new controller function
   exportWriterChats,  // 🔧 new export function
+  getExportHistory,   // 🔧 new export history function
+  viewExportedFile,   // 🔧 new view file function
 } from '../controllers/chatController.js';
 
 const router = express.Router();
@@ -40,5 +42,11 @@ router.post('/send-file', upload.single('file'), sendFileMessage);
 // 7) 🔧 Export writer chats (Admin/Writer access)
 //    Supports JSON, CSV, and XLSX formats with optional filtering
 router.get('/export/writer-chats', exportWriterChats);
+
+// 8) 🔧 Get export history and statistics
+router.get('/export/history', getExportHistory);
+
+// 9) 🔧 View exported file content (JSON only)
+router.get('/export/view/:filename', viewExportedFile);
 
 export default router;
