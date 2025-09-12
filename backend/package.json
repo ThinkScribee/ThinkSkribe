@@ -26,6 +26,7 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.6.1",
+    "resend": "^6.0.3",
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
     "express-rate-limit": "^7.1.5",
@@ -49,5 +50,6 @@
     "nodemon": "^2.0.22"
   }
 }
+
 
 
