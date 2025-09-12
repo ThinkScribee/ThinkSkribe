@@ -2,8 +2,19 @@ import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// Get API key with multiple fallbacks for different environments
+const apiKey =  process.env.VITE_RESEND_API_KEY 
+
+// Debug logging (only in development)
+if (process.env.NODE_ENV === 'development') {
+  console.log('🔍 Environment check:');
+  console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+  console.log('VITE_RESEND_API_KEY exists:', !!process.env.VITE_RESEND_API_KEY);
+  console.log('Using API key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'NOT FOUND');
+}
+
 // Initialize Resend with API key
-const resend = new Resend(process.env.VITE_RESEND_API_KEY);
+const resend = new Resend(apiKey);
 
 // Email templates for unread message notifications
 export const sendUnreadMessageEmail = async (recipient, sender, message, chatId) => {
