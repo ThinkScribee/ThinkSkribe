@@ -785,3 +785,41 @@ function formatBytes(bytes, decimals = 2) {
   
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
+// 7) View exported file content
+// ────────────────────────────────────────────────────────────────────────────────
+export const viewExportedFile = async (req, res, next) => {
+  try {
+    const { filename } = req.params;
+    const fs = await import('fs');
+    const path = await import('path');
+    const { fileURLToPath } = await import('url');
+    
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const filePath = path.join(__dirname, '..', 'exports', filename);
+    
+    // Security check - only allow writer_chats files
+    if (!filename.startsWith('writer_chats_') || !filename.endsWith('.json')) {
+      return res.status(400).json({ message: 'Invalid file type' });
+    }
+    
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+    
+    // Read and parse JSON file
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const data = JSON.parse(fileContent);
+    
+    res.json(data);
+    
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return res.status(404).json({ message: 'File not found' });
+    }
+    next(err);
+  }
+};
