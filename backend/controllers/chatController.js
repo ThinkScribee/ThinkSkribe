@@ -491,7 +491,7 @@ export const sendFileMessage = async (req, res, next) => {
 // ────────────────────────────────────────────────────────────────────────────────
 export const exportWriterChats = async (req, res, next) => {
   try {
-    const { format = 'json', startDate, endDate, writerId } = req.query;
+    const { format = 'json', startDate, endDate, writerId, email } = req.query;
     
     // Build query filter
     const filter = {};
@@ -522,9 +522,18 @@ export const exportWriterChats = async (req, res, next) => {
       .sort({ updatedAt: -1 });
     
     // Filter to only include chats with writers
-    const writerChats = chats.filter(chat => 
+    let writerChats = chats.filter(chat => 
       chat.participants.some(participant => participant.role === 'writer')
     );
+    
+    // Filter by email if provided
+    if (email) {
+      writerChats = writerChats.filter(chat => 
+        chat.participants.some(participant => 
+          participant.email && participant.email.toLowerCase().includes(email.toLowerCase())
+        )
+      );
+    }
     
     if (writerChats.length === 0) {
       return res.status(404).json({ 
