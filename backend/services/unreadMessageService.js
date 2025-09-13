@@ -95,10 +95,13 @@ const checkParticipantUnreadMessages = async (chat, participant, otherParticipan
   // Check if we should send notification (avoid spam)
   const now = new Date();
   const lastNotification = participant.lastEmailNotification;
-  const notificationCooldown = 30 * 60 * 1000; // 30 minutes
+  
+  // First notification: send immediately if no previous notification
+  // Subsequent notifications: wait 4 hours
+  const notificationCooldown = lastNotification ? 4 * 60 * 60 * 1000 : 0; // 4 hours or immediate
 
   if (lastNotification && (now - new Date(lastNotification)) < notificationCooldown) {
-    console.log(`⏰ Skipping notification for ${participant.email} - too recent`);
+    console.log(`⏰ Skipping notification for ${participant.email} - too recent (last sent: ${lastNotification})`);
     return;
   }
 
@@ -203,6 +206,43 @@ export const getUnreadMessageCount = async (userId) => {
   } catch (error) {
     console.error('Error getting unread message count:', error);
     return { total: 0, byChat: [] };
+  }
+};
+
+// Send immediate notification for new message (called when message is sent)
+export const sendImmediateNotification = async (chatId, senderId, messageContent) => {
+  try {
+    const chat = await Chat.findById(chatId)
+      .populate('participants', 'name email role emailNotifications lastEmailNotification')
+      .lean();
+
+    if (!chat || chat.participants.length !== 2) return;
+
+    const [participant1, participant2] = chat.participants;
+    const recipient = participant1._id.toString() === senderId.toString() ? participant2 : participant1;
+    const sender = participant1._id.toString() === senderId.toString() ? participant1 : participant2;
+
+    // Check if recipient has email notifications enabled
+    if (!recipient.emailNotifications) return;
+
+    // Check if recipient has never received an email (first notification)
+    if (!recipient.lastEmailNotification) {
+      console.log(`📧 Sending immediate notification to ${recipient.email} for new message`);
+      
+      await sendUnreadMessageEmail(
+        recipient,
+        sender,
+        { content: messageContent, timestamp: new Date() },
+        chatId
+      );
+
+      // Update last email notification timestamp
+      await User.findByIdAndUpdate(recipient._id, {
+        lastEmailNotification: new Date()
+      });
+    }
+  } catch (error) {
+    console.error('Error sending immediate notification:', error);
   }
 };
 
