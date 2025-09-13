@@ -5,9 +5,9 @@ import { checkAndSendUnreadNotifications, cleanupLastSeenData } from './unreadMe
 export const startScheduledJobs = () => {
   console.log('🕐 Starting scheduled jobs...');
 
-  // Check for unread messages every 5 minutes
-  cron.schedule('*/5 * * * *', async () => {
-    console.log('⏰ Running unread message check...');
+  // Check for unread messages every 4 hours
+  cron.schedule('0 */4 * * *', async () => {
+    console.log('⏰ Running unread message check (every 4 hours)...');
     try {
       await checkAndSendUnreadNotifications();
     } catch (error) {
