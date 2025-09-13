@@ -20,7 +20,7 @@ const resend = new Resend(apiKey);
 export const sendUnreadMessageEmail = async (recipient, sender, message, chatId) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'ThinqScribe <notifications@thinqscribe.com>',
+      from: 'ThinqScribe <onboarding@resend.dev>',
       to: [recipient.email],
       subject: `New unread message from ${sender.name} - ThinqScribe`,
       html: `
@@ -48,7 +48,7 @@ export const sendUnreadMessageEmail = async (recipient, sender, message, chatId)
             
             <!-- Action Button -->
             <div style="text-align: center; margin: 32px 0;">
-              <a href="${process.env.CLIENT_URL}/chat/${recipient.role || 'user'}/${chatId}" 
+              <a href="https://thinqscribe.com/chat/${recipient.role || 'user'}/${chatId}" 
                  style="display: inline-block; padding: 14px 28px; background-color: #E0B13A; 
                         color: #0D1B2A; text-decoration: none; border-radius: 6px; 
                         font-weight: 600; font-size: 16px; transition: all 0.3s ease;">
@@ -61,7 +61,7 @@ export const sendUnreadMessageEmail = async (recipient, sender, message, chatId)
               <h3 style="color: #0D1B2A; margin-top: 0; font-size: 14px;">Notification Settings</h3>
               <p style="color: #415A77; font-size: 12px; margin-bottom: 0;">
                 You can manage your email notification preferences in your 
-                <a href="${process.env.CLIENT_URL}/settings" style="color: #E0B13A; text-decoration: none;">account settings</a>.
+                <a href="https://thinqscribe.com" style="color: #E0B13A; text-decoration: none;">account settings</a>.
               </p>
             </div>
           </div>
@@ -97,7 +97,7 @@ export const sendUnreadMessageEmail = async (recipient, sender, message, chatId)
 export const sendUnreadMessagesSummaryEmail = async (recipient, unreadMessages) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'ThinqScribe <notifications@thinqscribe.com>',
+      from: 'ThinqScribe <onboarding@resend.dev>',
       to: [recipient.email],
       subject: `You have ${unreadMessages.length} unread messages - ThinqScribe`,
       html: `
@@ -126,7 +126,7 @@ export const sendUnreadMessagesSummaryEmail = async (recipient, unreadMessages) 
                   <p style="color: #415A77; line-height: 1.4; margin: 0; font-size: 13px;">
                     ${msg.content.length > 100 ? msg.content.substring(0, 100) + '...' : msg.content}
                   </p>
-                  <a href="${process.env.CLIENT_URL}/chat/${recipient.role || 'user'}/${msg.chatId}" 
+                  <a href="https://thinqscribe.com/chat/${recipient.role || 'user'}/${msg.chatId}" 
                      style="color: #E0B13A; text-decoration: none; font-size: 12px; font-weight: 600;">
                     View Conversation →
                   </a>
@@ -136,7 +136,7 @@ export const sendUnreadMessagesSummaryEmail = async (recipient, unreadMessages) 
             
             <!-- Action Button -->
             <div style="text-align: center; margin: 32px 0;">
-              <a href="${process.env.CLIENT_URL}/chat" 
+              <a href="https://thinqscribe.com/chat" 
                  style="display: inline-block; padding: 14px 28px; background-color: #E0B13A; 
                         color: #0D1B2A; text-decoration: none; border-radius: 6px; 
                         font-weight: 600; font-size: 16px; transition: all 0.3s ease;">
@@ -176,7 +176,7 @@ export const sendUnreadMessagesSummaryEmail = async (recipient, unreadMessages) 
 export const testResendConnection = async () => {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'ThinqScribe <notifications@thinqscribe.com>',
+      from: 'ThinqScribe <onboarding@resend.dev>',
       to: ['test@example.com'],
       subject: 'Test Email from ThinqScribe',
       html: '<p>This is a test email to verify Resend integration.</p>',
