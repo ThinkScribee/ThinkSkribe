@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import { getIO } from '../socket.js';
 import Notification from '../models/Notification.js';
 import { getUserLocationData } from '../middlewares/locationMiddleware.js';
+import { sendImmediateNotification } from '../services/unreadMessageService.js';
 
 // ────────────────────────────────────────────────────────────────────────────────
 // 1) Start a new chat between two users (or return existing)
@@ -307,6 +308,9 @@ export const sendMessage = async (req, res, next) => {
         chatId: chat._id,
         message: payload
       });
+
+    // Send immediate email notification for new message
+    sendImmediateNotification(chat._id, req.user._id, content.trim());
 
     res.status(201).json(payload);
   } catch (err) {
