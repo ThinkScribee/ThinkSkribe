@@ -1,14 +1,10 @@
 // server/socket.js
 
 import { Server } from 'socket.io';
-import User from './models/User.js';
 import Chat from './models/Chat.js';
 import Message from './models/Message.js';
 import Notification from './models/Notification.js';
-import ServiceAgreement from './models/ServiceAgreement.js';
-import Order from './models/Order.js';
-import { ORDER_STATUS } from './models/constants.js';
-import { generateOrderId } from './utils/helpers.js';
+import User from './models/User.js';
 
 let io;
 
@@ -323,6 +319,11 @@ const initSocket = (server) => {
           return;
         }
 
+        // Count unread messages before marking as read
+        const unreadCountBefore = chat.messages.filter(msg => 
+          !msg.read && msg.sender.toString() !== userId
+        ).length;
+
         // Mark unread messages as read
         let updated = false;
         chat.messages.forEach(msg => {
@@ -333,7 +334,14 @@ const initSocket = (server) => {
         });
 
         if (updated) {
+          // Calculate new unread count
+          const unreadCountAfter = chat.messages.filter(msg => 
+            !msg.read && msg.sender.toString() !== userId
+          ).length;
+
           await chat.save();
+          
+          console.log(`📊 [Backend] Unread count updated: ${unreadCountBefore} → ${unreadCountAfter}`);
           
           // Notify the sender that their messages were read
           chat.messages.forEach(msg => {
@@ -344,6 +352,19 @@ const initSocket = (server) => {
                 readBy: userId
               });
             }
+          });
+
+          // CRITICAL: Notify all participants about updated unread count
+          chat.participants.forEach(participant => {
+            const participantUnreadCount = chat.messages.filter(msg => 
+              !msg.read && msg.sender.toString() !== participant._id.toString()
+            ).length;
+            
+            io.to(`user-${participant._id}`).emit('chatUnreadCountUpdated', {
+              chatId,
+              unreadCount: participantUnreadCount,
+              updatedBy: userId
+            });
           });
         }
       } catch (err) {
@@ -841,4 +862,5 @@ const getIO = () => {
   return io;
 };
 
-export { initSocket, getIO };
+export { getIO, initSocket };
+
