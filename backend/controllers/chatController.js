@@ -1,11 +1,11 @@
 // server/controllers/chatController.js
-import { uploadToS3 } from '../utils/upload.js'; // 🔧 S3 helper
-import Chat from '../models/Chat.js';
-import User from '../models/User.js';
-import { getIO } from '../socket.js';
-import Notification from '../models/Notification.js';
 import { getUserLocationData } from '../middlewares/locationMiddleware.js';
+import Chat from '../models/Chat.js';
+import Notification from '../models/Notification.js';
+import User from '../models/User.js';
 import { sendImmediateNotification } from '../services/unreadMessageService.js';
+import { getIO } from '../socket.js';
+import { uploadToS3 } from '../utils/upload.js'; // 🔧 S3 helper
 
 // ────────────────────────────────────────────────────────────────────────────────
 // 1) Start a new chat between two users (or return existing)
@@ -62,9 +62,17 @@ export const getChats = async (req, res, next) => {
       .populate('messages.sender', 'name avatar location')
       .sort('-updatedAt');
 
-    // Enhance each chat with formatted location data
+    // Enhance each chat with formatted location data and unread counts
     const enhancedChats = chats.map(chat => {
       const chatObj = chat.toObject();
+      
+      // Calculate unread count for this user
+      const unreadCount = chatObj.messages.filter(msg => 
+        !msg.read && msg.sender._id.toString() !== req.user._id.toString()
+      ).length;
+      
+      // Add unread count to chat object
+      chatObj.unreadCount = unreadCount;
       
       // Add formatted location data for participants
       chatObj.participants = chatObj.participants.map(participant => ({
@@ -83,6 +91,15 @@ export const getChats = async (req, res, next) => {
 
       return chatObj;
     });
+
+    // Debug logging for unread counts
+    console.log(`📊 [Backend] getChats for user ${req.user._id}:`, 
+      enhancedChats.map(chat => ({ 
+        chatId: chat._id, 
+        unreadCount: chat.unreadCount,
+        lastMessage: chat.messages[chat.messages.length - 1]?.content?.substring(0, 30) + '...'
+      }))
+    );
 
     res.json(enhancedChats);
   } catch (err) {
