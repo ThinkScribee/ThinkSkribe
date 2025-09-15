@@ -47,25 +47,10 @@ export const getWriterDashboard = async (req, res, next) => {
     for (const agreement of agreements) {
       if (agreement.paidAmount > 0) {
         // Calculate writer's share (100% - platform fee removed)
-        let writerShare = agreement.paidAmount * 1.0;
+        let writerShare = agreement.paidAmount * 1.0; // 100% writer share
         
-        // Convert to USD if the payment was in a different currency
-        if (agreement.originalCurrency && agreement.originalCurrency !== 'usd') {
-          try {
-            const conversionResult = await currencyService.convertCurrency(
-              writerShare, 
-              agreement.originalCurrency, 
-              'usd'
-            );
-            writerShare = conversionResult.amount;
-          } catch (error) {
-            console.error(`Error converting ${agreement.originalCurrency} to USD:`, error);
-            // Fallback: use exchange rate if available
-            if (agreement.exchangeRate) {
-              writerShare = writerShare / agreement.exchangeRate;
-            }
-          }
-        }
+        // Keep original currency (Naira) - no conversion needed
+        // All amounts are already in Naira
         
         totalEarningsFromAgreements += writerShare;
       }
@@ -77,23 +62,8 @@ export const getWriterDashboard = async (req, res, next) => {
     for (const payment of payments) {
       let amount = payment.writerAmount || payment.amount || 0;
       
-      // Convert to USD if the payment was in a different currency
-      if (payment.originalCurrency && payment.originalCurrency !== 'usd') {
-        try {
-          const conversionResult = await currencyService.convertCurrency(
-            amount, 
-            payment.originalCurrency, 
-            'usd'
-          );
-          amount = conversionResult.amount;
-        } catch (error) {
-          console.error(`Error converting ${payment.originalCurrency} to USD:`, error);
-          // Fallback: use exchange rate if available
-          if (payment.exchangeRate) {
-            amount = amount / payment.exchangeRate;
-          }
-        }
-      }
+      // Keep original currency (Naira) - no conversion needed
+      // All amounts are already in Naira
       
       totalEarningsFromPayments += amount;
     }
@@ -113,25 +83,10 @@ export const getWriterDashboard = async (req, res, next) => {
         const unpaid = (agreement.totalAmount || 0) - (agreement.paidAmount || 0);
         if (unpaid > 0.005) {
           // Calculate writer's potential earnings (100% - platform fee removed)
-          let writerPendingShare = unpaid * 1.0;
+          let writerPendingShare = unpaid * 1.0; // 100% writer share
           
-          // Convert to USD if the agreement was in a different currency
-          if (agreement.originalCurrency && agreement.originalCurrency !== 'usd') {
-            try {
-              const conversionResult = await currencyService.convertCurrency(
-                writerPendingShare, 
-                agreement.originalCurrency, 
-                'usd'
-              );
-              writerPendingShare = conversionResult.amount;
-            } catch (error) {
-              console.error(`Error converting ${agreement.originalCurrency} to USD:`, error);
-              // Fallback: use exchange rate if available
-              if (agreement.exchangeRate) {
-                writerPendingShare = writerPendingShare / agreement.exchangeRate;
-              }
-            }
-          }
+          // Keep original currency (Naira) - no conversion needed
+          // All amounts are already in Naira
           
           pendingAmount += writerPendingShare;
         }
@@ -153,25 +108,10 @@ export const getWriterDashboard = async (req, res, next) => {
     let monthlyEarnings = 0;
     for (const agreement of agreements) {
       if (agreement.paidAmount > 0 && new Date(agreement.updatedAt) >= currentMonth) {
-        let writerMonthlyShare = agreement.paidAmount * 1.0; // Platform fee removed
+        let writerMonthlyShare = agreement.paidAmount * 1.0; // 100% writer share
         
-        // Convert to USD if the payment was in a different currency
-        if (agreement.originalCurrency && agreement.originalCurrency !== 'usd') {
-          try {
-            const conversionResult = await currencyService.convertCurrency(
-              writerMonthlyShare, 
-              agreement.originalCurrency, 
-              'usd'
-            );
-            writerMonthlyShare = conversionResult.amount;
-          } catch (error) {
-            console.error(`Error converting ${agreement.originalCurrency} to USD:`, error);
-            // Fallback: use exchange rate if available
-            if (agreement.exchangeRate) {
-              writerMonthlyShare = writerMonthlyShare / agreement.exchangeRate;
-            }
-          }
-        }
+        // Keep original currency (Naira) - no conversion needed
+        // All amounts are already in Naira
         
         monthlyEarnings += writerMonthlyShare;
       }
