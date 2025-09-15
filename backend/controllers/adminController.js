@@ -163,7 +163,7 @@ export const getStats = async (req, res, next) => {
     let totalGrossRevenue = 0;
     
     allPayments.forEach(payment => {
-      const writerAmount = payment.writerAmount || (payment.amount * 1.0) || 0; // Platform fee removed
+      const writerAmount = payment.writerAmount || (payment.amount * 1.0) || 0; // 100% writer share
       totalWriterEarningsFromPayments += writerAmount;
       totalGrossRevenue += payment.amount || 0;
     });
@@ -176,7 +176,7 @@ export const getStats = async (req, res, next) => {
     allAgreements.forEach(agreement => {
       if (agreement.paidAmount > 0) {
         console.log(`  - Agreement: ${agreement._id}, paidAmount: ${agreement.paidAmount}`);
-        // Platform fee removed - writers get full amount
+        // 100% writer share - no platform fee deduction
         const writerShare = agreement.paidAmount * 1.0;
         totalWriterEarningsFromAgreements += writerShare;
       }
@@ -184,7 +184,8 @@ export const getStats = async (req, res, next) => {
 
     // Use the higher value (same logic as writer dashboard)
     const actualWriterEarnings = Math.max(totalWriterEarningsFromAgreements, totalWriterEarningsFromPayments);
-    const actualPlatformRevenue = totalGrossRevenue - actualWriterEarnings;
+    // Since writers get 100%, platform revenue is 0 for now
+    const actualPlatformRevenue = 0;
 
     // Monthly Revenue - Use ServiceAgreements since no Payment records exist
     let monthlyPlatformRevenue = [];
@@ -209,18 +210,13 @@ export const getStats = async (req, res, next) => {
               month: { $month: '$effectiveDate' }
             },
             platformRevenue: { 
-              $sum: { 
-                $ifNull: [
-                  '$platformFee', 
-                  { $multiply: ['$amount', 0.2] }
-                ] 
-              }
+              $sum: 0 // Platform gets 0% since writers get 100%
             },
             writerEarnings: { 
               $sum: { 
                 $ifNull: [
                   '$writerAmount', 
-                  { $multiply: ['$amount', 0.8] }
+                  { $multiply: ['$amount', 1.0] } // Writers get 100%
                 ] 
               }
             },
@@ -253,10 +249,10 @@ export const getStats = async (req, res, next) => {
               month: { $month: '$effectiveDate' }
             },
             platformRevenue: { 
-              $sum: { $multiply: ['$paidAmount', 0.2] }
+              $sum: 0 // Platform gets 0% since writers get 100%
             },
             writerEarnings: { 
-              $sum: { $multiply: ['$paidAmount', 0.8] }
+              $sum: { $multiply: ['$paidAmount', 1.0] } // Writers get 100%
             },
             grossRevenue: { $sum: '$paidAmount' },
             count: { $sum: 1 }
@@ -295,10 +291,10 @@ export const getStats = async (req, res, next) => {
               month: { $month: '$effectiveDate' }
             },
             platformRevenue: { 
-              $sum: { $multiply: ['$paidAmount', 0.2] }
+              $sum: 0 // Platform gets 0% since writers get 100%
             },
             writerEarnings: { 
-              $sum: { $multiply: ['$paidAmount', 0.8] }
+              $sum: { $multiply: ['$paidAmount', 1.0] } // Writers get 100%
             },
             grossRevenue: { $sum: '$paidAmount' },
             count: { $sum: 1 }
