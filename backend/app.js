@@ -7,6 +7,7 @@ import userRoutes from './routes/user.js';
 import writerRoutes from './routes/writer.js';
 import paymentRoutes from './routes/payment.js';
 import chatRoutes from './routes/chat.js';
+import publicWritersRoutes from './routes/publicWriters.js';
 import compression from 'compression';
 import adminRoutes from './routes/admin.js';
 import orderRoutes from './routes/order.js';
@@ -77,6 +78,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/writer', writerRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/public', publicWritersRoutes);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/order', orderRoutes);
