@@ -386,7 +386,7 @@ export const fetchWriterDashboardData = asyncHandler(async (req, res, next) => {
 
 export const getRecommendedWriters = asyncHandler(async (req, res, next) => {
   try {
-    console.log('Fetching recommended writers for user:', req.user?.id || 'public access');
+    console.log('Fetching recommended writers for user:', req.user.id);
     
     // Find writers with good ratings and availability - ONLY PUBLISHED WRITERS
     const writers = await User.find({
