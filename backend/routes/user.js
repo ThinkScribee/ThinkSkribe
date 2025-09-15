@@ -15,7 +15,10 @@ import {
 
 const router = express.Router();
 
-// Protect all routes
+// Public routes (no authentication required)
+router.get('/recommended-writers', getRecommendedWriters); // Route for recommended writers - PUBLIC
+
+// Protect all other routes
 router.use(protect);
 
 // Profile routes
@@ -25,7 +28,6 @@ router.post('/files/:type', upload.single('file'), uploadFile);
 
 // Student-specific routes
 router.get('/dashboard/student', role('student'), fetchStudentDashboardData); // Route for student dashboard data
-router.get('/recommended-writers',getRecommendedWriters); // Route for recommended writers
 
 // Payment terms
 router.put('/payment-terms', updatePaymentTerms);
