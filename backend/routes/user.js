@@ -16,7 +16,7 @@ import {
 const router = express.Router();
 
 // Public routes (no authentication required)
-router.get('/writers', getRecommendedWriters); // Public writers list
+router.get('/recommended-writers', getRecommendedWriters); // Public writers list
 
 // Protect all routes below this point
 router.use(protect);
@@ -36,3 +36,4 @@ router.put('/payment-terms', updatePaymentTerms);
 router.get('/files', getFiles);
 
 export default router;
+
