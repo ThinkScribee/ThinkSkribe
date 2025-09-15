@@ -386,7 +386,7 @@ export const fetchWriterDashboardData = asyncHandler(async (req, res, next) => {
 
 export const getRecommendedWriters = asyncHandler(async (req, res, next) => {
   try {
-    console.log('Fetching recommended writers for user:', req.user.id);
+    console.log('Fetching recommended writers for user:', req.user?.id || 'public access');
     
     // Find writers with good ratings and availability - ONLY PUBLISHED WRITERS
     const writers = await User.find({
@@ -405,12 +405,19 @@ export const getRecommendedWriters = asyncHandler(async (req, res, next) => {
     
     console.log(`Found ${writers.length} recommended published writers`);
     
-    // Format writers with proper default values
+    // Format writers with proper default values - match frontend expectations
     const formattedWriters = writers.map(writer => ({
       _id: writer._id,
       name: writer.name || 'Writer',
       email: writer.email,
       avatar: writer.avatar,
+      // Top-level properties that the frontend expects
+      rating: writer.writerProfile?.rating?.average || 4.5,
+      reviewCount: writer.writerProfile?.rating?.count || 5,
+      projectsCompleted: writer.writerProfile?.completedProjects || 10,
+      isOnline: Math.random() > 0.4, // Random online status for demo
+      verified: writer.writerProfile?.verified || false,
+      responseTime: writer.writerProfile?.responseTime || 24,
       writerProfile: {
         bio: writer.writerProfile?.bio || 'Experienced academic writer',
         specialties: writer.writerProfile?.specialties || ['General Writing'],
@@ -423,7 +430,8 @@ export const getRecommendedWriters = asyncHandler(async (req, res, next) => {
         availability: writer.writerProfile?.availability || 'available',
         hourlyRate: writer.writerProfile?.hourlyRate || 25,
         isApproved: writer.writerProfile?.isApproved || false,
-        isPublished: writer.writerProfile?.isPublished || false
+        isPublished: writer.writerProfile?.isPublished || false,
+        verified: writer.writerProfile?.verified || false
       }
     }));
     
