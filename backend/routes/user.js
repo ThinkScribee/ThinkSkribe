@@ -25,7 +25,7 @@ router.post('/files/:type', upload.single('file'), uploadFile);
 
 // Student-specific routes
 router.get('/dashboard/student', role('student'), fetchStudentDashboardData); // Route for student dashboard data
-router.get('/recommended-writers', role('student'), getRecommendedWriters); // Route for recommended writers
+router.get('/writers', getRecommendedWriters); // Route for recommended writers (authenticated)
 
 // Payment terms
 router.put('/payment-terms', updatePaymentTerms);
