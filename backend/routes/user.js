@@ -15,10 +15,7 @@ import {
 
 const router = express.Router();
 
-// Public routes (no authentication required)
- // Route for recommended writers - PUBLIC
-
-// Protect all other routes
+// Protect all routes
 router.use(protect);
 
 // Profile routes
@@ -31,7 +28,7 @@ router.get('/dashboard/student', role('student'), fetchStudentDashboardData); //
 
 // Payment terms
 router.put('/payment-terms', updatePaymentTerms);
-router.get('/recommended-writers', getRecommendedWriters);
+
 // Files
 router.get('/files', getFiles);
 
