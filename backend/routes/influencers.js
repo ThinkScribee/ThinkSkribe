@@ -7,6 +7,7 @@ import {
   deleteInfluencer,
   getInfluencerDashboard,
   getInfluencerByReferralCode,
+  trackReferralVisit,
   trackReferralSignup,
   getInfluencerAnalytics,
   syncReferralCounts
@@ -17,6 +18,7 @@ const router = express.Router();
 
 // Public routes
 router.get('/referral/:code', getInfluencerByReferralCode);
+router.post('/track-visit', trackReferralVisit);
 
 // Protected routes (require authentication)
 router.use(protect);
