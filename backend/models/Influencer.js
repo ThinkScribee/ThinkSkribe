@@ -50,6 +50,14 @@ const InfluencerSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
+    totalVisits: {
+      type: Number,
+      default: 0
+    },
+    writersPageVisits: {
+      type: Number,
+      default: 0
+    },
     totalRevenue: {
       type: Number,
       default: 0
@@ -59,6 +67,9 @@ const InfluencerSchema = new mongoose.Schema({
       default: 0
     },
     lastSignup: {
+      type: Date
+    },
+    lastVisit: {
       type: Date
     }
   },
@@ -81,15 +92,50 @@ InfluencerSchema.virtual('referralUrl').get(function() {
 });
 
 // Method to increment signup count
-InfluencerSchema.methods.incrementSignup = function() {
+InfluencerSchema.methods.incrementSignup = async function() {
   console.log(`📈 Incrementing signup count for ${this.name} (${this.referralCode})`);
   console.log(`   Before: totalSignups = ${this.stats.totalSignups}`);
+
+  // Initialize stats if they don't exist
+  if (!this.stats) {
+    this.stats = {
+      totalSignups: 0,
+      totalRevenue: 0,
+      totalCommission: 0
+    };
+  }
 
   this.stats.totalSignups += 1;
   this.stats.lastSignup = new Date();
 
   console.log(`   After: totalSignups = ${this.stats.totalSignups}`);
   console.log(`   Last signup: ${this.stats.lastSignup}`);
+
+  // Save and return the updated document
+  const savedInfluencer = await this.save();
+  console.log(`   ✅ Saved to database: totalSignups = ${savedInfluencer.stats.totalSignups}`);
+  
+  return savedInfluencer;
+};
+
+// Method to increment visit count (optionally by page)
+InfluencerSchema.methods.incrementVisit = async function(page) {
+  // Initialize stats if they don't exist
+  if (!this.stats) {
+    this.stats = {
+      totalSignups: 0,
+      totalRevenue: 0,
+      totalCommission: 0,
+      totalVisits: 0,
+      writersPageVisits: 0
+    };
+  }
+
+  this.stats.totalVisits = (this.stats.totalVisits || 0) + 1;
+  if (page === 'writers') {
+    this.stats.writersPageVisits = (this.stats.writersPageVisits || 0) + 1;
+  }
+  this.stats.lastVisit = new Date();
 
   return this.save();
 };
