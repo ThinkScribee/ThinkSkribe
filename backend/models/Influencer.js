@@ -78,7 +78,9 @@ const InfluencerSchema = new mongoose.Schema({
     maxlength: 500
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
 // Index for performance
@@ -89,6 +91,11 @@ InfluencerSchema.index({ isActive: 1 });
 // Virtual for referral URL
 InfluencerSchema.virtual('referralUrl').get(function() {
   return `https://thinqscribe.com/ref/${this.referralCode.toLowerCase()}`;
+});
+
+// Virtual for writers page referral URL
+InfluencerSchema.virtual('writersReferralUrl').get(function() {
+  return `https://thinqscribe.com/writers?ref=${this.referralCode.toUpperCase()}`;
 });
 
 // Method to increment signup count
