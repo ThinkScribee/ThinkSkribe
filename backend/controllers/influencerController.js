@@ -242,7 +242,8 @@ export const getInfluencerByReferralCode = asyncHandler(async (req, res, next) =
       name: influencer.name,
       platform: influencer.platform || 'other', // Provide default if platform is missing
       referralCode: influencer.referralCode,
-      referralUrl: influencer.referralUrl
+      referralUrl: influencer.referralUrl,
+      writersReferralUrl: influencer.writersReferralUrl
     }
   });
 });
