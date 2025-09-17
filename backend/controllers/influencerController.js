@@ -247,6 +247,42 @@ export const getInfluencerByReferralCode = asyncHandler(async (req, res, next) =
   });
 });
 
+// @desc    Track referral visit (public)
+// @route   POST /api/influencers/track-visit
+// @access  Public
+export const trackReferralVisit = asyncHandler(async (req, res, next) => {
+  try {
+    const { referralCode, page } = req.body || {};
+
+    if (!referralCode) {
+      return next(new ErrorResponse('Referral code is required', 400));
+    }
+
+    const influencer = await Influencer.findOne({
+      referralCode: referralCode.toUpperCase(),
+      isActive: true
+    });
+
+    if (!influencer) {
+      return next(new ErrorResponse('Invalid referral code', 404));
+    }
+
+    await influencer.incrementVisit(page);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Referral visit tracked',
+      data: {
+        referralCode: influencer.referralCode,
+        page: page || 'unknown'
+      }
+    });
+  } catch (error) {
+    console.error('Error tracking referral visit:', error);
+    return next(new ErrorResponse('Failed to track referral visit', 500));
+  }
+});
+
 // @desc    Track referral signup
 // @route   POST /api/influencers/track-signup
 // @access  Private
