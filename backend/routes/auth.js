@@ -8,7 +8,8 @@ import {
   getMe,
   forgotPassword,
   resetPassword,
-  verifyEmail
+  verifyEmail,
+  testEmail
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router.post('/logout', logout);
 router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:resetToken', resetPassword);
 router.get('/verify/:token', verifyEmail);
+router.post('/test-email', testEmail);
 
 // Protected routes
 router.get('/me', protect, getMe);
