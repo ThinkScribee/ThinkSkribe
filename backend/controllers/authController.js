@@ -178,6 +178,18 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, data: 'Email sent' });
   } catch (err) {
     console.error('❌ Failed to send password reset email:', err.message);
+    console.error('❌ Email service error details:', err);
+    
+    // Check if it's a missing API key error
+    if (err.message.includes('RESEND_API_KEY') || err.message.includes('API key')) {
+      console.error('❌ Resend API key is missing or invalid');
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      
+      return next(new ErrorResponse('Email service is currently unavailable. Please try again later or contact support.', 503));
+    }
+    
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
@@ -265,4 +277,24 @@ export const testEmail = asyncHandler(async (req, res, next) => {
       error: error.message
     });
   }
+});
+
+// Check email service status
+export const checkEmailService = asyncHandler(async (req, res, next) => {
+  console.log('🔍 [AuthController] Checking email service status...');
+  
+  const resendApiKey = process.env.RESEND_API_KEY;
+  console.log('🔍 [AuthController] RESEND_API_KEY exists:', !!resendApiKey);
+  console.log('🔍 [AuthController] RESEND_API_KEY length:', resendApiKey ? resendApiKey.length : 0);
+  
+  res.status(200).json({
+    success: true,
+    message: 'Email service status check',
+    data: {
+      resendApiKeyExists: !!resendApiKey,
+      resendApiKeyLength: resendApiKey ? resendApiKey.length : 0,
+      environment: process.env.NODE_ENV,
+      clientUrl: process.env.CLIENT_URL
+    }
+  });
 });
