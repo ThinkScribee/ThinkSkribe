@@ -9,7 +9,8 @@ import {
   forgotPassword,
   resetPassword,
   verifyEmail,
-  testEmail
+  testEmail,
+  checkEmailService
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:resetToken', resetPassword);
 router.get('/verify/:token', verifyEmail);
 router.post('/test-email', testEmail);
+router.get('/email-service-status', checkEmailService);
 
 // Protected routes
 router.get('/me', protect, getMe);
