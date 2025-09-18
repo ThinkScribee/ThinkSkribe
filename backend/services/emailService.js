@@ -5,15 +5,29 @@ import { Resend } from 'resend';
 // Initialize Resend with API key
 const resendApiKey = process.env.RESEND_API_KEY;
 
+console.log('🔍 [EmailService] Initializing email service...');
+console.log('🔍 [EmailService] RESEND_API_KEY exists:', !!resendApiKey);
+console.log('🔍 [EmailService] RESEND_API_KEY length:', resendApiKey ? resendApiKey.length : 0);
+console.log('🔍 [EmailService] Available env vars with RESEND:', Object.keys(process.env).filter(key => key.includes('RESEND')));
+
 if (!resendApiKey) {
   console.error('❌ RESEND_API_KEY not found in environment variables');
-  console.error('❌ Available env vars:', Object.keys(process.env).filter(key => key.includes('RESEND')));
-  throw new Error('RESEND_API_KEY is required for email service');
+  console.error('❌ This will cause email sending to fail');
+  console.error('❌ Please add RESEND_API_KEY to your environment variables');
+  // Don't throw error here, let it fail gracefully when trying to send emails
 }
 
-const resend = new Resend(resendApiKey);
-
-console.log('✅ Resend email service initialized');
+let resend = null;
+if (resendApiKey) {
+  try {
+    resend = new Resend(resendApiKey);
+    console.log('✅ Resend email service initialized successfully');
+  } catch (error) {
+    console.error('❌ Failed to initialize Resend:', error.message);
+  }
+} else {
+  console.warn('⚠️ Resend not initialized - email sending will fail');
+}
 
 // Main email sending function
 export const sendEmail = async ({ email, subject, text, html }) => {
@@ -22,8 +36,16 @@ export const sendEmail = async ({ email, subject, text, html }) => {
     throw new Error('Email and subject are required');
   }
 
+  // Check if resend is initialized
+  if (!resend) {
+    console.error('❌ Resend service not initialized - RESEND_API_KEY missing');
+    throw new Error('Email service is not configured. Please contact support.');
+  }
+
   try {
-    console.log('📧 Sending email via Resend...');
+    console.log('📧 Sending email via Resend to:', email);
+    console.log('📧 Subject:', subject);
+    
     const { data, error } = await resend.emails.send({
       from: 'ThinqScribe <onboarding@resend.dev>',
       to: [email],
@@ -33,6 +55,7 @@ export const sendEmail = async ({ email, subject, text, html }) => {
     });
 
     if (error) {
+      console.error('❌ Resend API error:', error);
       throw new Error(`Resend error: ${error.message}`);
     }
 
@@ -40,6 +63,7 @@ export const sendEmail = async ({ email, subject, text, html }) => {
     return data;
   } catch (error) {
     console.error('❌ Failed to send email:', error.message);
+    console.error('❌ Error details:', error);
     throw error;
   }
 };
