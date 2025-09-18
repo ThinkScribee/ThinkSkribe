@@ -1,169 +1,50 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { Resend } from 'resend';
-import nodemailer from 'nodemailer';
 
-// Initialize Resend
-const apiKey = process.env.VITE_RESEND_API_KEY || process.env.RESEND_API_KEY;
+// Initialize Resend with API key
+const resendApiKey = process.env.RESEND_API_KEY;
 
-// Debug logging for API key
-if (process.env.NODE_ENV === 'development') {
-  console.log('🔍 Email Service Environment Check:');
-  console.log('VITE_RESEND_API_KEY exists:', !!process.env.VITE_RESEND_API_KEY);
-  console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
-  console.log('Using API key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'NOT FOUND');
+if (!resendApiKey) {
+  console.error('❌ RESEND_API_KEY not found in environment variables');
+  console.error('❌ Available env vars:', Object.keys(process.env).filter(key => key.includes('RESEND')));
+  throw new Error('RESEND_API_KEY is required for email service');
 }
 
-const resend = apiKey ? new Resend(apiKey) : null;
+const resend = new Resend(resendApiKey);
 
-// Create transporter with improved configuration (fallback for development)
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.MAILTRAP_HOST || 'sandbox.smtp.mailtrap.io',
-    port: parseInt(process.env.MAILTRAP_PORT || '2525'),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.MAILTRAP_USER,
-      pass: process.env.MAILTRAP_PASS,
-    },
-    // Increased timeout values
-    connectionTimeout: 60000, // 60 seconds
-    greetingTimeout: 30000,   // 30 seconds
-    socketTimeout: 60000,     // 60 seconds
-    // Connection pool settings
-    pool: true,
-    maxConnections: 5,
-    maxMessages: 10,
-    // TLS settings
-    tls: {
-      rejectUnauthorized: false, // only for development/testing
-      ciphers: 'SSLv3'
-    },
-    // Additional options for better reliability
-    ignoreTLS: false,
-    requireTLS: false,
-    // Debug for troubleshooting (remove in production)
-    debug: process.env.NODE_ENV === 'development',
-    logger: process.env.NODE_ENV === 'development'
-  });
-};
+console.log('✅ Resend email service initialized');
 
-let transporter = createTransporter();
-
-// Function to recreate transporter if needed
-const ensureTransporter = async () => {
-  try {
-    await transporter.verify();
-    return transporter;
-  } catch (error) {
-    console.log('Recreating transporter due to verification failure:', error.message);
-    transporter = createTransporter();
-    return transporter;
-  }
-};
-
+// Main email sending function
 export const sendEmail = async ({ email, subject, text, html }) => {
   // Input validation
   if (!email || !subject) {
     throw new Error('Email and subject are required');
   }
 
-  // Try Resend first (production)
-  if (apiKey && resend) {
-    try {
-      console.log('Sending email via Resend...');
-      
-      const { data, error } = await resend.emails.send({
-        from: 'ThinqScribe <onboarding@resend.dev>',
-        to: [email],
-        subject,
-        html: html || text,
-        text: text || (html ? html.replace(/<[^>]*>/g, '') : '')
-      });
+  try {
+    console.log('📧 Sending email via Resend...');
+    const { data, error } = await resend.emails.send({
+      from: 'ThinqScribe <onboarding@resend.dev>',
+      to: [email],
+      subject,
+      html: html || text,
+      text: text || (html ? html.replace(/<[^>]*>/g, '') : '')
+    });
 
-      if (error) {
-        console.error('Resend email error:', error);
-        throw new Error(`Resend failed: ${error.message}`);
-      }
-
-      console.log('Email sent successfully via Resend:', data);
-      return data;
-    } catch (error) {
-      console.error('Resend failed, falling back to Mailtrap:', error.message);
-      // Fall through to Mailtrap fallback
+    if (error) {
+      throw new Error(`Resend error: ${error.message}`);
     }
-  } else {
-    console.log('Resend not configured, using Mailtrap fallback');
-  }
 
-  // Fallback to Mailtrap (development)
-  if (!process.env.MAILTRAP_USER || !process.env.MAILTRAP_PASS) {
-    throw new Error('No email service configured. Please set up Resend API key or Mailtrap credentials');
-  }
-
-  const mailOptions = {
-    from: process.env.EMAIL_FROM || '"ThinqScribe" <mailtrap@demomailtrap.co>',
-    to: email,
-    subject,
-    text: text || (html ? html.replace(/<[^>]*>/g, '') : ''),
-    html: html
-  };
-
-  let retryCount = 0;
-  const maxRetries = 3;
-
-  while (retryCount < maxRetries) {
-    try {
-      // Ensure transporter is working
-      const currentTransporter = await ensureTransporter();
-      
-      console.log(`Attempting to send email via Mailtrap (attempt ${retryCount + 1}/${maxRetries})`);
-      
-      // Send email with timeout wrapper
-      const info = await Promise.race([
-        currentTransporter.sendMail(mailOptions),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Send operation timed out')), 45000)
-        )
-      ]);
-      
-      console.log('Email sent successfully via Mailtrap:', info.messageId);
-      return info;
-      
-    } catch (error) {
-      retryCount++;
-      console.error(`Email send attempt ${retryCount} failed:`, error.message);
-      
-      if (retryCount >= maxRetries) {
-        // Log detailed error information
-        console.error('All email send attempts failed. Final error:', {
-          message: error.message,
-          code: error.code,
-          command: error.command,
-          response: error.response,
-          responseCode: error.responseCode
-        });
-        
-        // Provide more specific error messages
-        if (error.message.includes('timeout') || error.code === 'ETIMEDOUT') {
-          throw new Error('Email service timeout - please check your internet connection and try again');
-        } else if (error.code === 'EAUTH') {
-          throw new Error('Email authentication failed - please check your Mailtrap credentials');
-        } else if (error.code === 'ECONNECTION') {
-          throw new Error('Cannot connect to email service - please check your network connection');
-        } else {
-          throw new Error(`Failed to send email: ${error.message}`);
-        }
-      }
-      
-      // Wait before retry (exponential backoff)
-      const delay = Math.min(1000 * Math.pow(2, retryCount - 1), 5000);
-      console.log(`Waiting ${delay}ms before retry...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
+    console.log('✅ Email sent successfully via Resend:', data.id);
+    return data;
+  } catch (error) {
+    console.error('❌ Failed to send email:', error.message);
+    throw error;
   }
 };
 
+// Email verification function
 export const sendVerificationEmail = async (user, verificationToken) => {
   if (!user || !user.email || !user.name || !verificationToken) {
     throw new Error('User information and verification token are required');
@@ -237,13 +118,14 @@ export const sendVerificationEmail = async (user, verificationToken) => {
       subject: 'Verify Your ThinqScribe Account',
       html: html
     });
-    console.log(`Verification email sent to ${user.email}`);
+    console.log(`✅ Verification email sent to ${user.email}`);
   } catch (error) {
-    console.error('Failed to send verification email:', error.message);
+    console.error('❌ Failed to send verification email:', error.message);
     throw error;
   }
 };
 
+// Password reset email function
 export const sendPasswordResetEmail = async (user, resetToken) => {
   if (!user || !user.email || !user.name || !resetToken) {
     throw new Error('User information and reset token are required');
@@ -320,18 +202,25 @@ export const sendPasswordResetEmail = async (user, resetToken) => {
       subject: 'ThinqScribe Password Reset - Action Required',
       html: html
     });
-    console.log(`Password reset email sent to ${user.email}`);
+    console.log(`✅ Password reset email sent to ${user.email}`);
   } catch (error) {
-    console.error('Failed to send password reset email:', error.message);
+    console.error('❌ Failed to send password reset email:', error.message);
     throw error;
   }
 };
 
+// Welcome email function
 export const sendWelcomeEmail = async (user) => {
   if (!user || !user.email || !user.name) {
     throw new Error('User information is required');
   }
 
+  if (!process.env.CLIENT_URL) {
+    throw new Error('CLIENT_URL environment variable is required');
+  }
+
+  const dashboardUrl = `${process.env.CLIENT_URL}/dashboard`;
+  const writersUrl = `${process.env.CLIENT_URL}/writers`;
   const html = `
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #F8F9FA; border-radius: 8px; overflow: hidden;">
       <!-- Email Header -->
@@ -344,43 +233,48 @@ export const sendWelcomeEmail = async (user) => {
         <h2 style="color: #0D1B2A; margin-top: 0; font-size: 20px;">Hello ${user.name},</h2>
         
         <p style="color: #415A77; line-height: 1.6; margin-bottom: 24px;">
-          Welcome to ThinqScribe! We're excited to have you join our community of students and expert academic writers. Your account has been created successfully and you're ready to start your academic journey with us.
+          Welcome to ThinqScribe! Your account has been created successfully. We're excited to help you achieve your academic goals with our expert writers and AI-powered tools.
         </p>
-        
-        <!-- Welcome Benefits -->
-        <div style="background-color: #FFFFFF; border-left: 4px solid #E0B13A; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
-          <h3 style="color: #0D1B2A; margin-top: 0; font-size: 16px;">What you can do now:</h3>
-          <ul style="color: #415A77; padding-left: 20px; margin-bottom: 0;">
-            <li style="margin-bottom: 8px;">Browse and hire expert academic writers</li>
-            <li style="margin-bottom: 8px;">Access our AI-powered writing tools</li>
-            <li style="margin-bottom: 8px;">Get help with essays, dissertations, and research papers</li>
-            <li>Connect with writers through our secure chat system</li>
-          </ul>
-        </div>
         
         <!-- Get Started Button -->
         <div style="text-align: center; margin: 32px 0;">
-          <a href="${process.env.CLIENT_URL || 'https://thinqscribe.com'}/writers" 
+          <a href="${dashboardUrl}" 
              style="display: inline-block; padding: 14px 28px; background-color: #E0B13A; 
                     color: #0D1B2A; text-decoration: none; border-radius: 6px; 
                     font-weight: 600; font-size: 16px; transition: all 0.3s ease;">
-            Browse Writers
+            Go to Dashboard
           </a>
         </div>
         
-        <!-- Quick Start Guide -->
-        <div style="background-color: #E6ECF4; padding: 20px; border-radius: 4px; margin-bottom: 24px;">
-          <h3 style="color: #0D1B2A; margin-top: 0; font-size: 16px;">Quick Start Guide:</h3>
-          <ol style="color: #415A77; padding-left: 20px; margin-bottom: 0;">
-            <li style="margin-bottom: 8px;">Complete your profile to help writers understand your needs</li>
-            <li style="margin-bottom: 8px;">Browse our verified writer profiles and read reviews</li>
-            <li style="margin-bottom: 8px;">Start a conversation with a writer that matches your requirements</li>
-            <li>Discuss your project details and get a quote</li>
-          </ol>
+        <!-- What's Next Section -->
+        <div style="background-color: #FFFFFF; border-left: 4px solid #E0B13A; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+          <h3 style="color: #0D1B2A; margin-top: 0; font-size: 16px;">What's Next?</h3>
+          <ul style="color: #415A77; padding-left: 20px; margin-bottom: 0;">
+            <li style="margin-bottom: 8px;">Browse our expert academic writers</li>
+            <li style="margin-bottom: 8px;">Access AI writing tools and grammar checker</li>
+            <li style="margin-bottom: 8px;">Start your first project with confidence</li>
+            <li>Get 24/7 support from our team</li>
+          </ul>
+        </div>
+        
+        <!-- Quick Links -->
+        <div style="text-align: center; margin: 24px 0;">
+          <a href="${writersUrl}" 
+             style="display: inline-block; padding: 10px 20px; background-color: #0D1B2A; 
+                    color: #E0B13A; text-decoration: none; border-radius: 4px; 
+                    font-weight: 500; font-size: 14px; margin: 0 8px;">
+            Browse Writers
+          </a>
+          <a href="${process.env.CLIENT_URL}/grammar-checker" 
+             style="display: inline-block; padding: 10px 20px; background-color: #0D1B2A; 
+                    color: #E0B13A; text-decoration: none; border-radius: 4px; 
+                    font-weight: 500; font-size: 14px; margin: 0 8px;">
+            AI Tools
+          </a>
         </div>
         
         <p style="color: #415A77; line-height: 1.6;">
-          If you have any questions or need assistance, don't hesitate to reach out to our support team. We're here to help you succeed!
+          If you have any questions or need assistance, don't hesitate to contact our support team. We're here to help you succeed!
         </p>
       </div>
       
@@ -402,30 +296,25 @@ export const sendWelcomeEmail = async (user) => {
       subject: 'Welcome to ThinqScribe - Your Academic Success Partner!',
       html: html
     });
-    console.log(`Welcome email sent to ${user.email}`);
+    console.log(`✅ Welcome email sent to ${user.email}`);
   } catch (error) {
-    console.error('Failed to send welcome email:', error.message);
+    console.error('❌ Failed to send welcome email:', error.message);
     throw error;
   }
 };
 
-// Test email functionality
+// Test email service function
 export const testEmailService = async (testEmail = 'test@example.com') => {
   try {
-    console.log('🧪 Testing email service...');
-    
     const testHtml = `
       <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #F8F9FA; border-radius: 8px; overflow: hidden;">
         <div style="background-color: #0D1B2A; padding: 24px; text-align: center;">
           <h1 style="color: #E0B13A; margin: 0; font-size: 24px; font-weight: 700;">Email Service Test</h1>
         </div>
         <div style="padding: 32px;">
-          <h2 style="color: #0D1B2A; margin-top: 0; font-size: 20px;">Hello!</h2>
+          <h2 style="color: #0D1B2A; margin-top: 0; font-size: 20px;">Test Successful!</h2>
           <p style="color: #415A77; line-height: 1.6;">
             This is a test email to verify that the ThinqScribe email service is working correctly.
-          </p>
-          <p style="color: #415A77; line-height: 1.6;">
-            If you received this email, the system is properly configured and ready to send welcome emails and password reset emails.
           </p>
         </div>
         <div style="background-color: #E6ECF4; padding: 20px; text-align: center; font-size: 12px; color: #415A77;">
