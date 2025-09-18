@@ -5,6 +5,7 @@ import Influencer from '../models/Influencer.js';
 import { generateToken } from '../utils/generateToken.js';
 import asyncHandler from '../middlewares/async.js';
 import ErrorResponse from '../utils/errorResponse.js';
+import { sendWelcomeEmail, sendPasswordResetEmail, testEmailService } from '../services/emailService.js';
 import crypto from 'crypto';
 
 // Helper function for sending token response
@@ -100,6 +101,15 @@ export const register = asyncHandler(async (req, res, next) => {
     }
   }
 
+  // Send welcome email
+  try {
+    await sendWelcomeEmail(user);
+    console.log('✅ Welcome email sent to:', user.email);
+  } catch (error) {
+    console.error('❌ Failed to send welcome email:', error.message);
+    // Don't fail registration if welcome email fails, but log the issue
+  }
+
   sendTokenResponse(user, 201, res);
 });
 
@@ -155,19 +165,19 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  // Create reset url
-  const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
+  // Create reset url using CLIENT_URL environment variable
+  const resetUrl = `${process.env.CLIENT_URL || 'https://thinqscribe.com'}/reset-password/${resetToken}`;
 
-  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+  console.log('🔗 Generated reset URL:', resetUrl);
 
   try {
-    // Here you would send email
-    console.log('Password reset email would be sent to:', user.email);
-    console.log('Reset URL:', resetUrl);
+    // Send password reset email
+    await sendPasswordResetEmail(user, resetToken);
+    console.log('✅ Password reset email sent to:', user.email);
 
     res.status(200).json({ success: true, data: 'Email sent' });
   } catch (err) {
-    console.log(err);
+    console.error('❌ Failed to send password reset email:', err.message);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
@@ -221,4 +231,38 @@ export const verifyEmail = asyncHandler(async (req, res, next) => {
     success: true,
     message: 'Email verified successfully'
   });
+});
+
+// Test email functionality
+export const testEmail = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    return next(new ErrorResponse('Email is required for testing', 400));
+  }
+
+  try {
+    const result = await testEmailService(email);
+    
+    if (result.success) {
+      res.status(200).json({
+        success: true,
+        message: 'Test email sent successfully',
+        data: result.result
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send test email',
+        error: result.error
+      });
+    }
+  } catch (error) {
+    console.error('Test email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Email service error',
+      error: error.message
+    });
+  }
 });
