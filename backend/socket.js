@@ -1,10 +1,14 @@
 // server/socket.js
 
 import { Server } from 'socket.io';
+import User from './models/User.js';
 import Chat from './models/Chat.js';
 import Message from './models/Message.js';
 import Notification from './models/Notification.js';
-import User from './models/User.js';
+import ServiceAgreement from './models/ServiceAgreement.js';
+import Order from './models/Order.js';
+import { ORDER_STATUS } from './models/constants.js';
+import { generateOrderId } from './utils/helpers.js';
 
 let io;
 
@@ -319,11 +323,6 @@ const initSocket = (server) => {
           return;
         }
 
-        // Count unread messages before marking as read
-        const unreadCountBefore = chat.messages.filter(msg => 
-          !msg.read && msg.sender.toString() !== userId
-        ).length;
-
         // Mark unread messages as read
         let updated = false;
         chat.messages.forEach(msg => {
@@ -334,14 +333,7 @@ const initSocket = (server) => {
         });
 
         if (updated) {
-          // Calculate new unread count
-          const unreadCountAfter = chat.messages.filter(msg => 
-            !msg.read && msg.sender.toString() !== userId
-          ).length;
-
           await chat.save();
-          
-          console.log(`📊 [Backend] Unread count updated: ${unreadCountBefore} → ${unreadCountAfter}`);
           
           // Notify the sender that their messages were read
           chat.messages.forEach(msg => {
@@ -352,19 +344,6 @@ const initSocket = (server) => {
                 readBy: userId
               });
             }
-          });
-
-          // CRITICAL: Notify all participants about updated unread count
-          chat.participants.forEach(participant => {
-            const participantUnreadCount = chat.messages.filter(msg => 
-              !msg.read && msg.sender.toString() !== participant._id.toString()
-            ).length;
-            
-            io.to(`user-${participant._id}`).emit('chatUnreadCountUpdated', {
-              chatId,
-              unreadCount: participantUnreadCount,
-              updatedBy: userId
-            });
           });
         }
       } catch (err) {
@@ -850,6 +829,193 @@ const initSocket = (server) => {
         timestamp: timestamp || Date.now()
       });
     });
+
+    // ==========================================
+    // JOB POSTING REAL-TIME EVENTS
+    // ==========================================
+
+    // Handle job view tracking
+    socket.on('jobViewed', async (data) => {
+      try {
+        const { jobId, userId } = data;
+        console.log(`👀 Job ${jobId} viewed by user ${userId}`);
+        
+        // Import Job model dynamically to avoid circular dependency
+        const { default: Job } = await import('./models/Job.js');
+        const job = await Job.findById(jobId);
+        
+        if (job) {
+          await job.addView(userId);
+          console.log(`✅ Job view tracked for job ${jobId}`);
+        }
+      } catch (error) {
+        console.error('❌ Error tracking job view:', error);
+      }
+    });
+
+    // Handle job application notifications
+    socket.on('jobApplicationSubmitted', (data) => {
+      const { jobId, writerId, writerName, jobTitle } = data;
+      console.log(`📝 Job application submitted for job ${jobId} by ${writerName}`);
+      
+      // Notify job poster about new application
+      socket.broadcast.emit('newJobApplication', {
+        jobId,
+        writerId,
+        writerName,
+        jobTitle,
+        message: `New application from ${writerName}`,
+        timestamp: Date.now()
+      });
+    });
+
+    // Handle job status updates
+    socket.on('jobStatusUpdated', (data) => {
+      const { jobId, status, updatedBy, jobTitle } = data;
+      console.log(`📋 Job ${jobId} status updated to ${status} by ${updatedBy}`);
+      
+      // Broadcast job status update to all connected users
+      io.emit('jobStatusChanged', {
+        jobId,
+        status,
+        updatedBy,
+        jobTitle,
+        message: `Job "${jobTitle}" status updated to ${status}`,
+        timestamp: Date.now()
+      });
+    });
+
+    // Handle job assignment notifications
+    socket.on('jobAssigned', (data) => {
+      const { jobId, writerId, studentId, jobTitle } = data;
+      console.log(`✅ Job ${jobId} assigned to writer ${writerId}`);
+      
+      // Notify the assigned writer
+      io.to(`user-${writerId}`).emit('jobAssignedToYou', {
+        jobId,
+        jobTitle,
+        message: `You have been assigned to job: ${jobTitle}`,
+        timestamp: Date.now()
+      });
+      
+      // Notify the student
+      io.to(`user-${studentId}`).emit('jobAssignedToWriter', {
+        jobId,
+        jobTitle,
+        message: `Your job "${jobTitle}" has been assigned to a writer`,
+        timestamp: Date.now()
+      });
+    });
+
+    // Handle job completion notifications
+    socket.on('jobCompleted', (data) => {
+      const { jobId, writerId, studentId, jobTitle, completedAt } = data;
+      console.log(`🎉 Job ${jobId} completed by writer ${writerId}`);
+      
+      // Notify the student
+      io.to(`user-${studentId}`).emit('jobCompleted', {
+        jobId,
+        jobTitle,
+        writerId,
+        message: `Your job "${jobTitle}" has been completed!`,
+        completedAt,
+        timestamp: Date.now()
+      });
+      
+      // Notify the writer
+      io.to(`user-${writerId}`).emit('jobCompletedByYou', {
+        jobId,
+        jobTitle,
+        message: `You have successfully completed: ${jobTitle}`,
+        completedAt,
+        timestamp: Date.now()
+      });
+    });
+
+    // Handle job deadline reminders
+    socket.on('jobDeadlineReminder', (data) => {
+      const { jobId, deadline, jobTitle, userIds } = data;
+      console.log(`⏰ Job deadline reminder for job ${jobId}`);
+      
+      // Send reminder to specific users
+      userIds.forEach(userId => {
+        io.to(`user-${userId}`).emit('jobDeadlineReminder', {
+          jobId,
+          jobTitle,
+          deadline,
+          message: `Reminder: Job "${jobTitle}" deadline is approaching`,
+          timestamp: Date.now()
+        });
+      });
+    });
+
+    // Handle job search/filter updates
+    socket.on('jobSearchPerformed', (data) => {
+      const { searchQuery, filters, resultsCount, userId } = data;
+      console.log(`🔍 Job search performed by user ${userId}: "${searchQuery}"`);
+      
+      // Could be used for analytics or real-time search suggestions
+      socket.broadcast.emit('jobSearchActivity', {
+        searchQuery,
+        filters,
+        resultsCount,
+        userId,
+        timestamp: Date.now()
+      });
+    });
+
+    // Handle job bookmark/favorite
+    socket.on('jobBookmarked', (data) => {
+      const { jobId, userId, action } = data; // action: 'bookmark' or 'unbookmark'
+      console.log(`⭐ Job ${jobId} ${action}ed by user ${userId}`);
+      
+      // Notify job poster about bookmark activity (optional)
+      socket.broadcast.emit('jobBookmarkActivity', {
+        jobId,
+        userId,
+        action,
+        timestamp: Date.now()
+      });
+    });
+
+    // Handle job sharing
+    socket.on('jobShared', (data) => {
+      const { jobId, sharedBy, sharedWith, jobTitle } = data;
+      console.log(`📤 Job ${jobId} shared by ${sharedBy} with ${sharedWith}`);
+      
+      // Notify the recipient
+      if (sharedWith) {
+        io.to(`user-${sharedWith}`).emit('jobSharedWithYou', {
+          jobId,
+          jobTitle,
+          sharedBy,
+          message: `Job "${jobTitle}" has been shared with you`,
+          timestamp: Date.now()
+        });
+      }
+    });
+
+    // Handle job feedback/rating
+    socket.on('jobFeedbackSubmitted', (data) => {
+      const { jobId, writerId, studentId, rating, feedback } = data;
+      console.log(`⭐ Job feedback submitted for job ${jobId}`);
+      
+      // Notify the writer about feedback
+      io.to(`user-${writerId}`).emit('jobFeedbackReceived', {
+        jobId,
+        rating,
+        feedback,
+        message: 'You have received feedback for your completed job',
+        timestamp: Date.now()
+      });
+      
+      // Notify the student
+      io.to(`user-${studentId}`).emit('jobFeedbackSubmitted', {
+        jobId,
+        message: 'Your feedback has been submitted',
+        timestamp: Date.now()
+      });
+    });
   });
 
   return io;
@@ -862,5 +1028,4 @@ const getIO = () => {
   return io;
 };
 
-export { getIO, initSocket };
-
+export { initSocket, getIO };
