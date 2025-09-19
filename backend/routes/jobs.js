@@ -22,16 +22,18 @@ const router = express.Router();
 router.get('/pricing', getJobPricing);
 router.get('/search', searchJobs);
 router.get('/', getJobs);
-router.get('/:id', getJob);
 
 // Protected routes
 router.use(protect);
 
-// Job management routes (students)
-router.post('/', authorize('student'), createJob);
+// Job management routes (students) - MUST come before /:id route
 router.get('/my-jobs', authorize('student'), getMyJobs);
+router.post('/', authorize('student'), createJob);
 router.put('/:id', authorize('student'), updateJob);
 router.delete('/:id', authorize('student'), deleteJob);
+
+// Single job route (must come after specific routes)
+router.get('/:id', getJob);
 router.post('/:id/attachments', authorize('student'), upload.single('file'), uploadJobAttachment);
 
 // Application routes (writers)
