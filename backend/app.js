@@ -26,6 +26,7 @@ import webhookRoutes from './routes/webhooks.js';
 import influencerRoutes from './routes/influencers.js';
 import unreadMessageRoutes from './routes/unreadMessages.js';
 import testEmailRoutes from './routes/testEmail.js';
+import jobRoutes from './routes/jobs.js';
 import { startScheduledJobs } from './services/schedulerService.js';
 
 // Database connection
@@ -91,6 +92,7 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/api/influencers', influencerRoutes);
 app.use('/api/unread', unreadMessageRoutes);
 app.use('/api/test-email', testEmailRoutes);
+app.use('/api/jobs', jobRoutes);
 // Removed: app.use('/api/student', studentRoutes); // No longer needed
 
 // Health check endpoint
