@@ -18,9 +18,12 @@ const resend = new Resend(apiKey);
 // Email templates for unread message notifications
 export const sendUnreadMessageEmail = async (recipient, sender, message, chatId) => {
   try {
+    // TEMPORARY FIX: Send to verified email for testing
+    const testEmail = process.env.NODE_ENV === 'development' ? 'marytuboks@gmail.com' : recipient.email;
+    
     const { data, error } = await resend.emails.send({
       from: 'ThinqScribe <onboarding@resend.dev>',
-      to: [recipient.email],
+      to: [testEmail],
       subject: `New unread message from ${sender.name} - ThinqScribe`,
       html: `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #F8F9FA; border-radius: 8px; overflow: hidden;">
@@ -95,9 +98,12 @@ export const sendUnreadMessageEmail = async (recipient, sender, message, chatId)
 // Email for multiple unread messages summary
 export const sendUnreadMessagesSummaryEmail = async (recipient, unreadMessages) => {
   try {
+    // TEMPORARY FIX: Send to verified email for testing
+    const testEmail = process.env.NODE_ENV === 'development' ? 'marytuboks@gmail.com' : recipient.email;
+    
     const { data, error } = await resend.emails.send({
       from: 'ThinqScribe <onboarding@resend.dev>',
-      to: [recipient.email],
+      to: [testEmail],
       subject: `You have ${unreadMessages.length} unread messages - ThinqScribe`,
       html: `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #F8F9FA; border-radius: 8px; overflow: hidden;">
