@@ -1,0 +1,37 @@
+import express from 'express';
+import {
+  createInfluencer,
+  getInfluencers,
+  getInfluencer,
+  updateInfluencer,
+  deleteInfluencer,
+  getInfluencerDashboard,
+  getInfluencerByReferralCode,
+  trackReferralSignup,
+  getInfluencerAnalytics
+} from '../controllers/influencerController.js';
+import { protect, authorize } from '../middlewares/auth.js';
+
+const router = express.Router();
+
+// Public routes (no authentication required)
+router.get('/referral/:code', getInfluencerByReferralCode);
+
+// Protected routes (require authentication)
+router.use(protect);
+
+// IMPORTANT: Specific routes must come before parameterized routes
+router.get('/analytics/overview', authorize('admin'), getInfluencerAnalytics);
+router.post('/track-signup', trackReferralSignup);
+
+// Admin only routes
+router.get('/', authorize('admin'), getInfluencers);
+router.post('/', authorize('admin'), createInfluencer);
+
+// Parameterized routes (must come after specific routes)
+router.get('/:id', authorize('admin'), getInfluencer);
+router.put('/:id', authorize('admin'), updateInfluencer);
+router.delete('/:id', authorize('admin'), deleteInfluencer);
+router.get('/:id/dashboard', authorize('admin'), getInfluencerDashboard);
+
+export default router;

@@ -1,0 +1,229 @@
+/* Job Components Mobile Responsive Styles */
+
+/* Ensure buttons are always visible */
+.job-management-header .ant-btn,
+.job-posting-modal .ant-btn,
+.job-card .ant-btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Button visibility fixes */
+.ant-btn-primary {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: #fff !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+}
+
+.ant-btn-default {
+  background-color: #fff !important;
+  border-color: #d9d9d9 !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.ant-btn-default:hover {
+  background-color: #f5f5f5 !important;
+  border-color: #40a9ff !important;
+  color: #40a9ff !important;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  /* Job Posting Modal */
+  .job-posting-modal .ant-modal {
+    margin: 10px !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+  
+  .job-posting-modal .ant-modal-content {
+    border-radius: 8px;
+  }
+  
+  /* Job Cards */
+  .job-card .ant-card-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .job-card .ant-card-actions > li {
+    margin: 0 !important;
+    width: 100%;
+  }
+  
+  .job-card .ant-card-actions > li > span {
+    width: 100%;
+    display: block;
+  }
+  
+  /* Job Management Header */
+  .job-management-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }
+  
+  .job-management-header .ant-btn {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 16px !important;
+  }
+  
+  /* Search and Filter Cards */
+  .job-filters .ant-row {
+    flex-direction: column;
+  }
+  
+  .job-filters .ant-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+  }
+  
+  /* Job Cards Mobile Layout */
+  .job-card-mobile .ant-card-meta-title {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+  }
+  
+  .job-card-mobile .ant-card-meta-description {
+    font-size: 14px !important;
+  }
+  
+  /* Tags and Badges */
+  .job-tags .ant-tag {
+    margin: 2px !important;
+    font-size: 12px !important;
+  }
+  
+  /* Application Modal */
+  .application-modal .ant-modal {
+    margin: 10px !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+  
+  /* Form Elements */
+  .job-form .ant-form-item-label {
+    padding-bottom: 4px !important;
+  }
+  
+  .job-form .ant-input,
+  .job-form .ant-select-selector,
+  .job-form .ant-picker {
+    height: 48px !important;
+    font-size: 16px !important;
+  }
+  
+  /* Date Picker Mobile */
+  .ant-picker-dropdown {
+    z-index: 1050 !important;
+  }
+  
+  .ant-picker-panel {
+    width: 100% !important;
+  }
+  
+  /* Table Mobile */
+  .job-table-mobile .ant-table-thead {
+    display: none !important;
+  }
+  
+  .job-table-mobile .ant-table-tbody > tr {
+    display: block !important;
+    margin-bottom: 16px !important;
+    border: 1px solid #f0f0f0 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+  }
+  
+  .job-table-mobile .ant-table-tbody > tr > td {
+    display: block !important;
+    border: none !important;
+    padding: 4px 0 !important;
+  }
+  
+  .job-table-mobile .ant-table-tbody > tr > td::before {
+    content: attr(data-label) !important;
+    font-weight: 600 !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+    color: #666 !important;
+  }
+}
+
+/* Tablet responsive design */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .job-posting-modal .ant-modal {
+    width: 90% !important;
+    max-width: 800px !important;
+  }
+  
+  .job-management-header {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  
+  .job-management-header .ant-btn {
+    width: auto !important;
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1200px) {
+  .job-posting-modal .ant-modal {
+    width: 800px !important;
+  }
+  
+  .job-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 16px;
+  }
+}
+
+/* Accessibility improvements */
+.job-card:focus-within {
+  box-shadow: 0 0 0 2px #1890ff !important;
+}
+
+.job-btn:focus {
+  outline: 2px solid #1890ff !important;
+  outline-offset: 2px !important;
+}
+
+/* Loading states */
+.job-loading .ant-spin-container {
+  min-height: 200px;
+}
+
+/* Error states */
+.job-error .ant-alert {
+  margin: 16px 0;
+}
+
+/* Success states */
+.job-success .ant-message {
+  position: fixed;
+  top: 24px;
+  z-index: 1060;
+}
+
+/* Print styles */
+@media print {
+  .job-posting-modal,
+  .application-modal {
+    display: none !important;
+  }
+  
+  .job-card {
+    break-inside: avoid;
+    margin-bottom: 16px;
+  }
+}

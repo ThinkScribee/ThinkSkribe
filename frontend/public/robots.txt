@@ -1,0 +1,52 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://thinqscribe.com/sitemap.xml
+
+# Disallow protected/private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /student/dashboard/
+Disallow: /writer/dashboard/
+Disallow: /chat/
+Disallow: /profile/
+Disallow: /notifications/
+Disallow: /search/
+Disallow: /writers/
+Disallow: /payment/
+Disallow: /agreements/
+Disallow: /assignments/
+Disallow: /payments/
+
+# Allow public pages
+Allow: /
+Allow: /essay-writing-services
+Allow: /about-us
+Allow: /our-writers
+Allow: /contact-support
+Allow: /quality-promise
+Allow: /signin
+Allow: /signup
+Allow: /forgot-password
+Allow: /reset-password
+Allow: /terms
+Allow: /privacy
+Allow: /about
+Allow: /not-authorized
+Allow: /thesis-writing-services
+Allow: /dissertation-writing-services
+Allow: /research-paper-writing-services
+Allow: /term-paper-writing-services
+Allow: /seminar-writing-services
+Allow: /article-critique-writing-services
+Allow: /questionnaire-writing-services
+Allow: /grammar-checker
+Allow: /citation-generator
+Allow: /plagiarism-detector
+Allow: /writing-enhancement
+Allow: /structure-analyzer
+
+# Crawl delay (helps prevent server overload)
+Crawl-delay: 1
