@@ -77,6 +77,7 @@ import VoiceRecorder from '../components/VoiceRecorder.jsx';
 // Import the beautiful CSS styling
 import './StudentChat.css';
 import './MobileChat.css';
+import '../components/ChatMobile.css';
 
 const { Sider, Content } = Layout;
 

@@ -159,16 +159,42 @@ const StudentWriterList = () => {
     // Sort writers
     filtered.sort((a, b) => {
       switch (sortBy) {
+        case 'online':
+          // Online writers first, then by rating
+          if (a.isOnline !== b.isOnline) {
+            return b.isOnline ? 1 : -1;
+          }
+          return (b.rating || 0) - (a.rating || 0);
         case 'rating':
+          // First priority: Online status (online writers come first)
+          if (a.isOnline !== b.isOnline) {
+            return b.isOnline ? 1 : -1;
+          }
           return (b.rating || 0) - (a.rating || 0);
         case 'projects':
+          // First priority: Online status (online writers come first)
+          if (a.isOnline !== b.isOnline) {
+            return b.isOnline ? 1 : -1;
+          }
           return (b.projectsCompleted || 0) - (a.projectsCompleted || 0);
         case 'response':
+          // First priority: Online status (online writers come first)
+          if (a.isOnline !== b.isOnline) {
+            return b.isOnline ? 1 : -1;
+          }
           return (a.responseTime || 0) - (b.responseTime || 0);
         case 'name':
+          // First priority: Online status (online writers come first)
+          if (a.isOnline !== b.isOnline) {
+            return b.isOnline ? 1 : -1;
+          }
           return (a.name || '').localeCompare(b.name || '');
         default:
-          return 0;
+          // Default: Online writers first, then by rating
+          if (a.isOnline !== b.isOnline) {
+            return b.isOnline ? 1 : -1;
+          }
+          return (b.rating || 0) - (a.rating || 0);
       }
     });
 
@@ -513,6 +539,7 @@ const StudentWriterList = () => {
                   }}
                   size="large"
                 >
+                  <Option value="online">🟢 Online First</Option>
                   <Option value="rating">⭐ Highest Rated</Option>
                   <Option value="projects">🏆 Most Projects</Option>
                   <Option value="response">⚡ Fastest Response</Option>

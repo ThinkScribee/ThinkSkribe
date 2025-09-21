@@ -208,10 +208,19 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
       open={visible}
       onCancel={onCancel}
       footer={null}
-      width={window.innerWidth < 768 ? '95%' : 800}
+      width={window.innerWidth < 768 ? '98%' : 900}
       destroyOnClose
-      style={{ top: window.innerWidth < 768 ? 10 : 20 }}
-      className="job-posting-modal"
+      style={{ 
+        top: window.innerWidth < 768 ? 5 : 20,
+        margin: window.innerWidth < 768 ? '0 auto' : 'auto'
+      }}
+      className="job-posting-modal professional-modal"
+      centered={window.innerWidth < 768}
+      bodyStyle={{ 
+        padding: window.innerWidth < 768 ? '16px' : '32px',
+        maxHeight: window.innerWidth < 768 ? 'calc(100vh - 120px)' : 'none',
+        overflowY: window.innerWidth < 768 ? 'auto' : 'visible'
+      }}
     >
       <Form
         form={form}
@@ -483,15 +492,24 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
 
         <Divider />
 
-        <Form.Item style={{ marginBottom: 0, textAlign: 'right', marginTop: '24px' }}>
-          <Space size="middle">
+        <Form.Item style={{ marginBottom: 0, marginTop: '24px' }}>
+          <Space 
+            size="middle" 
+            direction={window.innerWidth < 768 ? 'vertical' : 'horizontal'}
+            style={{ 
+              width: '100%', 
+              justifyContent: window.innerWidth < 768 ? 'stretch' : 'flex-end' 
+            }}
+          >
             <Button 
               onClick={onCancel}
               size="large"
               style={{ 
+                width: window.innerWidth < 768 ? '100%' : 'auto',
                 minWidth: '100px',
-                height: '40px',
-                fontSize: '16px'
+                height: '48px',
+                fontSize: '16px',
+                borderRadius: '12px'
               }}
             >
               Cancel
@@ -502,10 +520,15 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
               loading={loading}
               size="large"
               style={{ 
+                width: window.innerWidth < 768 ? '100%' : 'auto',
                 minWidth: '120px',
-                height: '40px',
+                height: '48px',
                 fontSize: '16px',
-                fontWeight: '600'
+                fontWeight: '600',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
               }}
             >
               {editingJob ? 'Update Job' : 'Post Job'}

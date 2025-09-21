@@ -58,6 +58,7 @@ import HeaderComponent from '../components/HeaderComponent';
 import ReviewAgreementModal from '../components/ReviewAgreementModal';
 import CompleteAssignmentModal from '../components/CompleteAssignmentModal';
 import AppLoader from '../components/AppLoader';
+import MobileBottomTabs from '../components/MobileBottomTabs';
 // Enhanced location and currency components
 import { useCurrency } from '../hooks/useCurrency';
 import moment from 'moment';
@@ -694,12 +695,12 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={{ xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
               icon={<DollarOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.2)', 
                 color: 'white',
-                fontSize: 'clamp(16px, 3vw, 24px)'
+                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
               }} 
             />
           </div>
@@ -732,12 +733,12 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={{ xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
               icon={<BankOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.2)', 
                 color: 'white',
-                fontSize: 'clamp(16px, 3vw, 24px)'
+                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
               }} 
             />
           </div>
@@ -770,12 +771,12 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={{ xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
               icon={<ClockCircleOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.2)', 
                 color: 'white',
-                fontSize: 'clamp(16px, 3vw, 24px)'
+                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
               }} 
             />
           </div>
@@ -806,12 +807,12 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={{ xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
               icon={<TrophyOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(44,62,80,0.1)', 
                 color: '#2c3e50',
-                fontSize: 'clamp(16px, 3vw, 24px)'
+                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
               }} 
             />
           </div>
@@ -1150,7 +1151,12 @@ const WriterDashboard = () => {
               </div>
               {/* Header Actions with Manual Refresh */}
               <div className="header-actions" style={{ marginBottom: '24px' }}>
-                <Space size="large" wrap>
+                <Space 
+                  size="large" 
+                  wrap
+                  direction={window.innerWidth < 768 ? 'vertical' : 'horizontal'}
+                  style={{ width: window.innerWidth < 768 ? '100%' : 'auto' }}
+                >
                   <Button 
                     type="primary" 
                     icon={<PlusCircleOutlined />}
@@ -1160,7 +1166,13 @@ const WriterDashboard = () => {
                       borderRadius: '12px',
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       border: 'none',
-                      fontWeight: '600'
+                      fontWeight: '600',
+                      height: 'clamp(44px, 10vw, 52px)',
+                      paddingInline: 'clamp(20px, 6vw, 32px)',
+                      fontSize: 'clamp(14px, 3vw, 16px)',
+                      width: window.innerWidth < 768 ? '100%' : 'auto',
+                      maxWidth: window.innerWidth < 768 ? '280px' : 'none',
+                      minWidth: '160px'
                     }}
                   >
                     Browse Projects
@@ -1172,8 +1184,12 @@ const WriterDashboard = () => {
                     size="large"
                     style={{
                       borderRadius: '12px',
-                      height: 'clamp(40px, 8vw, 48px)',
-                      paddingInline: 'clamp(16px, 4vw, 24px)'
+                      height: 'clamp(44px, 10vw, 52px)',
+                      paddingInline: 'clamp(20px, 6vw, 32px)',
+                      fontSize: 'clamp(14px, 3vw, 16px)',
+                      width: window.innerWidth < 768 ? '100%' : 'auto',
+                      maxWidth: window.innerWidth < 768 ? '280px' : 'none',
+                      minWidth: '120px'
                     }}
                   >
                     Refresh
@@ -1221,9 +1237,9 @@ const WriterDashboard = () => {
           )}
 
           {/* Main Content Row */}
-          <Row gutter={[24, 24]}>
+          <Row gutter={[16, 16]}>
             {/* Projects Section */}
-            <Col xs={24} xl={16}>
+            <Col xs={24} lg={16}>
               <Card 
                 title={
                   <div className="flex justify-between items-center">
@@ -1740,7 +1756,7 @@ const WriterDashboard = () => {
             </Col>
 
             {/* Sidebar */}
-            <Col xs={24} xl={8}>
+            <Col xs={24} lg={8}>
               <Space direction="vertical" size="large" style={{ width: '100%' }}>
                 {/* Currency & Location Info */}
                 {userLocation && (
@@ -1784,7 +1800,7 @@ const WriterDashboard = () => {
                   className="quick-actions-card"
                   style={{ borderRadius: '16px', border: 'none', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)', background: '#ffffff' }}
                 >
-                  <Space direction="vertical" style={{ width: '100%' }}>
+                  <Space direction="vertical" style={{ width: '100%' }} size="middle">
                     <Button 
                       icon={<PlusCircleOutlined />}
                       onClick={() => navigate('/writers')}
@@ -1794,8 +1810,11 @@ const WriterDashboard = () => {
                         background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                         border: 'none',
                         color: 'white',
-                        borderRadius: '8px',
-                        fontWeight: '600'
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        height: '48px',
+                        fontSize: '15px',
+                        boxShadow: '0 4px 12px rgba(30, 58, 138, 0.3)'
                       }}
                     >
                       Browse Projects
@@ -1809,8 +1828,11 @@ const WriterDashboard = () => {
                         background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                         border: 'none',
                         color: 'white',
-                        borderRadius: '8px',
-                        fontWeight: '600'
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        height: '48px',
+                        fontSize: '15px',
+                        boxShadow: '0 4px 12px rgba(5, 150, 105, 0.3)'
                       }}
                     >
                       Contact Support
@@ -1905,6 +1927,159 @@ const WriterDashboard = () => {
         />
       </Content>
       <style>{`
+@media (max-width: 768px) {
+  /* Mobile header improvements */
+  .dashboard-header {
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .header-content {
+    text-align: center !important;
+  }
+  
+  .welcome-section {
+    margin-bottom: 20px !important;
+  }
+  
+  .header-actions {
+    display: flex !important;
+    justify-content: center !important;
+  }
+  
+  /* Fix narrow sections on mobile */
+  .ant-row {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+  
+  .ant-col {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  
+  /* Make project sections full width on mobile */
+  .ant-collapse {
+    margin: 0 !important;
+  }
+  
+  .ant-collapse-item {
+    border: 1px solid #f0f0f0 !important;
+    border-radius: 12px !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .ant-collapse-header {
+    padding: 16px 20px !important;
+    font-size: 16px !important;
+  }
+  
+  .ant-collapse-content-box {
+    padding: 16px 20px !important;
+  }
+  
+  /* Mobile stats cards */
+  .ant-statistic-title {
+    font-size: 12px !important;
+  }
+  
+  .ant-statistic-content {
+    font-size: 20px !important;
+  }
+  
+  /* Mobile project cards */
+  .mobile-project-cards .ant-card {
+    margin-bottom: 12px !important;
+  }
+  
+  .mobile-project-cards .ant-card-body {
+    padding: 12px !important;
+  }
+  
+  /* Mobile action buttons */
+  .ant-btn {
+    height: 44px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+  }
+  
+  /* Fix project section button text sizing */
+  .ant-collapse-content-box .ant-btn {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    height: 32px !important;
+    min-width: auto !important;
+  }
+  
+  .ant-collapse-content-box .ant-btn span {
+    font-size: 12px !important;
+  }
+  
+  /* Fix table action buttons */
+  .ant-table-tbody .ant-btn {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    height: 28px !important;
+    min-width: auto !important;
+  }
+  
+  /* Fix avatar sizing override */
+  .ant-statistic-content .ant-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+    line-height: 32px !important;
+  }
+  
+  .ant-statistic-content .ant-avatar .anticon {
+    font-size: 14px !important;
+  }
+  
+  /* Mobile sidebar */
+  .ant-space-vertical {
+    width: 100% !important;
+  }
+  
+  /* Fix sidebar spacing on mobile */
+  .ant-space-vertical > .ant-space-item {
+    width: 100% !important;
+    margin-bottom: 16px !important;
+  }
+  
+  /* Make sidebar cards wider */
+  .ant-space-vertical .ant-card {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  
+  .ant-space-vertical .ant-card-body {
+    padding: 20px !important;
+  }
+  
+  /* Mobile typography */
+  .ant-typography {
+    font-size: 14px !important;
+  }
+  
+  .ant-card-head-title {
+    font-size: 16px !important;
+  }
+  
+  /* Mobile layout adjustments */
+  .dashboard-container {
+    padding: 16px !important;
+  }
+  
+  /* Mobile agreement cards */
+  .agreement-card-mobile {
+    margin-bottom: 16px !important;
+  }
+  
+  .agreement-card-mobile .ant-card-body {
+    padding: 16px !important;
+  }
+}
+
 @media (max-width: 480px) {
   .payment-amounts-mobile {
     flex-direction: column !important;
@@ -2021,8 +2196,74 @@ const WriterDashboard = () => {
   .professional-table .ant-pagination-jump-next {
     display: inline-block !important;
   }
+  
+  /* Mobile app feel optimizations */
+  .mobile-bottom-tabs-visible {
+    padding-bottom: 80px;
+  }
+  
+  /* Mobile header card optimization */
+  .ant-card {
+    margin-bottom: 16px !important;
+  }
+  
+  /* Mobile welcome section */
+  .ant-typography h1 {
+    font-size: 24px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 8px !important;
+  }
+  
+  /* Mobile location section */
+  .location-status-mobile {
+    padding: 12px !important;
+    margin-top: 16px !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+  }
+  
+  /* Mobile stats cards */
+  .stat-cards .ant-col {
+    margin-bottom: 16px !important;
+  }
+  
+  .stat-card {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Mobile quick actions */
+  .quick-actions-mobile {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  .quick-actions-mobile .ant-btn {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Remove extra spacing after quick actions */
+  .quick-actions-section {
+    margin-bottom: 0 !important;
+  }
+  
+  /* Mobile table improvements */
+  .ant-table-wrapper {
+    margin-bottom: 0 !important;
+  }
+  
+  /* Mobile content wrapper */
+  .content-wrapper-mobile {
+    padding: 16px !important;
+    padding-bottom: 88px !important;
+  }
 }
 `}</style>
+      <MobileBottomTabs />
     </Layout>
   );
 };

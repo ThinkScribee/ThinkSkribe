@@ -58,7 +58,7 @@ const JobManagement = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 100, // Increased page size to show more jobs
     total: 0
   });
   const [filters, setFilters] = useState({
@@ -227,13 +227,33 @@ const JobManagement = () => {
       <Card
         key={job._id}
         hoverable
-        style={{ marginBottom: 16 }}
+        className="job-card job-card-mobile"
+        style={{ 
+          marginBottom: 20,
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.3s ease',
+          overflow: 'hidden'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+        }}
         actions={[
           <Tooltip title="View Details">
             <Button
               type="text"
               icon={<EyeOutlined />}
               onClick={() => handleViewJob(job)}
+              style={{ 
+                fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                height: window.innerWidth < 768 ? '32px' : 'auto'
+              }}
             >
               View
             </Button>
@@ -244,6 +264,10 @@ const JobManagement = () => {
                 type="text"
                 icon={<EditOutlined />}
                 onClick={() => handleEditJob(job)}
+                style={{ 
+                  fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                  height: window.innerWidth < 768 ? '32px' : 'auto'
+                }}
               >
                 Edit
               </Button>
@@ -261,6 +285,10 @@ const JobManagement = () => {
                   type="text"
                   danger
                   icon={<DeleteOutlined />}
+                  style={{ 
+                    fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                    height: window.innerWidth < 768 ? '32px' : 'auto'
+                  }}
                 >
                   Delete
                 </Button>
@@ -454,18 +482,31 @@ const JobManagement = () => {
   ];
 
   return (
-    <div>
+    <div className="mobile-bottom-tabs-visible">
       <div className="job-management-header" style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        marginBottom: 16,
+        marginBottom: 24,
         flexDirection: window.innerWidth < 768 ? 'column' : 'row',
-        gap: window.innerWidth < 768 ? '16px' : '0'
+        gap: window.innerWidth < 768 ? '20px' : '0',
+        padding: window.innerWidth < 768 ? '16px' : '24px',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        borderRadius: '16px',
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
       }}>
-        <Title level={2} style={{ margin: 0 }}>
+        <Title level={window.innerWidth < 768 ? 3 : 2} style={{ 
+          margin: 0,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          fontWeight: '700',
+          textAlign: window.innerWidth < 768 ? 'center' : 'left'
+        }}>
           <Space>
-            <FileTextOutlined />
+            <FileTextOutlined style={{ color: '#667eea' }} />
             My Jobs
           </Space>
         </Title>
@@ -473,25 +514,46 @@ const JobManagement = () => {
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => setPostingModalVisible(true)}
-          size="large"
+          size={window.innerWidth < 768 ? 'middle' : 'large'}
           style={{ 
             width: window.innerWidth < 768 ? '100%' : 'auto',
-            minWidth: '140px',
-            height: '48px',
-            fontSize: '16px',
+            minWidth: window.innerWidth < 768 ? 'auto' : '160px',
+            height: window.innerWidth < 768 ? '48px' : '52px',
+            fontSize: window.innerWidth < 768 ? '14px' : '16px',
             fontWeight: '600',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '8px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            border: 'none',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
           }}
         >
-          Post New Job
+          {window.innerWidth < 768 ? 'Post Job' : 'Post New Job'}
         </Button>
       </div>
 
       {/* Search and Filters */}
-      <Card style={{ marginBottom: 16 }} className="job-filters">
+      <Card 
+        style={{ 
+          marginBottom: 24,
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
+        }} 
+        className="job-filters"
+      >
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={16} md={16} lg={16} xl={16}>
             <Search
@@ -529,19 +591,22 @@ const JobManagement = () => {
           <div>
             {jobs.map(renderJobCard)}
             
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <Pagination
-                current={pagination.current}
-                total={pagination.total}
-                pageSize={pagination.pageSize}
-                onChange={handlePageChange}
-                showSizeChanger
-                showQuickJumper
-                showTotal={(total, range) =>
-                  `${range[0]}-${range[1]} of ${total} jobs`
-                }
-              />
-            </div>
+            {/* Pagination - Only show if there are many jobs */}
+            {pagination.total > pagination.pageSize && (
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <Pagination
+                  current={pagination.current}
+                  total={pagination.total}
+                  pageSize={pagination.pageSize}
+                  onChange={handlePageChange}
+                  showSizeChanger
+                  showQuickJumper
+                  showTotal={(total, range) =>
+                    `${range[0]}-${range[1]} of ${total} jobs`
+                  }
+                />
+              </div>
+            )}
           </div>
         )}
       </Spin>

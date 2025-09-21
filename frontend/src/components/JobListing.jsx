@@ -56,7 +56,7 @@ const JobListing = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50, // Increased page size for writers to see more jobs
     total: 0
   });
   const [filters, setFilters] = useState({
@@ -263,14 +263,33 @@ const JobListing = () => {
       <Card
         key={job._id}
         hoverable
-        style={{ marginBottom: 16 }}
+        style={{ 
+          marginBottom: 20,
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.3s ease',
+          overflow: 'hidden'
+        }}
         className="job-card job-card-mobile"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+        }}
         actions={[
           <Tooltip title="View Details">
             <Button
               type="text"
               icon={<EyeOutlined />}
               onClick={() => handleJobView(job)}
+              style={{ 
+                fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                height: window.innerWidth < 768 ? '32px' : 'auto'
+              }}
             >
               View
             </Button>
@@ -280,7 +299,11 @@ const JobListing = () => {
               type="text"
               icon={<MessageOutlined />}
               onClick={() => handleChatWithStudent(job)}
-              style={{ color: '#52c41a' }}
+              style={{ 
+                color: '#52c41a',
+                fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                height: window.innerWidth < 768 ? '32px' : 'auto'
+              }}
             >
               Chat
             </Button>
@@ -290,11 +313,21 @@ const JobListing = () => {
               type="primary"
               icon={<SendOutlined />}
               onClick={() => handleApply(job)}
+              style={{ 
+                fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                height: window.innerWidth < 768 ? '32px' : 'auto'
+              }}
             >
               Apply
             </Button>
           ) : applicationStatus || (
-            <Button disabled>
+            <Button 
+              disabled
+              style={{ 
+                fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                height: window.innerWidth < 768 ? '32px' : 'auto'
+              }}
+            >
               {job.status !== 'open' ? 'Closed' : 'Already Applied'}
             </Button>
           )
@@ -384,16 +417,41 @@ const JobListing = () => {
   };
 
   return (
-    <div>
-      <Title level={2}>
-        <Space>
-          <FileTextOutlined />
-          Available Jobs
-        </Space>
-      </Title>
+    <div className="mobile-bottom-tabs-visible">
+      <div style={{ 
+        marginBottom: 24,
+        padding: window.innerWidth < 768 ? '16px' : '24px',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        borderRadius: '16px',
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
+      }}>
+        <Title level={window.innerWidth < 768 ? 3 : 2} style={{ 
+          margin: 0,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          fontWeight: '700',
+          textAlign: window.innerWidth < 768 ? 'center' : 'left'
+        }}>
+          <Space>
+            <FileTextOutlined style={{ color: '#667eea' }} />
+            Available Jobs
+          </Space>
+        </Title>
+      </div>
 
       {/* Search and Filters */}
-      <Card style={{ marginBottom: 16 }} className="job-filters">
+      <Card 
+        style={{ 
+          marginBottom: 24,
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
+        }} 
+        className="job-filters"
+      >
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={8} lg={8} xl={8}>
             <Search
@@ -465,19 +523,22 @@ const JobListing = () => {
           <div>
             {jobs.map(renderJobCard)}
             
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <Pagination
-                current={pagination.current}
-                total={pagination.total}
-                pageSize={pagination.pageSize}
-                onChange={handlePageChange}
-                showSizeChanger
-                showQuickJumper
-                showTotal={(total, range) =>
-                  `${range[0]}-${range[1]} of ${total} jobs`
-                }
-              />
-            </div>
+            {/* Pagination - Only show if there are many jobs */}
+            {pagination.total > pagination.pageSize && (
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <Pagination
+                  current={pagination.current}
+                  total={pagination.total}
+                  pageSize={pagination.pageSize}
+                  onChange={handlePageChange}
+                  showSizeChanger
+                  showQuickJumper
+                  showTotal={(total, range) =>
+                    `${range[0]}-${range[1]} of ${total} jobs`
+                  }
+                />
+              </div>
+            )}
           </div>
         )}
       </Spin>

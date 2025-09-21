@@ -681,27 +681,9 @@ const HeaderComponent = () => {
       >
         {/* THREE SECTION LAYOUT */}
         <div className="header-main-container">
-          {/* LEFT SECTION: Mobile Menu + Logo */}
+          {/* LEFT SECTION: Logo Only on Mobile */}
           <div className="header-left-section">
-            {screenSize.isMobile && (
-              <Button
-                className="mobile-menu-btn"
-                icon={<MenuOutlined />}
-                type="text"
-                onClick={() => setDrawerVisible(true)}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: 0,
-                  border: 'none',
-                  borderRadius: '8px',
-                  background: 'transparent'
-                }}
-              />
-            )}
+            {/* Hamburger menu removed for mobile - navigation moved to bottom tabs */}
 
             <Link to={isAuthenticated ? getDashboardLink() : '/'} className="header-logo">
               <img

@@ -77,6 +77,7 @@ import VoiceWaveform from '../components/VoiceWaveform.jsx';
 // Import premium Writer chat CSS
 import './WriterChat.css';
 import './MobileChat.css';
+import '../components/ChatMobile.css';
 
 const { Sider, Content } = Layout;
 // Removed Typography usage; using Tailwind-styled elements instead
@@ -1024,7 +1025,7 @@ const WriterChat = () => {
           return (
             <List.Item
               onClick={() => handleSelectChat(chat)}
-              className={`professional-chat-item ${
+              className={`professional-chat-item mobile-chat-item ${
                 selectedChat && selectedChat._id === chat._id ? 'selected' : ''
               } ${hasUnread ? 'unread' : ''}`}
             >
@@ -1069,17 +1070,6 @@ const WriterChat = () => {
                       {other.name || 'Unknown'}
                     </span>
                     <div className="chat-meta">
-                      <Badge
-                        text={other.role === 'student' ? 'Student' : 'Writer'}
-                        style={{
-                          backgroundColor: other.role === 'student' ? '#dbeafe' : '#dcfce7',
-                          color: other.role === 'student' ? '#1e40af' : '#166534',
-                          fontSize: '10px',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          fontWeight: '600'
-                        }}
-                      />
                       {lastMsg && (
                         <span className="chat-time">
                           {formatTime(lastMsg.timestamp)}
@@ -1345,6 +1335,7 @@ const WriterChat = () => {
   return (
     <>
       <Layout 
+        className="mobile-bottom-tabs-visible"
         style={{ height: '100vh' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -1522,19 +1513,6 @@ const WriterChat = () => {
                       }}>
                         {selectedChat.participants.find((p) => p._id !== user._id).name}
                       </h4>
-                      <Tag 
-                        color={selectedChat.participants.find((p) => p._id !== user._id).role === 'student' ? 'blue' : 'green'}
-                        style={{ 
-                          margin: 0, 
-                          fontWeight: 600, 
-                          fontSize: '11px',
-                          borderRadius: '6px',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}
-                      >
-                        {selectedChat.participants.find((p) => p._id !== user._id).role === 'student' ? 'Student' : 'Writer'}
-                      </Tag>
                     </div>
                     {otherUserTyping ? (
                       <div style={{ 
