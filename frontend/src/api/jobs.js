@@ -193,6 +193,7 @@ export const getJobStats = async () => {
 export const validateJobBudget = (jobType, amount, currency = 'NGN') => {
   const pricing = {
     'full-project': { minAmount: 80000, currency: 'NGN' },
+    'it_Report': { minAmount: 20000, currency: 'NGN' },
     'term-paper': { minAmount: 25000, currency: 'NGN' },
     'chapter': { minAmount: 30000, currency: 'NGN' },
     'assignment': { minAmount: 10000, currency: 'NGN' }
@@ -292,6 +293,7 @@ export const getUrgencyColor = (urgencyLevel) => {
 export const getJobTypeDisplayName = (jobType) => {
   const displayNames = {
     'full-project': 'Full Project',
+    'it_Report': 'IT/SIWES Report',
     'term-paper': 'Term Paper',
     'chapter': 'Chapter',
     'assignment': 'Assignment'

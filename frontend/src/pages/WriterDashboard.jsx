@@ -63,6 +63,7 @@ import MobileBottomTabs from '../components/MobileBottomTabs';
 import { useCurrency } from '../hooks/useCurrency';
 import moment from 'moment';
 import './WriterDashboard.css';
+import '../components/DashboardMobile.css';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -695,13 +696,13 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 50 : 65}
               icon={<DollarOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.2)', 
                 color: 'white',
-                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
-              }} 
+                fontSize: window.innerWidth < 768 ? '22px' : '29px'
+              }}
             />
           </div>
         </Card>
@@ -733,12 +734,12 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 50 : 65}
               icon={<BankOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.2)', 
                 color: 'white',
-                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
+                fontSize: window.innerWidth < 768 ? '22px' : '29px'
               }} 
             />
           </div>
@@ -771,12 +772,12 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 50 : 65}
               icon={<ClockCircleOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.2)', 
                 color: 'white',
-                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
+                fontSize: window.innerWidth < 768 ? '22px' : '29px'
               }} 
             />
           </div>
@@ -807,12 +808,12 @@ const WriterDashboard = () => {
               </div>
             </div>
             <Avatar 
-              size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+              size={window.innerWidth < 768 ? 50 : 65}
               icon={<TrophyOutlined />} 
               style={{ 
                 backgroundColor: 'rgba(44,62,80,0.1)', 
                 color: '#2c3e50',
-                fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
+                fontSize: window.innerWidth < 768 ? '22px' : '29px'
               }} 
             />
           </div>
@@ -849,7 +850,7 @@ const WriterDashboard = () => {
         <div className="student-info">
           <div className="student-avatar-section">
             <Avatar 
-              size={40} 
+              size={72} 
               icon={<UserOutlined />} 
               src={student?.avatar}
               className="student-avatar"
@@ -1106,46 +1107,34 @@ const WriterDashboard = () => {
       <Content className="dashboard-content">
         <div className="dashboard-container">
           {/* Premium Header Section */}
-          <div 
-            className="dashboard-header premium-header"
-            style={{
-              background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-              borderRadius: '20px',
-              padding: '32px',
-              marginBottom: '32px',
-              color: 'white'
-            }}
-          >
+          <div className="writer-header-mobile dashboard-header-desktop">
             <div className="header-content">
               <div className="welcome-section">
                 <Title 
                   level={1} 
-                  style={{ 
-                    color: 'white',
-                    marginBottom: '8px',
-                    fontSize: 'clamp(28px, 6vw, 42px)',
-                    fontWeight: '800'
-                  }}
+                  className="welcome-title-mobile welcome-title-desktop"
                 >
-                  Welcome back, <span className="user-name">{user?.name}</span> 👋
+                  Welcome back, <span className="user-name-mobile user-name-desktop">{user?.name}</span> 👋
                 </Title>
-                <Paragraph style={{ color: 'rgba(255,255,255,0.9)', fontSize: '16px', marginBottom: 0 }}>
+                <Paragraph className="welcome-subtitle-mobile welcome-subtitle-desktop">
                   Manage your projects, track earnings, and grow your freelance business
                 </Paragraph>
                 
                 {/* Location Status */}
-                <div style={{ marginTop: '12px', padding: '8px 12px', background: userLocation ? '#f0f9ff' : '#fef2f2', borderRadius: '8px', border: `1px solid ${userLocation ? '#3b82f6' : '#ef4444'}` }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <EnvironmentOutlined style={{ color: userLocation ? '#3b82f6' : '#ef4444' }} />
-                    {userLocation ? (
-                      <Text style={{ fontSize: '14px', color: '#1e40af' }}>
-                        {userLocation.flag} {userLocation.displayName || userLocation.country} • Earnings in USD (≈ {userLocation.currencySymbol} for reference)
-                      </Text>
-                    ) : (
-                      <Text style={{ fontSize: '14px', color: '#1e40af' }}>
-                        🇳🇬 Nigeria • Earnings in USD (≈ ₦ for reference)
-                      </Text>
-                    )}
+                <div className="location-status-mobile location-status-desktop">
+                  <div className="location-content-mobile">
+                    <EnvironmentOutlined />
+                    <div className="location-text-mobile">
+                      {userLocation ? (
+                        <Text>
+                          {userLocation.flag} {userLocation.displayName || userLocation.country} • Earnings in USD (≈ {userLocation.currencySymbol} for reference)
+                        </Text>
+                      ) : (
+                        <Text>
+                          🇳🇬 Nigeria • Earnings in USD (≈ ₦ for reference)
+                        </Text>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1297,125 +1286,135 @@ const WriterDashboard = () => {
                           }}
                           bodyStyle={{ padding: '16px' }}
                         >
+                          {/* Compact Header */}
                           <div style={{ marginBottom: '12px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                              <Title level={5} style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                              <Title level={5} style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3', flex: 1, marginRight: '8px' }}>
                                 {agreement.projectDetails?.title || 'Untitled Project'}
                               </Title>
-                              <Tag color="processing" style={{ margin: 0, borderRadius: '6px', fontSize: '11px', fontWeight: '500' }}>
-                                <ClockCircleOutlined /> In Progress
+                              <Tag color="processing" style={{ margin: 0, borderRadius: '4px', fontSize: '10px', fontWeight: '500', padding: '2px 6px' }}>
+                                <ClockCircleOutlined style={{ fontSize: '10px' }} />
                               </Tag>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                              <Tag color="blue" style={{ fontSize: '10px', borderRadius: '4px' }}>
-                                ID: {agreement._id?.slice(-8)}
-                              </Tag>
-                              <Text type="secondary" style={{ fontSize: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Text type="secondary" style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <BookOutlined style={{ fontSize: '10px' }} />
                                 {agreement.projectDetails?.subject || 'General'}
+                              </Text>
+                              <Text type="secondary" style={{ fontSize: '10px', color: '#9ca3af' }}>
+                                #{agreement._id?.slice(-6)}
                               </Text>
                             </div>
                           </div>
 
-                          <div style={{ 
-                            background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', 
-                            padding: '12px', 
-                            borderRadius: '8px', 
-                            marginBottom: '12px' 
-                          }}>
-                            <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '6px' }}>
-                              STUDENT
-                            </Text>
-                            {agreement.student ? (
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <Avatar 
-                                  size={36} 
-                                  icon={<UserOutlined />} 
-                                  src={agreement.student?.avatar}
-                                  style={{ backgroundColor: '#667eea', flexShrink: 0 }}
-                                />
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                  <Text strong style={{ fontSize: '14px', color: '#1f2937', display: 'block' }}>
-                                    {agreement.student.name}
+                          {/* Compact Student Info */}
+                          {agreement.student ? (
+                            <div style={{ 
+                              background: '#f8fafc', 
+                              padding: '8px', 
+                              borderRadius: '6px', 
+                              marginBottom: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px'
+                            }}>
+                              <Avatar 
+                                size={43} 
+                                icon={<UserOutlined />} 
+                                src={agreement.student?.avatar}
+                                style={{ backgroundColor: '#667eea', flexShrink: 0 }}
+                              />
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <Text style={{ fontSize: '12px', color: '#1f2937', fontWeight: '500', display: 'block' }}>
+                                  {agreement.student.name}
+                                </Text>
+                              </div>
+                              <MessageOutlined style={{ color: '#667eea', fontSize: '14px' }} />
+                            </div>
+                          ) : (
+                            <div style={{ 
+                              background: '#fef3cd', 
+                              padding: '8px', 
+                              borderRadius: '6px', 
+                              marginBottom: '10px',
+                              textAlign: 'center'
+                            }}>
+                              <Text type="secondary" style={{ fontSize: '11px' }}>
+                                <UserOutlined style={{ marginRight: '4px' }} />
+                                Student info unavailable
+                              </Text>
+                            </div>
+                          )}
+
+                          {/* Compact Payment Progress */}
+                          {(() => {
+                            let paidAmount = 0;
+                            let totalAmount = agreement.totalAmount || 0;
+                            const detectedCurrency = getAgreementCurrency(agreement);
+                            paidAmount = agreement.paidAmount || 0;
+                            const progressPercentage = totalAmount > 0 ? (paidAmount / totalAmount) * 100 : 0;
+                            
+                            return (
+                              <div style={{ marginBottom: '10px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                  <Text style={{ fontSize: '12px', fontWeight: '600', color: '#059669', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <DollarOutlined style={{ fontSize: '10px' }} />
+                                    {formatCurrency(paidAmount, detectedCurrency)}
                                   </Text>
-                                  <Text type="secondary" style={{ fontSize: '11px', display: 'block' }}>
-                                    {agreement.student?.email || 'No email'}
+                                  <Text style={{ fontSize: '11px', color: '#6b7280' }}>
+                                    of {formatCurrency(totalAmount, detectedCurrency)}
                                   </Text>
                                 </div>
+                                <Progress 
+                                  percent={progressPercentage} 
+                                  size="small" 
+                                  status={progressPercentage === 100 ? 'success' : 'active'}
+                                  strokeColor={{
+                                    '0%': '#10b981',
+                                    '100%': '#059669',
+                                  }}
+                                  style={{ marginBottom: '4px' }}
+                                />
                               </div>
-                            ) : (
-                              <Text type="secondary">Student information not available</Text>
-                            )}
-                          </div>
+                            );
+                          })()}
 
-                          <div style={{ marginBottom: '16px' }}>
-                            <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                              PAYMENT PROGRESS
-                            </Text>
-                            {(() => {
-                              let paidAmount = 0;
-                              let totalAmount = agreement.totalAmount || 0;
-                              const detectedCurrency = getAgreementCurrency(agreement);
-                              paidAmount = agreement.paidAmount || 0;
-                              const progressPercentage = totalAmount > 0 ? (paidAmount / totalAmount) * 100 : 0;
-                              
-                              return (
-                                <>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                    <Text style={{ fontSize: '14px', fontWeight: '600', color: '#059669' }}>
-                                      {formatCurrency(paidAmount, detectedCurrency)} paid
-                                    </Text>
-                                    <Text style={{ fontSize: '14px', color: '#6b7280' }}>
-                                      of {formatCurrency(totalAmount, detectedCurrency)}
-                                    </Text>
-                                  </div>
-                                  <Progress 
-                                    percent={progressPercentage} 
-                                    size="small" 
-                                    status={progressPercentage === 100 ? 'success' : 'active'}
-                                    strokeColor={{
-                                      '0%': '#10b981',
-                                      '100%': '#059669',
-                                    }}
-                                    style={{ marginBottom: '6px' }}
-                                  />
-                                </>
-                              );
-                            })()}
-                          </div>
-
-                          <div style={{ display: 'flex', gap: '8px' }}>
+                          {/* Compact Actions */}
+                          <div style={{ display: 'flex', gap: '6px' }}>
                             <Button
                               icon={<MessageOutlined />}
                               type="primary"
-                              size="large"
+                              size="small"
                               onClick={() => navigate(`/chat/writer/${agreement.chatId}`)}
                               disabled={!agreement.chatId}
                               style={{
                                 flex: 1,
-                                borderRadius: '8px',
+                                borderRadius: '6px',
                                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                 border: 'none',
                                 fontWeight: '500',
-                                fontSize: '13px'
+                                fontSize: '11px',
+                                height: '32px'
                               }}
                             >
-                              Chat Student
+                              Chat
                             </Button>
                             <Button
                               icon={<CheckCircleOutlined />}
-                              size="large"
+                              size="small"
                               onClick={() => handleCompleteAssignment(agreement._id)}
                               style={{
                                 flex: 1,
-                                borderRadius: '8px',
+                                borderRadius: '6px',
                                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                                 border: 'none',
                                 color: 'white',
                                 fontWeight: '500',
-                                fontSize: '13px'
+                                fontSize: '11px',
+                                height: '32px'
                               }}
                             >
-                              Mark Complete
+                              Complete
                             </Button>
                           </div>
                         </Card>
@@ -1468,105 +1467,72 @@ const WriterDashboard = () => {
                           }}
                           bodyStyle={{ padding: '16px' }}
                         >
+                          {/* Compact Header */}
                           <div style={{ marginBottom: '12px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                              <Title level={5} style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                              <Title level={5} style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3', flex: 1, marginRight: '8px' }}>
                                 {agreement.projectDetails?.title || 'Untitled Project'}
                               </Title>
-                              <Tag color="warning" style={{ margin: 0, borderRadius: '6px', fontSize: '11px', fontWeight: '500' }}>
-                                <ClockCircleOutlined /> Pending
+                              <Tag color="warning" style={{ margin: 0, borderRadius: '4px', fontSize: '10px', fontWeight: '500', padding: '2px 6px' }}>
+                                <ClockCircleOutlined style={{ fontSize: '10px' }} />
                               </Tag>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                              <Tag color="blue" style={{ fontSize: '10px', borderRadius: '4px' }}>
-                                ID: {agreement._id?.slice(-8)}
-                              </Tag>
-                              <Text type="secondary" style={{ fontSize: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Text type="secondary" style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <BookOutlined style={{ fontSize: '10px' }} />
                                 {agreement.projectDetails?.subject || 'General'}
+                              </Text>
+                              <Text type="secondary" style={{ fontSize: '10px', color: '#9ca3af' }}>
+                                #{agreement._id?.slice(-6)}
                               </Text>
                             </div>
                           </div>
 
+                          {/* Compact Student & Payment */}
                           <div style={{ 
-                            background: 'linear-gradient(135deg, #fef7cd 0%, #fde68a 100%)', 
-                            padding: '12px', 
-                            borderRadius: '8px', 
-                            marginBottom: '12px' 
+                            background: '#fef7cd', 
+                            padding: '8px', 
+                            borderRadius: '6px', 
+                            marginBottom: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
                           }}>
-                            <Text strong style={{ fontSize: '12px', color: '#92400e', display: 'block', marginBottom: '6px' }}>
-                              STUDENT
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Avatar 
+                                size={36} 
+                                icon={<UserOutlined />} 
+                                src={agreement.student?.avatar}
+                                style={{ backgroundColor: '#f59e0b', flexShrink: 0 }}
+                              />
+                              <Text style={{ fontSize: '11px', fontWeight: '500', color: '#92400e' }}>
+                                {agreement.student?.name || 'Unknown Student'}
+                              </Text>
+                            </div>
+                            <Text style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <DollarOutlined style={{ fontSize: '10px' }} />
+                              {formatCurrency(agreement.totalAmount || 0, getAgreementCurrency(agreement))}
                             </Text>
-                            {agreement.student ? (
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <Avatar 
-                                  size={36} 
-                                  icon={<UserOutlined />} 
-                                  src={agreement.student?.avatar}
-                                  style={{ backgroundColor: '#f59e0b', flexShrink: 0 }}
-                                />
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                  <Text strong style={{ fontSize: '14px', color: '#92400e', display: 'block' }}>
-                                    {agreement.student.name}
-                                  </Text>
-                                  <Text type="secondary" style={{ fontSize: '11px', display: 'block' }}>
-                                    {agreement.student?.email || 'No email'}
-                                  </Text>
-                                </div>
-                              </div>
-                            ) : (
-                              <Text type="secondary">Student information not available</Text>
-                            )}
                           </div>
 
-                          <div style={{ marginBottom: '12px' }}>
-                            <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                              PAYMENT DETAILS
-                            </Text>
-                            {(() => {
-                              const totalAmount = agreement.totalAmount || 0;
-                              const detectedCurrency = getAgreementCurrency(agreement);
-
-                              return (
-                                <div style={{ 
-                                  background: '#f8fafc', 
-                                  padding: '10px', 
-                                  borderRadius: '6px',
-                                  border: '1px solid #e2e8f0'
-                                }}>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: '13px', color: '#64748b' }}>
-                                      Total Amount:
-                                    </Text>
-                                    <Text style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
-                                      {formatCurrency(totalAmount, detectedCurrency)}
-                                    </Text>
-                                  </div>
-                                  {agreement.installments && agreement.installments.length > 0 && (
-                                    <Text type="secondary" style={{ fontSize: '11px', marginTop: '4px', display: 'block' }}>
-                                      {agreement.installments.length} installments planned
-                                    </Text>
-                                  )}
-                                </div>
-                              );
-                            })()}
-                          </div>
-
-                          <div style={{ display: 'flex', gap: '8px' }}>
+                          {/* Compact Actions */}
+                          <div style={{ display: 'flex', gap: '6px' }}>
                             <Button
                               type="primary"
-                              size="large"
+                              size="small"
                               onClick={() => handleReviewAgreement(agreement)}
                               loading={accepting && selectedAgreement?._id === agreement._id}
                               style={{
                                 flex: 1,
-                                borderRadius: '8px',
+                                borderRadius: '6px',
                                 background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                                 border: 'none',
                                 fontWeight: '500',
-                                fontSize: '13px'
+                                fontSize: '11px',
+                                height: '32px'
                               }}
                             >
-                              Review Project
+                              Review
                             </Button>
                           </div>
                         </Card>
@@ -1617,126 +1583,110 @@ const WriterDashboard = () => {
                           }}
                           bodyStyle={{ padding: '16px' }}
                         >
+                          {/* Compact Header */}
                           <div style={{ marginBottom: '12px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                              <Title level={5} style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                              <Title level={5} style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3', flex: 1, marginRight: '8px' }}>
                                 {agreement.projectDetails?.title || 'Untitled Project'}
                               </Title>
-                              <Tag color="success" style={{ margin: 0, borderRadius: '6px', fontSize: '11px', fontWeight: '500' }}>
-                                <CheckCircleOutlined /> Completed
+                              <Tag color="success" style={{ margin: 0, borderRadius: '4px', fontSize: '10px', fontWeight: '500', padding: '2px 6px' }}>
+                                <CheckCircleOutlined style={{ fontSize: '10px' }} />
                               </Tag>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                              <Tag color="blue" style={{ fontSize: '10px', borderRadius: '4px' }}>
-                                ID: {agreement._id?.slice(-8)}
-                              </Tag>
-                              <Text type="secondary" style={{ fontSize: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Text type="secondary" style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <BookOutlined style={{ fontSize: '10px' }} />
                                 {agreement.projectDetails?.subject || 'General'}
+                              </Text>
+                              <Text type="secondary" style={{ fontSize: '10px', color: '#9ca3af' }}>
+                                #{agreement._id?.slice(-6)}
                               </Text>
                             </div>
                           </div>
 
+                          {/* Compact Completion & Payment */}
                           <div style={{ 
-                            background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', 
-                            padding: '12px', 
-                            borderRadius: '8px', 
-                            marginBottom: '12px' 
+                            background: '#d1fae5', 
+                            padding: '8px', 
+                            borderRadius: '6px', 
+                            marginBottom: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
                           }}>
-                            <Text strong style={{ fontSize: '12px', color: '#065f46', display: 'block', marginBottom: '6px' }}>
-                              COMPLETION DETAILS
-                            </Text>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <CheckCircleOutlined style={{ color: '#10b981', fontSize: '16px' }} />
-                              <div>
-                                <Text style={{ fontSize: '14px', fontWeight: '500', color: '#065f46', display: 'block' }}>
-                                  Project Delivered
-                                </Text>
-                                <Text type="secondary" style={{ fontSize: '11px' }}>
-                                  Completed {moment(agreement.completedAt || agreement.updatedAt).fromNow()}
-                                </Text>
-                              </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <CheckCircleOutlined style={{ color: '#10b981', fontSize: '12px' }} />
+                              <Text style={{ fontSize: '11px', fontWeight: '500', color: '#065f46' }}>
+                                {moment(agreement.completedAt || agreement.updatedAt).fromNow()}
+                              </Text>
                             </div>
+                            <Text style={{ fontSize: '12px', fontWeight: '600', color: '#065f46', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <DollarOutlined style={{ fontSize: '10px' }} />
+                              {formatCurrency(agreement.paidAmount || agreement.totalAmount || 0, getAgreementCurrency(agreement))}
+                            </Text>
                           </div>
 
-                          <div style={{ marginBottom: '12px' }}>
-                            <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                              COMPLETED FOR
-                            </Text>
-                            {agreement.student ? (
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <Avatar 
-                                  size={32} 
-                                  icon={<UserOutlined />} 
-                                  src={agreement.student?.avatar}
-                                  style={{ backgroundColor: '#10b981', flexShrink: 0 }}
-                                />
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                  <Text strong style={{ fontSize: '13px', color: '#1f2937', display: 'block' }}>
-                                    {agreement.student.name}
-                                  </Text>
-                                  <Text type="secondary" style={{ fontSize: '11px', display: 'block' }}>
-                                    {agreement.student?.email || 'No email'}
-                                  </Text>
-                                </div>
+                          {/* Compact Student Info */}
+                          {agreement.student && (
+                            <div style={{ 
+                              background: '#f8fafc', 
+                              padding: '8px', 
+                              borderRadius: '6px', 
+                              marginBottom: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px'
+                            }}>
+                              <Avatar 
+                                size={43} 
+                                icon={<UserOutlined />} 
+                                src={agreement.student?.avatar}
+                                style={{ backgroundColor: '#10b981', flexShrink: 0 }}
+                              />
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <Text style={{ fontSize: '12px', color: '#1f2937', fontWeight: '500', display: 'block' }}>
+                                  {agreement.student.name}
+                                </Text>
                               </div>
-                            ) : (
-                              <Text type="secondary">Student information not available</Text>
-                            )}
-                          </div>
+                              <MessageOutlined style={{ color: '#10b981', fontSize: '14px' }} />
+                            </div>
+                          )}
 
-                          <div style={{ marginBottom: '16px' }}>
-                            <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                              PAYMENT SUMMARY
-                            </Text>
-                            {(() => {
-                              const totalAmount = agreement.totalAmount || 0;
-                              const paidAmount = agreement.paidAmount || totalAmount;
-                              const detectedCurrency = getAgreementCurrency(agreement);
-
-                              return (
-                                <div style={{ 
-                                  background: '#f0fdf4', 
-                                  padding: '10px', 
-                                  borderRadius: '6px',
-                                  border: '1px solid #bbf7d0'
-                                }}>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                                    <Text style={{ fontSize: '12px', color: '#065f46' }}>
-                                      Total Earned:
-                                    </Text>
-                                    <Text style={{ fontSize: '16px', fontWeight: '600', color: '#065f46' }}>
-                                      {formatCurrency(paidAmount, detectedCurrency)}
-                                    </Text>
-                                  </div>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: '11px', color: '#16a34a' }}>
-                                      Status:
-                                    </Text>
-                                    <Text style={{ fontSize: '11px', color: '#16a34a', fontWeight: '500' }}>
-                                      ✓ Payment Complete
-                                    </Text>
-                                  </div>
-                                </div>
-                              );
-                            })()}
-                          </div>
-
-                          <div style={{ display: 'flex', gap: '8px' }}>
+                          {/* Compact Actions */}
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <Button
+                              icon={<MessageOutlined />}
+                              type="primary"
+                              size="small"
+                              onClick={() => navigate(`/chat/writer/${agreement.chatId}`)}
+                              disabled={!agreement.chatId}
+                              style={{
+                                flex: 1,
+                                borderRadius: '6px',
+                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                border: 'none',
+                                fontWeight: '500',
+                                fontSize: '11px',
+                                height: '32px'
+                              }}
+                            >
+                              Chat
+                            </Button>
                             <Button
                               icon={<EyeOutlined />}
-                              type="primary"
-                              size="large"
+                              size="small"
                               onClick={() => navigate(`/agreements/${agreement._id}`)}
                               style={{
                                 flex: 1,
-                                borderRadius: '8px',
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                border: 'none',
+                                borderRadius: '6px',
+                                borderColor: '#d1d5db',
+                                color: '#374151',
                                 fontWeight: '500',
-                                fontSize: '13px'
+                                fontSize: '11px',
+                                height: '32px'
                               }}
                             >
-                              View Details
+                              Details
                             </Button>
                           </div>
                         </Card>
@@ -2260,6 +2210,32 @@ const WriterDashboard = () => {
   .content-wrapper-mobile {
     padding: 16px !important;
     padding-bottom: 88px !important;
+  }
+  
+  /* Fix header avatars on mobile */
+  .ant-card .ant-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+    line-height: 28px !important;
+  }
+  
+  .ant-card .ant-avatar .anticon {
+    font-size: 12px !important;
+  }
+}
+
+/* Desktop avatar sizing */
+@media (min-width: 769px) {
+  .ant-card .ant-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+    line-height: 36px !important;
+  }
+  
+  .ant-card .ant-avatar .anticon {
+    font-size: 16px !important;
   }
 }
 `}</style>

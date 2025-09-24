@@ -1623,6 +1623,7 @@ const StudentChat = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: isDesktop ? 16 : 12, minWidth: 0, flex: 1 }}>
                   <div style={{ position: 'relative' }}>
                     <Avatar
+                      size={isDesktop ? 40 : 36}
                       src={
                         selectedChat.participants.find((p) => p._id !== user._id)
                           .avatar ||
@@ -2133,7 +2134,7 @@ const StudentChat = () => {
                                           <div style={{ 
                                             marginTop: '8px', 
                                             fontSize: '14px',
-                                            color: isCurrentUser ? 'white' : '#1f2937',
+                                            color: 'inherit',
                                             lineHeight: '1.4'
                                           }}>
                                             {msg.content}
@@ -2146,7 +2147,7 @@ const StudentChat = () => {
                                             size="small"
                                             onClick={() => downloadFile(msg.fileUrl, fileName)}
                                             style={{
-                                              color: isCurrentUser ? 'rgba(255,255,255,0.8)' : '#667eea',
+                                              color: '#667eea',
                                               padding: 0
                                             }}
                                           >
@@ -2210,7 +2211,7 @@ const StudentChat = () => {
                                           <div style={{
                                             marginTop: '8px',
                                             fontSize: '14px',
-                                            color: isCurrentUser ? 'white' : '#1f2937',
+                                            color: 'inherit',
                                             lineHeight: '1.4',
                                             wordWrap: 'break-word',
                                             overflowWrap: 'break-word'
@@ -2271,7 +2272,7 @@ const StudentChat = () => {
                                           <div className="file-name" style={{
                                             fontSize: '14px',
                                             fontWeight: 500,
-                                            color: isCurrentUser ? 'white' : '#1f2937',
+                                            color: 'inherit',
                                             marginBottom: '4px',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
@@ -2298,7 +2299,7 @@ const StudentChat = () => {
                                             downloadFile(msg.fileUrl, fileName);
                                           }}
                                           style={{
-                                            color: isCurrentUser ? 'rgba(255,255,255,0.8)' : '#667eea'
+                                            color: '#667eea'
                                           }}
                                         />
                                       </div>
@@ -2431,12 +2432,12 @@ const StudentChat = () => {
     alignItems: 'center',
     width: '100%',
     maxWidth: 600,
-    background: '#fff',
-    borderRadius: 24,
-    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-    padding: '6px 12px',
+    background: '#ffffff',
+    borderRadius: 18,
+    boxShadow: 'none',
+    padding: '6px 10px',
     border: '1px solid #e5e7eb',
-    margin: '0 auto',
+    margin: '0 auto'
   }}>
                   {/* Emoji picker */}
                   <Popover
@@ -2503,8 +2504,18 @@ const StudentChat = () => {
                     placement="topLeft"
                     overlayStyle={{ borderRadius: 12, overflow: 'hidden' }}
                   >
-                    <button className="action-button mobile-action-button">
-                      <SmileOutlined style={{ fontSize: 20, color: '#6b7280' }} />
+                    <button className="action-button mobile-action-button" style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 8,
+                      background: 'transparent',
+                      border: 'none',
+                      padding: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <SmileOutlined style={{ fontSize: 18, color: '#6b7280' }} />
                     </button>
                   </Popover>
 
@@ -2524,11 +2535,11 @@ const StudentChat = () => {
                       background: 'transparent',
                       outline: 'none',
                       resize: 'none',
-                      fontSize: '16px', // prevent iOS zoom
+                      fontSize: '15px',
                       lineHeight: '1.4',
                       flex: 1,
                       height: '24px',
-                      padding: '0 6px',
+                      padding: '6px 6px',
                       color: '#374151',
                       fontFamily: 'inherit',
                       overflow: 'hidden',
@@ -2695,8 +2706,18 @@ const StudentChat = () => {
                       }}
                       multiple={true}
                     >
-                      <button className="action-button mobile-action-button" title="Upload File">
-                        <PaperClipOutlined style={{ fontSize: 20, color: '#6b7280' }} />
+                      <button className="action-button mobile-action-button" title="Upload File" style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 8,
+                        background: 'transparent',
+                        border: 'none',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <PaperClipOutlined style={{ fontSize: 18, color: '#6b7280' }} />
                       </button>
                     </Upload>
 
@@ -2706,21 +2727,21 @@ const StudentChat = () => {
         onClick={handleSend}
         disabled={false}
         style={{
-          background: 'linear-gradient(135deg, #015382 0%, #017DB0 100%)',
+          background: '#015382',
           color: 'white',
           border: 'none',
-          borderRadius: '50%',
-          width: 40,
-          height: 40,
+          borderRadius: 10,
+          width: 36,
+          height: 36,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 2px 8px rgba(1,83,130,0.10)',
-          marginLeft: 4,
-          transition: 'all 0.2s',
+          boxShadow: 'none',
+          marginLeft: 6,
+          transition: 'background 0.2s',
         }}
       >
-        <SendOutlined style={{ fontSize: 20 }} />
+        <SendOutlined style={{ fontSize: 18 }} />
       </button>
                   </div>
                 </div>

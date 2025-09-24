@@ -71,6 +71,7 @@ import { useCurrency } from '../hooks/useCurrency';
 import { formatCurrency } from '../utils/currencyUtils';
 import moment from 'moment';
 import './StudentDashboard.css';
+import '../components/DashboardMobile.css';
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -1144,41 +1145,35 @@ const StudentDashboard = () => {
       <div style={modernStyles.container}>
         <div style={modernStyles.contentWrapper} className="content-wrapper-mobile">
           {/* Modern Header */}
-          <Card style={modernStyles.headerCard}>
+          <div className={`welcome-header-mobile welcome-header-desktop`}>
             <Row gutter={[24, 24]} align="middle">
               <Col xs={24} lg={16}>
                 <div>
                   <Title 
                     level={1} 
-                    style={{ 
-                      background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                      marginBottom: '8px',
-                      fontSize: 'clamp(28px, 6vw, 42px)',
-                      fontWeight: '800'
-                    }}
+                    className="welcome-title-mobile welcome-title-desktop"
                   >
-                    Welcome back, {user?.name}! 👋
+                    Welcome back, <span className="user-name-mobile user-name-desktop">{user?.name}</span>! 👋
                   </Title>
-                  <Text style={{ fontSize: 'clamp(14px, 3vw, 16px)', color: '#6b7280' }}>
+                  <Text className="welcome-subtitle-mobile welcome-subtitle-desktop">
                     Track your projects and manage your academic success
                   </Text>
                   
                   {/* Location Status */}
-                  <div className="location-status-mobile" style={{ marginTop: '12px', padding: '8px 12px', background: userLocation ? '#f0f9ff' : '#fef2f2', borderRadius: '8px', border: `1px solid ${userLocation ? '#3b82f6' : '#ef4444'}` }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <EnvironmentOutlined style={{ color: userLocation ? '#3b82f6' : '#ef4444' }} />
-                      {userLocation ? (
-                        <Text style={{ fontSize: '14px', color: '#1e40af' }}>
-                          {userLocation.flag} {userLocation.displayName || userLocation.country} • {userLocation.currencySymbol} {userLocation.currency} • Native Pricing
-                        </Text>
-                      ) : (
-                        <Text style={{ fontSize: '14px', color: '#1e40af' }}>
-                          🇳🇬 Nigeria • ₦ NGN • Native Pricing
-                        </Text>
-                      )}
+                  <div className="location-status-mobile location-status-desktop">
+                    <div className="location-content-mobile">
+                      <EnvironmentOutlined />
+                      <div className="location-text-mobile">
+                        {userLocation ? (
+                          <Text>
+                            {userLocation.flag} {userLocation.displayName || userLocation.country} • {userLocation.currencySymbol} {userLocation.currency} • Native Pricing
+                          </Text>
+                        ) : (
+                          <Text>
+                            🇳🇬 Nigeria • ₦ NGN • Native Pricing
+                          </Text>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1230,7 +1225,7 @@ const StudentDashboard = () => {
                 </Space>
               </Col>
             </Row>
-          </Card>
+          </div>
 
           {/* Modern Statistics Cards */}
           <Row gutter={[16, 16]} style={{ marginBottom: '32px' }}>
@@ -1258,12 +1253,12 @@ const StudentDashboard = () => {
                     </div>
                   </div>
                   <Avatar 
-                    size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+                    size={window.innerWidth < 768 ? 28 : 36}
                     icon={<DollarOutlined />} 
                     style={{ 
                       backgroundColor: 'rgba(255,255,255,0.2)', 
                       color: 'white',
-                      fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
+                      fontSize: window.innerWidth < 768 ? '12px' : '16px'
                     }} 
                   />
                 </div>
@@ -1294,12 +1289,12 @@ const StudentDashboard = () => {
                     </div>
                   </div>
                   <Avatar 
-                    size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+                    size={window.innerWidth < 768 ? 28 : 36}
                     icon={<LineChartOutlined />} 
                     style={{ 
                       backgroundColor: 'rgba(255,255,255,0.2)', 
                       color: 'white',
-                      fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
+                      fontSize: window.innerWidth < 768 ? '12px' : '16px'
                     }} 
                   />
                 </div>
@@ -1328,12 +1323,12 @@ const StudentDashboard = () => {
                     </div>
                   </div>
                   <Avatar 
-                    size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+                    size={window.innerWidth < 768 ? 28 : 36}
                     icon={<FileTextOutlined />} 
                     style={{ 
                       backgroundColor: 'rgba(255,255,255,0.2)', 
                       color: 'white',
-                      fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
+                      fontSize: window.innerWidth < 768 ? '12px' : '16px'
                     }} 
                   />
                 </div>
@@ -1362,12 +1357,12 @@ const StudentDashboard = () => {
                     </div>
                   </div>
                   <Avatar 
-                    size={window.innerWidth < 768 ? 32 : { xs: 40, sm: 48, md: 56 }}
+                    size={window.innerWidth < 768 ? 28 : 36}
                     icon={<TrophyOutlined />} 
                     style={{ 
                       backgroundColor: 'rgba(44,62,80,0.1)', 
                       color: '#2c3e50',
-                      fontSize: window.innerWidth < 768 ? '14px' : 'clamp(16px, 3vw, 24px)'
+                      fontSize: window.innerWidth < 768 ? '12px' : '16px'
                     }} 
                   />
                 </div>
@@ -1472,184 +1467,191 @@ const StudentDashboard = () => {
                               }}
                               bodyStyle={{ padding: '16px' }}
                             >
-                              {/* Header Section */}
+                              {/* Compact Header */}
                               <div style={{ marginBottom: '12px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                                  <Title level={5} style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                                  <Title level={5} style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3', flex: 1, marginRight: '8px' }}>
                                     {agreement.projectDetails?.title || 'Untitled Project'}
                                   </Title>
-                                  <Tag color="processing" style={{ margin: 0, borderRadius: '6px', fontSize: '11px', fontWeight: '500' }}>
-                                    <ClockCircleOutlined /> In Progress
+                                  <Tag color="processing" style={{ margin: 0, borderRadius: '4px', fontSize: '10px', fontWeight: '500', padding: '2px 6px' }}>
+                                    <ClockCircleOutlined style={{ fontSize: '10px' }} />
                                   </Tag>
                                 </div>
-                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                  <Tag color="blue" style={{ fontSize: '10px', borderRadius: '4px' }}>
-                                    ID: {agreement._id?.slice(-8)}
-                                  </Tag>
-                                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <Text type="secondary" style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <BookOutlined style={{ fontSize: '10px' }} />
                                     {agreement.projectDetails?.subject || 'General'}
+                                  </Text>
+                                  <Text type="secondary" style={{ fontSize: '10px', color: '#9ca3af' }}>
+                                    #{agreement._id?.slice(-6)}
                                   </Text>
                                 </div>
                               </div>
 
-                              {/* Writer Info */}
-                              <div style={{ 
-                                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', 
-                                padding: '12px', 
-                                borderRadius: '8px', 
-                                marginBottom: '12px' 
-                              }}>
-                                <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '6px' }}>
-                                  ASSIGNED WRITER
-                                </Text>
-                                {agreement.writer ? (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <Avatar 
-                                      size={36} 
-                                      icon={<UserOutlined />} 
-                                      src={agreement.writer?.avatar}
-                                      style={{ backgroundColor: '#667eea', flexShrink: 0 }}
-                                    />
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                      <Text strong style={{ fontSize: '14px', color: '#1f2937', display: 'block' }}>
-                                        {agreement.writer.name}
+                              {/* Compact Writer Info */}
+                              {agreement.writer ? (
+                                <div style={{ 
+                                  background: '#f8fafc', 
+                                  padding: '8px', 
+                                  borderRadius: '6px', 
+                                  marginBottom: '10px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px'
+                                }}>
+                                  <Avatar 
+                                    size={24} 
+                                    icon={<UserOutlined />} 
+                                    src={agreement.writer?.avatar}
+                                    style={{ backgroundColor: '#667eea', flexShrink: 0 }}
+                                  />
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <Text style={{ fontSize: '12px', color: '#1f2937', fontWeight: '500', display: 'block' }}>
+                                      {agreement.writer.name}
+                                    </Text>
+                                  </div>
+                                  <MessageOutlined style={{ color: '#667eea', fontSize: '14px' }} />
+                                </div>
+                              ) : (
+                                <div style={{ 
+                                  background: '#fef3cd', 
+                                  padding: '8px', 
+                                  borderRadius: '6px', 
+                                  marginBottom: '10px',
+                                  textAlign: 'center'
+                                }}>
+                                  <Text type="secondary" style={{ fontSize: '11px' }}>
+                                    <LoadingOutlined style={{ marginRight: '4px' }} />
+                                    Awaiting assignment
+                                  </Text>
+                                </div>
+                              )}
+
+                              {/* Compact Payment Progress */}
+                              {(() => {
+                                let paidAmount = 0;
+                                let totalAmount = agreement.totalAmount || 0;
+                                let paidInstallments = 0;
+                                let totalInstallments = 0;
+
+                                if (agreement.installments && agreement.installments.length > 0) {
+                                  totalInstallments = agreement.installments.length;
+                                  paidInstallments = agreement.installments.filter(inst => 
+                                    inst.status === 'paid' || inst.status === 'processing'
+                                  ).length;
+                                  paidAmount = agreement.installments.reduce((sum, inst) => {
+                                    return sum + (inst.status === 'paid' || inst.status === 'processing' ? inst.amount : 0);
+                                  }, 0);
+                                } else {
+                                  paidAmount = agreement.paidAmount || 0;
+                                }
+
+                                const progressPercentage = totalAmount > 0 ? (paidAmount / totalAmount) * 100 : 0;
+                                const isFullyPaid = (totalAmount - paidAmount) <= 0.01;
+                                const detectedCurrency = getAgreementCurrency(agreement);
+
+                                return (
+                                  <div style={{ marginBottom: '10px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                      <Text style={{ fontSize: '12px', fontWeight: '600', color: '#059669', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <DollarOutlined style={{ fontSize: '10px' }} />
+                                        {formatCurrency(paidAmount, detectedCurrency)}
                                       </Text>
-                                      <Text type="secondary" style={{ fontSize: '11px', display: 'block' }}>
-                                        {agreement.writer?.email || 'No email'}
+                                      <Text style={{ fontSize: '11px', color: '#6b7280' }}>
+                                        of {formatCurrency(totalAmount, detectedCurrency)}
+                                      </Text>
+                                    </div>
+                                    <Progress 
+                                      percent={progressPercentage} 
+                                      size="small" 
+                                      status={isFullyPaid ? 'success' : 'active'}
+                                      strokeColor={{
+                                        '0%': '#10b981',
+                                        '100%': '#059669',
+                                      }}
+                                      style={{ marginBottom: '4px' }}
+                                    />
+                                    {totalInstallments > 0 && (
+                                      <Text type="secondary" style={{ fontSize: '10px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <CreditCardOutlined style={{ fontSize: '8px' }} />
+                                        {paidInstallments}/{totalInstallments} payments
+                                      </Text>
+                                    )}
+                                  </div>
+                                );
+                              })()}
+
+                              {/* Compact Timeline */}
+                              {(() => {
+                                const dueDate = agreement.projectDetails?.deadline;
+                                if (!dueDate) return (
+                                  <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <CalendarOutlined style={{ color: '#9ca3af', fontSize: '12px' }} />
+                                    <Text type="secondary" style={{ fontSize: '11px' }}>No deadline</Text>
+                                  </div>
+                                );
+                                
+                                const isOverdue = moment().isAfter(moment(dueDate));
+                                const daysUntilDue = moment(dueDate).diff(moment(), 'days');
+                                
+                                return (
+                                  <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <CalendarOutlined style={{ 
+                                      color: isOverdue ? '#ef4444' : daysUntilDue <= 3 ? '#f59e0b' : '#10b981',
+                                      fontSize: '12px'
+                                    }} />
+                                    <div style={{ flex: 1 }}>
+                                      <Text style={{ 
+                                        fontSize: '12px', 
+                                        fontWeight: '500',
+                                        color: isOverdue ? '#ef4444' : daysUntilDue <= 3 ? '#f59e0b' : '#374151'
+                                      }}>
+                                        {moment(dueDate).format('MMM DD')}
+                                      </Text>
+                                      <Text type="secondary" style={{ fontSize: '10px', display: 'block' }}>
+                                        {isOverdue ? `${Math.abs(daysUntilDue)}d overdue` : 
+                                         daysUntilDue === 0 ? 'Today' :
+                                         `${daysUntilDue}d left`}
                                       </Text>
                                     </div>
                                   </div>
-                                ) : (
-                                  <Text type="secondary">Not assigned</Text>
-                                )}
-                              </div>
+                                );
+                              })()}
 
-                              {/* Payment Progress */}
-                              <div style={{ marginBottom: '12px' }}>
-                                <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                                  PAYMENT PROGRESS
-                                </Text>
-                                {(() => {
-                                  let paidAmount = 0;
-                                  let totalAmount = agreement.totalAmount || 0;
-                                  let paidInstallments = 0;
-                                  let totalInstallments = 0;
-
-                                  if (agreement.installments && agreement.installments.length > 0) {
-                                    totalInstallments = agreement.installments.length;
-                                    paidInstallments = agreement.installments.filter(inst => 
-                                      inst.status === 'paid' || inst.status === 'processing'
-                                    ).length;
-                                    paidAmount = agreement.installments.reduce((sum, inst) => {
-                                      return sum + (inst.status === 'paid' || inst.status === 'processing' ? inst.amount : 0);
-                                    }, 0);
-                                  } else {
-                                    paidAmount = agreement.paidAmount || 0;
-                                  }
-
-                                  const progressPercentage = totalAmount > 0 ? (paidAmount / totalAmount) * 100 : 0;
-                                  const isFullyPaid = (totalAmount - paidAmount) <= 0.01;
-                                  const detectedCurrency = getAgreementCurrency(agreement);
-
-                                  return (
-                                    <>
-                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                        <Text style={{ fontSize: '14px', fontWeight: '600', color: '#059669' }}>
-                                          {formatCurrency(paidAmount, detectedCurrency)} paid
-                                        </Text>
-                                        <Text style={{ fontSize: '14px', color: '#6b7280' }}>
-                                          of {formatCurrency(totalAmount, detectedCurrency)}
-                                        </Text>
-                                      </div>
-                                      <Progress 
-                                        percent={progressPercentage} 
-                                        size="small" 
-                                        status={isFullyPaid ? 'success' : 'active'}
-                                        strokeColor={{
-                                          '0%': '#10b981',
-                                          '100%': '#059669',
-                                        }}
-                                        style={{ marginBottom: '6px' }}
-                                      />
-                                      {totalInstallments > 0 && (
-                                        <Text type="secondary" style={{ fontSize: '11px' }}>
-                                          {paidInstallments} of {totalInstallments} installments completed
-                                        </Text>
-                                      )}
-                                    </>
-                                  );
-                                })()}
-                              </div>
-
-                              {/* Timeline */}
-                              <div style={{ marginBottom: '16px' }}>
-                                <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '6px' }}>
-                                  TIMELINE
-                                </Text>
-                                {(() => {
-                                  const dueDate = agreement.projectDetails?.deadline;
-                                  if (!dueDate) return <Text type="secondary" style={{ fontSize: '12px' }}>No deadline set</Text>;
-                                  
-                                  const isOverdue = moment().isAfter(moment(dueDate));
-                                  const daysUntilDue = moment(dueDate).diff(moment(), 'days');
-                                  
-                                  return (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                      <CalendarOutlined style={{ 
-                                        color: isOverdue ? '#ef4444' : daysUntilDue <= 3 ? '#f59e0b' : '#10b981',
-                                        fontSize: '14px'
-                                      }} />
-                                      <div>
-                                        <Text style={{ 
-                                          fontSize: '13px', 
-                                          fontWeight: '500',
-                                          color: isOverdue ? '#ef4444' : daysUntilDue <= 3 ? '#f59e0b' : '#374151'
-                                        }}>
-                                          Due {moment(dueDate).format('MMM DD, YYYY')}
-                                        </Text>
-                                        <Text type="secondary" style={{ fontSize: '11px', display: 'block' }}>
-                                          {isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
-                                           daysUntilDue === 0 ? 'Due today' :
-                                           `${daysUntilDue} days remaining`}
-                                        </Text>
-                                      </div>
-                                    </div>
-                                  );
-                                })()}
-                              </div>
-
-                              {/* Actions */}
-                              <div style={{ display: 'flex', gap: '8px' }}>
+                              {/* Compact Actions */}
+                              <div style={{ display: 'flex', gap: '6px' }}>
                                 <Button
                                   icon={<MessageOutlined />}
                                   type="primary"
-                                  size="large"
+                                  size="small"
                                   onClick={() => navigate(`/chat/student/${agreement.writer?._id}`)}
                                   style={{
                                     flex: 1,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                     border: 'none',
                                     fontWeight: '500',
-                                    fontSize: '13px'
+                                    fontSize: '11px',
+                                    height: '32px'
                                   }}
                                 >
-                                  Chat Writer
+                                  Chat
                                 </Button>
                                 <Button
                                   icon={<EyeOutlined />}
-                                  size="large"
+                                  size="small"
                                   onClick={() => navigate(`/agreements/${agreement._id}`)}
                                   style={{
                                     flex: 1,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     borderColor: '#d1d5db',
                                     color: '#374151',
                                     fontWeight: '500',
-                                    fontSize: '13px'
+                                    fontSize: '11px',
+                                    height: '32px'
                                   }}
                                 >
-                                  View Details
+                                  Details
                                 </Button>
                               </div>
                             </Card>
@@ -1702,149 +1704,117 @@ const StudentDashboard = () => {
                               }}
                               bodyStyle={{ padding: '16px' }}
                             >
-                              {/* Header Section */}
+                              {/* Compact Header */}
                               <div style={{ marginBottom: '12px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                                  <Title level={5} style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                                  <Title level={5} style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3', flex: 1, marginRight: '8px' }}>
                                     {agreement.projectDetails?.title || 'Untitled Project'}
                                   </Title>
-                                  <Tag color="warning" style={{ margin: 0, borderRadius: '6px', fontSize: '11px', fontWeight: '500' }}>
-                                    <ClockCircleOutlined /> Pending
+                                  <Tag color="warning" style={{ margin: 0, borderRadius: '4px', fontSize: '10px', fontWeight: '500', padding: '2px 6px' }}>
+                                    <ClockCircleOutlined style={{ fontSize: '10px' }} />
                                   </Tag>
                                 </div>
-                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                  <Tag color="blue" style={{ fontSize: '10px', borderRadius: '4px' }}>
-                                    ID: {agreement._id?.slice(-8)}
-                                  </Tag>
-                                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <Text type="secondary" style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <BookOutlined style={{ fontSize: '10px' }} />
                                     {agreement.projectDetails?.subject || 'General'}
+                                  </Text>
+                                  <Text type="secondary" style={{ fontSize: '10px', color: '#9ca3af' }}>
+                                    #{agreement._id?.slice(-6)}
                                   </Text>
                                 </div>
                               </div>
 
-                              {/* Status Info */}
+                              {/* Compact Status & Payment */}
                               <div style={{ 
-                                background: 'linear-gradient(135deg, #fef7cd 0%, #fde68a 100%)', 
-                                padding: '12px', 
-                                borderRadius: '8px', 
-                                marginBottom: '12px' 
+                                background: '#fef7cd', 
+                                padding: '8px', 
+                                borderRadius: '6px', 
+                                marginBottom: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
                               }}>
-                                <Text strong style={{ fontSize: '12px', color: '#92400e', display: 'block', marginBottom: '6px' }}>
-                                  STATUS
-                                </Text>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                  <LoadingOutlined style={{ color: '#f59e0b', fontSize: '16px' }} />
-                                  <div>
-                                    <Text style={{ fontSize: '14px', fontWeight: '500', color: '#92400e', display: 'block' }}>
-                                      Waiting for Writer
-                                    </Text>
-                                    <Text type="secondary" style={{ fontSize: '11px' }}>
-                                      Your project is in queue for assignment
-                                    </Text>
-                                  </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <LoadingOutlined style={{ color: '#f59e0b', fontSize: '12px' }} />
+                                  <Text style={{ fontSize: '11px', fontWeight: '500', color: '#92400e' }}>
+                                    Waiting for Writer
+                                  </Text>
                                 </div>
-                              </div>
-
-                              {/* Payment Info */}
-                              <div style={{ marginBottom: '12px' }}>
-                                <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                                  PAYMENT DETAILS
+                                <Text style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <DollarOutlined style={{ fontSize: '10px' }} />
+                                  {formatCurrency(agreement.totalAmount || 0, getAgreementCurrency(agreement))}
                                 </Text>
-                                {(() => {
-                                  const totalAmount = agreement.totalAmount || 0;
-                                  const detectedCurrency = getAgreementCurrency(agreement);
-
-                                  return (
-                                    <div style={{ 
-                                      background: '#f8fafc', 
-                                      padding: '10px', 
-                                      borderRadius: '6px',
-                                      border: '1px solid #e2e8f0'
-                                    }}>
-                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Text style={{ fontSize: '13px', color: '#64748b' }}>
-                                          Total Amount:
-                                        </Text>
-                                        <Text style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
-                                          {formatCurrency(totalAmount, detectedCurrency)}
-                                        </Text>
-                                      </div>
-                                      {agreement.installments && agreement.installments.length > 0 && (
-                                        <Text type="secondary" style={{ fontSize: '11px', marginTop: '4px', display: 'block' }}>
-                                          {agreement.installments.length} installments planned
-                                        </Text>
-                                      )}
-                                    </div>
-                                  );
-                                })()}
                               </div>
 
-                              {/* Timeline */}
-                              <div style={{ marginBottom: '16px' }}>
-                                <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '6px' }}>
-                                  DEADLINE
-                                </Text>
-                                {(() => {
-                                  const dueDate = agreement.projectDetails?.deadline;
-                                  if (!dueDate) return <Text type="secondary" style={{ fontSize: '12px' }}>No deadline set</Text>;
-                                  
-                                  const daysUntilDue = moment(dueDate).diff(moment(), 'days');
-                                  
-                                  return (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                      <CalendarOutlined style={{ 
-                                        color: daysUntilDue <= 7 ? '#f59e0b' : '#10b981',
-                                        fontSize: '14px'
-                                      }} />
-                                      <div>
-                                        <Text style={{ 
-                                          fontSize: '13px', 
-                                          fontWeight: '500',
-                                          color: '#374151'
-                                        }}>
-                                          Due {moment(dueDate).format('MMM DD, YYYY')}
-                                        </Text>
-                                        <Text type="secondary" style={{ fontSize: '11px', display: 'block' }}>
-                                          {daysUntilDue <= 0 ? 'Due today or overdue' : `${daysUntilDue} days remaining`}
-                                        </Text>
-                                      </div>
+                              {/* Compact Timeline */}
+                              {(() => {
+                                const dueDate = agreement.projectDetails?.deadline;
+                                if (!dueDate) return (
+                                  <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <CalendarOutlined style={{ color: '#9ca3af', fontSize: '12px' }} />
+                                    <Text type="secondary" style={{ fontSize: '11px' }}>No deadline</Text>
+                                  </div>
+                                );
+                                
+                                const daysUntilDue = moment(dueDate).diff(moment(), 'days');
+                                
+                                return (
+                                  <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <CalendarOutlined style={{ 
+                                      color: daysUntilDue <= 7 ? '#f59e0b' : '#10b981',
+                                      fontSize: '12px'
+                                    }} />
+                                    <div style={{ flex: 1 }}>
+                                      <Text style={{ 
+                                        fontSize: '12px', 
+                                        fontWeight: '500',
+                                        color: '#374151'
+                                      }}>
+                                        {moment(dueDate).format('MMM DD')}
+                                      </Text>
+                                      <Text type="secondary" style={{ fontSize: '10px', display: 'block' }}>
+                                        {daysUntilDue <= 0 ? 'Due today' : `${daysUntilDue}d left`}
+                                      </Text>
                                     </div>
-                                  );
-                                })()}
-                              </div>
+                                  </div>
+                                );
+                              })()}
 
-                              {/* Actions */}
-                              <div style={{ display: 'flex', gap: '8px' }}>
+                              {/* Compact Actions */}
+                              <div style={{ display: 'flex', gap: '6px' }}>
                                 <Button
                                   icon={<CreditCardOutlined />}
                                   type="primary"
-                                  size="large"
+                                  size="small"
                                   onClick={() => navigate(`/agreements/${agreement._id}`)}
                                   style={{
                                     flex: 1,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                                     border: 'none',
                                     fontWeight: '500',
-                                    fontSize: '13px'
+                                    fontSize: '11px',
+                                    height: '32px'
                                   }}
                                 >
-                                  Make Payment
+                                  Pay
                                 </Button>
                                 <Button
                                   icon={<EyeOutlined />}
-                                  size="large"
+                                  size="small"
                                   onClick={() => navigate(`/agreements/${agreement._id}`)}
                                   style={{
                                     flex: 1,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     borderColor: '#d1d5db',
                                     color: '#374151',
                                     fontWeight: '500',
-                                    fontSize: '13px'
+                                    fontSize: '11px',
+                                    height: '32px'
                                   }}
                                 >
-                                  View Details
+                                  Details
                                 </Button>
                               </div>
                             </Card>
@@ -1894,146 +1864,109 @@ const StudentDashboard = () => {
                               }}
                               bodyStyle={{ padding: '16px' }}
                             >
-                              {/* Header Section */}
+                              {/* Compact Header */}
                               <div style={{ marginBottom: '12px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                                  <Title level={5} style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                                  <Title level={5} style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1f2937', lineHeight: '1.3', flex: 1, marginRight: '8px' }}>
                                     {agreement.projectDetails?.title || 'Untitled Project'}
                                   </Title>
-                                  <Tag color="success" style={{ margin: 0, borderRadius: '6px', fontSize: '11px', fontWeight: '500' }}>
-                                    <CheckCircleOutlined /> Completed
+                                  <Tag color="success" style={{ margin: 0, borderRadius: '4px', fontSize: '10px', fontWeight: '500', padding: '2px 6px' }}>
+                                    <CheckCircleOutlined style={{ fontSize: '10px' }} />
                                   </Tag>
                                 </div>
-                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                  <Tag color="blue" style={{ fontSize: '10px', borderRadius: '4px' }}>
-                                    ID: {agreement._id?.slice(-8)}
-                                  </Tag>
-                                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <Text type="secondary" style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <BookOutlined style={{ fontSize: '10px' }} />
                                     {agreement.projectDetails?.subject || 'General'}
+                                  </Text>
+                                  <Text type="secondary" style={{ fontSize: '10px', color: '#9ca3af' }}>
+                                    #{agreement._id?.slice(-6)}
                                   </Text>
                                 </div>
                               </div>
 
-                              {/* Completion Info */}
+                              {/* Compact Completion & Payment */}
                               <div style={{ 
-                                background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', 
-                                padding: '12px', 
-                                borderRadius: '8px', 
-                                marginBottom: '12px' 
+                                background: '#d1fae5', 
+                                padding: '8px', 
+                                borderRadius: '6px', 
+                                marginBottom: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
                               }}>
-                                <Text strong style={{ fontSize: '12px', color: '#065f46', display: 'block', marginBottom: '6px' }}>
-                                  COMPLETION DETAILS
-                                </Text>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                  <CheckCircleOutlined style={{ color: '#10b981', fontSize: '16px' }} />
-                                  <div>
-                                    <Text style={{ fontSize: '14px', fontWeight: '500', color: '#065f46', display: 'block' }}>
-                                      Project Delivered
-                                    </Text>
-                                    <Text type="secondary" style={{ fontSize: '11px' }}>
-                                      Completed {moment(agreement.completedAt || agreement.updatedAt).fromNow()}
-                                    </Text>
-                                  </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <CheckCircleOutlined style={{ color: '#10b981', fontSize: '12px' }} />
+                                  <Text style={{ fontSize: '11px', fontWeight: '500', color: '#065f46' }}>
+                                    Completed {moment(agreement.completedAt || agreement.updatedAt).fromNow()}
+                                  </Text>
                                 </div>
+                                <Text style={{ fontSize: '12px', fontWeight: '600', color: '#065f46', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <DollarOutlined style={{ fontSize: '10px' }} />
+                                  {formatCurrency(agreement.paidAmount || agreement.totalAmount || 0, getAgreementCurrency(agreement))}
+                                </Text>
                               </div>
 
-                              {/* Writer Info */}
-                              <div style={{ marginBottom: '12px' }}>
-                                <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                                  COMPLETED BY
-                                </Text>
-                                {agreement.writer ? (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <Avatar 
-                                      size={32} 
-                                      icon={<UserOutlined />} 
-                                      src={agreement.writer?.avatar}
-                                      style={{ backgroundColor: '#10b981', flexShrink: 0 }}
-                                    />
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                      <Text strong style={{ fontSize: '13px', color: '#1f2937', display: 'block' }}>
-                                        {agreement.writer.name}
-                                      </Text>
-                                      <Text type="secondary" style={{ fontSize: '11px', display: 'block' }}>
-                                        {agreement.writer?.email || 'No email'}
-                                      </Text>
-                                    </div>
+                              {/* Compact Writer Info */}
+                              {agreement.writer && (
+                                <div style={{ 
+                                  background: '#f8fafc', 
+                                  padding: '8px', 
+                                  borderRadius: '6px', 
+                                  marginBottom: '10px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px'
+                                }}>
+                                  <Avatar 
+                                    size={24} 
+                                    icon={<UserOutlined />} 
+                                    src={agreement.writer?.avatar}
+                                    style={{ backgroundColor: '#10b981', flexShrink: 0 }}
+                                  />
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <Text style={{ fontSize: '12px', color: '#1f2937', fontWeight: '500', display: 'block' }}>
+                                      {agreement.writer.name}
+                                    </Text>
                                   </div>
-                                ) : (
-                                  <Text type="secondary">Writer information not available</Text>
-                                )}
-                              </div>
+                                  <MessageOutlined style={{ color: '#10b981', fontSize: '14px' }} />
+                                </div>
+                              )}
 
-                              {/* Payment Summary */}
-                              <div style={{ marginBottom: '16px' }}>
-                                <Text strong style={{ fontSize: '12px', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                                  PAYMENT SUMMARY
-                                </Text>
-                                {(() => {
-                                  const totalAmount = agreement.totalAmount || 0;
-                                  const paidAmount = agreement.paidAmount || totalAmount;
-                                  const detectedCurrency = getAgreementCurrency(agreement);
-
-                                  return (
-                                    <div style={{ 
-                                      background: '#f0fdf4', 
-                                      padding: '10px', 
-                                      borderRadius: '6px',
-                                      border: '1px solid #bbf7d0'
-                                    }}>
-                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                                        <Text style={{ fontSize: '12px', color: '#065f46' }}>
-                                          Total Paid:
-                                        </Text>
-                                        <Text style={{ fontSize: '16px', fontWeight: '600', color: '#065f46' }}>
-                                          {formatCurrency(paidAmount, detectedCurrency)}
-                                        </Text>
-                                      </div>
-                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Text style={{ fontSize: '11px', color: '#16a34a' }}>
-                                          Status:
-                                        </Text>
-                                        <Text style={{ fontSize: '11px', color: '#16a34a', fontWeight: '500' }}>
-                                          ✓ Payment Complete
-                                        </Text>
-                                      </div>
-                                    </div>
-                                  );
-                                })()}
-                              </div>
-
-                              {/* Actions */}
-                              <div style={{ display: 'flex', gap: '8px' }}>
+                              {/* Compact Actions */}
+                              <div style={{ display: 'flex', gap: '6px' }}>
                                 <Button
-                                  icon={<EyeOutlined />}
+                                  icon={<MessageOutlined />}
                                   type="primary"
-                                  size="large"
-                                  onClick={() => navigate(`/agreements/${agreement._id}`)}
+                                  size="small"
+                                  onClick={() => navigate(`/chat/student/${agreement.writer?._id}`)}
                                   style={{
                                     flex: 1,
-                                    borderRadius: '8px',
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    borderRadius: '6px',
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                                     border: 'none',
                                     fontWeight: '500',
-                                    fontSize: '13px'
+                                    fontSize: '11px',
+                                    height: '32px'
                                   }}
                                 >
-                                  Chat Writer
+                                  Chat
                                 </Button>
                                 <Button
                                   icon={<EyeOutlined />}
-                                  size="large"
+                                  size="small"
                                   onClick={() => navigate(`/agreements/${agreement._id}`)}
                                   style={{
                                     flex: 1,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     borderColor: '#d1d5db',
                                     color: '#374151',
                                     fontWeight: '500',
-                                    fontSize: '13px'
+                                    fontSize: '11px',
+                                    height: '32px'
                                   }}
                                 >
-                                  View Details
+                                  Details
                                 </Button>
                               </div>
                             </Card>
@@ -2513,6 +2446,32 @@ const StudentDashboard = () => {
   
   .ant-statistic-content .ant-avatar .anticon {
     font-size: 14px !important;
+  }
+  
+  /* Fix header avatars on mobile */
+  .ant-card .ant-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+    line-height: 28px !important;
+  }
+  
+  .ant-card .ant-avatar .anticon {
+    font-size: 12px !important;
+  }
+  
+  /* Desktop avatar sizing */
+  @media (min-width: 769px) {
+    .ant-card .ant-avatar {
+      width: 36px !important;
+      height: 36px !important;
+      font-size: 16px !important;
+      line-height: 36px !important;
+    }
+    
+    .ant-card .ant-avatar .anticon {
+      font-size: 16px !important;
+    }
   }
   
   /* Mobile sidebar */

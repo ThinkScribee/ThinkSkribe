@@ -15,8 +15,11 @@ import { useNavigate } from 'react-router-dom';
 import { updateUserProfile, uploadProfilePicture } from '../api/user';
 import { useNotifications } from '../context/NotificationContext';
 import HeaderComponent from '../components/HeaderComponent';
+import MobileBottomTabs from '../components/MobileBottomTabs';
 import { PREDEFINED_SPECIALTIES, searchSpecialties } from '../utils/specialties';
 import './ProfileSettings.css';
+import '../components/DashboardMobile.css';
+import '../components/ProfileSettingsMobile.css';
 
 const ProfileSettings = () => {
   const { user, isAuthenticated, updateUser } = useAuth();
@@ -263,37 +266,33 @@ const ProfileSettings = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="profile-settings-container mobile-bottom-tabs-visible">
       <HeaderComponent />
 
-      <div className="pt-16 px-4 sm:px-6 lg:px-8">
+      <div className="pt-16 px-4 sm:px-6 lg:px-8 pb-20">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+          <div className="profile-header">
+            <h1 className="profile-title">
               Account Settings
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="profile-subtitle">
               Manage your profile and preferences
             </p>
           </div>
 
           {/* Main Card */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="profile-main-card">
             {/* Tabs Navigation */}
-            <div className="border-b border-gray-200 bg-gray-50">
-              <nav className="flex space-x-8 px-6" aria-label="Tabs">
+            <div className="profile-tabs">
+              <nav className="flex" aria-label="Tabs">
                 {tabs.map((tab) => (
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                      activeTab === tab.key
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
+                    className={`profile-tab ${activeTab === tab.key ? 'active' : ''}`}
                   >
-                    <span className="text-lg">{tab.icon}</span>
+                    <span className="profile-tab-icon">{tab.icon}</span>
                     <span>{tab.label}</span>
                   </button>
                 ))}
@@ -301,142 +300,139 @@ const ProfileSettings = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="p-6 sm:p-8">
+            <div className="profile-tab-content">
               {/* Success/Error Messages */}
               {success && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center space-x-2">
-                  <CheckCircleOutlined className="text-green-500 text-lg" />
-                  <span className="text-green-800">{success}</span>
+                <div className="profile-message success">
+                  <CheckCircleOutlined className="profile-message-icon" />
+                  <span>{success}</span>
                 </div>
               )}
 
               {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2">
-                  <ExclamationCircleOutlined className="text-red-500 text-lg" />
-                  <span className="text-red-800">{error}</span>
+                <div className="profile-message error">
+                  <ExclamationCircleOutlined className="profile-message-icon" />
+                  <span>{error}</span>
                 </div>
               )}
 
               {/* Profile Tab */}
               {activeTab === 'profile' && (
-                <div className="space-y-8">
+                <div className="profile-section">
                   {/* Avatar Section */}
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
-                    <div className="text-center">
-                      <div className="relative inline-block">
-                        <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-lg relative">
-                          {imageLoading && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            </div>
-                          )}
-                          {previewUrl ? (
-                            <img
-                              src={previewUrl}
-                              alt="Profile"
-                              className="w-full h-full object-cover"
-                              onLoad={() => setImageLoading(false)}
-                              onLoadStart={() => setImageLoading(true)}
-                              onError={() => {
-                                setImageLoading(false);
-                                setPreviewUrl(user?.avatar || getFallbackAvatar());
-                                setError('Failed to load image. Please try another image.');
-                              }}
-                              style={{ 
-                                opacity: imageLoading ? 0 : 1,
-                                transition: 'opacity 0.3s ease'
-                              }}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <UserOutlined className="text-4xl text-gray-400" />
-                            </div>
-                          )}
+                  <div className="profile-avatar-section">
+                    <div className="profile-avatar-container">
+                      {imageLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-full">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                         </div>
-                        <label
-                          htmlFor="avatar-upload"
-                          className="absolute bottom-2 right-2 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-blue-700 transition-colors duration-200"
-                        >
-                          <CameraOutlined className="text-white text-lg" />
+                      )}
+                      {previewUrl ? (
+                        <img
+                          src={previewUrl}
+                          alt="Profile"
+                          className="profile-avatar"
+                          onLoad={() => setImageLoading(false)}
+                          onLoadStart={() => setImageLoading(true)}
+                          onError={() => {
+                            setImageLoading(false);
+                            setPreviewUrl(user?.avatar || getFallbackAvatar());
+                            setError('Failed to load image. Please try another image.');
+                          }}
+                          style={{ 
+                            opacity: imageLoading ? 0 : 1,
+                            transition: 'opacity 0.3s ease'
+                          }}
+                        />
+                      ) : (
+                        <div className="profile-avatar flex items-center justify-center bg-gray-200">
+                          <UserOutlined className="text-4xl text-gray-400" />
+                        </div>
+                      )}
+                      <label
+                        htmlFor="avatar-upload"
+                        className="profile-avatar-overlay"
+                      >
+                        <CameraOutlined className="profile-avatar-icon" />
+                      </label>
+                      <input
+                        id="avatar-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </div>
+                    <div className="profile-avatar-info">
+                      <h3 className="profile-avatar-name">{user?.name}</h3>
+                      <p className="profile-avatar-role">{user?.role}</p>
+                      <p className="text-sm text-gray-400 mt-2">JPG, PNG • Max 2MB</p>
+                    </div>
+                  </div>
+
+                  {/* Profile Form */}
+                  <div className="profile-form">
+                    <form onSubmit={handleUpdateProfile}>
+                      <div className="profile-form-group">
+                        <label className="profile-form-label">
+                          Full Name
                         </label>
                         <input
-                          id="avatar-upload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          className="hidden"
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => handleInputChange('name', e.target.value)}
+                          className="profile-form-input"
+                          placeholder="Enter your full name"
+                          required
                         />
                       </div>
-                      <div className="mt-4">
-                        <h3 className="text-xl font-semibold text-gray-900">{user?.name}</h3>
-                        <p className="text-gray-500 capitalize">{user?.role}</p>
-                        <p className="text-sm text-gray-400 mt-2">JPG, PNG • Max 2MB</p>
+
+                      <div className="profile-form-group">
+                        <label className="profile-form-label">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                          className="profile-form-input"
+                          placeholder="Enter your email"
+                          disabled
+                        />
                       </div>
-                    </div>
 
-                    {/* Profile Form */}
-                    <div className="flex-1 w-full max-w-md">
-                      <form onSubmit={handleUpdateProfile} className="space-y-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Full Name
+                      <div className="profile-form-group">
+                        <label className="profile-form-label">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => handleInputChange('phone', e.target.value)}
+                          className="profile-form-input"
+                          placeholder="Enter your phone number"
+                        />
+                      </div>
+
+                      {/* Writer-specific bio field */}
+                      {user?.role === 'writer' && (
+                        <div className="profile-form-group">
+                          <label className="profile-form-label">
+                            Professional Bio (Marketplace)
                           </label>
-                          <input
-                            type="text"
-                            value={formData.name}
-                            onChange={(e) => handleInputChange('name', e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
-                            placeholder="Enter your full name"
-                            required
+                          <textarea
+                            value={formData.writerBio || ''}
+                            onChange={(e) => handleInputChange('writerBio', e.target.value)}
+                            rows={6}
+                            maxLength={1000}
+                            className="profile-form-textarea"
+                            placeholder="Describe your professional experience, skills, and what makes you stand out as a writer. This will be displayed in the marketplace..."
                           />
+                          <p className="text-sm text-gray-500 mt-1">
+                            {(formData.writerBio || '').length}/1000 characters - This appears in the marketplace
+                          </p>
                         </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address
-                          </label>
-                          <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => handleInputChange('email', e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                            placeholder="Enter your email"
-                            disabled
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) => handleInputChange('phone', e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
-                            placeholder="Enter your phone number"
-                          />
-                        </div>
-
-                        {/* Writer-specific bio field */}
-                        {user?.role === 'writer' && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Professional Bio (Marketplace)
-                            </label>
-                            <textarea
-                              value={formData.writerBio || ''}
-                              onChange={(e) => handleInputChange('writerBio', e.target.value)}
-                              rows={6}
-                              maxLength={1000}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 resize-none"
-                              placeholder="Describe your professional experience, skills, and what makes you stand out as a writer. This will be displayed in the marketplace..."
-                            />
-                            <p className="text-sm text-gray-500 mt-1">
-                              {(formData.writerBio || '').length}/1000 characters - This appears in the marketplace
-                            </p>
-                          </div>
-                        )}
+                      )}
 
                         {/* Writer Specialties */}
                         {user?.role === 'writer' && (
@@ -528,22 +524,21 @@ const ProfileSettings = () => {
                           </div>
                         )}
 
-                        <button
-                          type="submit"
-                          disabled={isLoading}
-                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isLoading ? 'Saving...' : 'Save Changes'}
-                        </button>
-                      </form>
-                    </div>
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="profile-submit-button"
+                      >
+                        {isLoading ? 'Saving...' : 'Save Changes'}
+                      </button>
+                    </form>
                   </div>
                 </div>
               )}
 
               {/* Notifications Tab */}
               {activeTab === 'notifications' && (
-                <div className="space-y-6">
+                <div className="profile-notifications">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
                       Notification Preferences
@@ -557,13 +552,13 @@ const ProfileSettings = () => {
                     {Object.entries(notificationSettings).map(([key, value]) => (
                       <div
                         key={key}
-                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                        className="profile-notification-item"
                       >
-                        <div>
-                          <h4 className="font-semibold text-gray-900 capitalize">
+                        <div className="profile-notification-content">
+                          <h4 className="profile-notification-title">
                             {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                           </h4>
-                          <p className="text-sm text-gray-600">
+                          <p className="profile-notification-description">
                             {key === 'emailNotifications' && 'Receive notifications via email'}
                             {key === 'pushNotifications' && 'Receive push notifications'}
                             {key === 'assignmentUpdates' && 'Get notified about assignment progress'}
@@ -571,18 +566,15 @@ const ProfileSettings = () => {
                             {key === 'marketingEmails' && 'Receive updates about new features and offers'}
                           </p>
                         </div>
-                        <button
-                          onClick={() => handleNotificationChange(key, !value)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                            value ? 'bg-blue-600' : 'bg-gray-200'
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                              value ? 'translate-x-6' : 'translate-x-1'
-                            }`}
+                        <label className="profile-toggle">
+                          <input
+                            type="checkbox"
+                            checked={value}
+                            onChange={() => handleNotificationChange(key, !value)}
+                            className="profile-toggle-input"
                           />
-                        </button>
+                          <span className="profile-toggle-slider"></span>
+                        </label>
                       </div>
                     ))}
                   </div>
@@ -594,6 +586,8 @@ const ProfileSettings = () => {
           </div>
         </div>
       </div>
+      
+      <MobileBottomTabs />
     </div>
   );
 };

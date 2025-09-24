@@ -7,6 +7,11 @@ const JOB_PRICING = {
     currency: 'NGN',
     description: 'Full project work (80,000 NGN and above)'
   },
+  'it_Report':{
+    minAmount:20000,
+    currency:"NGN",
+    description:"IT/SIWES Report (20,000 NGN and above)"
+  },
   'term-paper': {
     minAmount: 25000,
     currency: 'NGN', 
@@ -46,7 +51,7 @@ const jobSchema = new mongoose.Schema({
     required: [true, 'Job type is required'],
     enum: {
       values: Object.keys(JOB_PRICING),
-      message: 'Invalid job type. Must be one of: full-project, term-paper, chapter, assignment'
+      message: 'Invalid job type. Must be one of: full-project, it_Report, term-paper, chapter, assignment'
     }
   },
   

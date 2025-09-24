@@ -202,7 +202,13 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
       title={
         <Space>
           <FileTextOutlined />
-          {editingJob ? 'Edit Job' : 'Post New Job'}
+          <span style={{ 
+            fontSize: window.innerWidth < 768 ? '16px' : '18px',
+            fontWeight: '600',
+            wordBreak: 'break-word'
+          }}>
+            {editingJob ? 'Edit Job' : 'Post New Job'}
+          </span>
         </Space>
       }
       open={visible}
@@ -244,7 +250,13 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
                 { max: 200, message: 'Title cannot exceed 200 characters' }
               ]}
             >
-              <Input placeholder="Enter a clear, descriptive title for your job" />
+              <Input 
+                placeholder="Enter a clear, descriptive title for your job" 
+                style={{
+                  fontSize: window.innerWidth < 768 ? '16px' : '14px',
+                  height: window.innerWidth < 768 ? '48px' : '40px'
+                }}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -265,6 +277,7 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
                 }}
               >
                 <Option value="full-project">Full Project (₦80,000+)</Option>
+                <Option value="it_Report">IT/SIWES Report (₦20,000+)</Option>
                 <Option value="term-paper">Term Paper (₦25,000+)</Option>
                 <Option value="chapter">Chapter (₦30,000 per chapter)</Option>
                 <Option value="assignment">Assignment (₦10,000+)</Option>
@@ -324,10 +337,14 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
           ]}
         >
           <TextArea
-            rows={6}
+            rows={window.innerWidth < 768 ? 4 : 6}
             placeholder="Provide detailed description of your requirements, including specific instructions, expectations, and any additional information that would help writers understand the scope of work..."
             showCount
             maxLength={5000}
+            style={{
+              fontSize: window.innerWidth < 768 ? '16px' : '14px',
+              resize: 'vertical'
+            }}
           />
         </Form.Item>
 
@@ -507,9 +524,10 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
               style={{ 
                 width: window.innerWidth < 768 ? '100%' : 'auto',
                 minWidth: '100px',
-                height: '48px',
-                fontSize: '16px',
-                borderRadius: '12px'
+                height: window.innerWidth < 768 ? '52px' : '48px',
+                fontSize: window.innerWidth < 768 ? '16px' : '16px',
+                borderRadius: '12px',
+                wordBreak: 'normal'
               }}
             >
               Cancel
@@ -522,13 +540,14 @@ const JobPostingModal = ({ visible, onCancel, onSuccess, editingJob = null }) =>
               style={{ 
                 width: window.innerWidth < 768 ? '100%' : 'auto',
                 minWidth: '120px',
-                height: '48px',
-                fontSize: '16px',
+                height: window.innerWidth < 768 ? '52px' : '48px',
+                fontSize: window.innerWidth < 768 ? '16px' : '16px',
                 fontWeight: '600',
                 borderRadius: '12px',
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 border: 'none',
-                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                wordBreak: 'normal'
               }}
             >
               {editingJob ? 'Update Job' : 'Post Job'}

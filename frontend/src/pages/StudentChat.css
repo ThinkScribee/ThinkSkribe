@@ -270,11 +270,12 @@
 }
 
 .own-bubble {
-  background: linear-gradient(135deg, #015382 0%, #017DB0 100%);
-  color: white;
+  background: #ffffff;
+  color: #1e293b;
   margin-left: auto;
   border-bottom-right-radius: 6px;
   box-shadow: 0 8px 24px rgba(1,83,130,0.12);
+  border: 1px solid #e2e8f0;
 }
 
 .other-bubble {
@@ -367,9 +368,10 @@
 }
 
 .premium-message-bubble.own-bubble {
-  background: linear-gradient(135deg, #015382 0%, #017DB0 100%);
-  color: white;
+  background: #ffffff;
+  color: #1e293b;
   border-bottom-right-radius: 4px;
+  border: 1px solid #e2e8f0;
 }
 
 .premium-message-bubble.other-bubble {
@@ -393,7 +395,7 @@
 }
 
 .premium-message-bubble.own-bubble .message-timestamp {
-  color: rgba(255, 255, 255, 0.9);
+  color: #64748b;
 }
 
 .premium-message-bubble.other-bubble .message-timestamp {

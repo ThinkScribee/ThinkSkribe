@@ -17,13 +17,15 @@ const StudentJobManagement = () => {
           paddingTop: window.innerWidth < 768 ? '8px' : '24px',
           paddingBottom: window.innerWidth < 768 ? '88px' : '24px',
           background: '#f5f5f5',
-          minHeight: '100vh'
+          minHeight: '100vh',
+          overflow: 'hidden'
         }}>
           <div style={{ 
             maxWidth: '1200px', 
             margin: '0 auto',
             width: '100%',
-            padding: window.innerWidth < 768 ? '0' : '0'
+            padding: window.innerWidth < 768 ? '0' : '0',
+            overflow: 'hidden'
           }}>
             <JobManagement />
           </div>

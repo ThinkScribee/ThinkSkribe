@@ -183,6 +183,12 @@ const MobileBottomTabs = () => {
     }
   };
 
+  // Hide bottom tabs in chat rooms
+  const isInChatRoom = location.pathname.includes('/chat/');
+  if (isInChatRoom) {
+    return null;
+  }
+
   return (
     <div className="mobile-bottom-tabs">
       <div className="mobile-bottom-tabs-container">

@@ -753,6 +753,42 @@
   flex-shrink: 0 !important;
 }
 
+/* Header avatar size overrides - increased by 1.8x */
+.header-user .ant-avatar,
+.ant-layout-header .ant-avatar {
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
+  max-width: 58px !important;
+  max-height: 58px !important;
+}
+
+/* Mobile avatar size adjustments - increased by 1.8x */
+@media (max-width: 768px) {
+  .header-user .ant-avatar,
+  .ant-layout-header .ant-avatar {
+    width: 43px !important;
+    height: 43px !important;
+    min-width: 43px !important;
+    min-height: 43px !important;
+    max-width: 50px !important;
+    max-height: 50px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-user .ant-avatar,
+  .ant-layout-header .ant-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    max-width: 43px !important;
+    max-height: 43px !important;
+  }
+}
+
 .ant-badge {
   font-size: 11px !important;
 }

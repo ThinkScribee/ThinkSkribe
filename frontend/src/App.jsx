@@ -62,6 +62,7 @@ import InfluencerDashboard from './pages/InfluencerDashboard.jsx';
 import InfluencerDetails from './pages/InfluencerDetails.jsx';
 import ExportChats from './pages/ExportChats.jsx';
 import FooterComponent from './components/FooterComponent.jsx';
+import MobileBottomTabs from './components/MobileBottomTabs.jsx';
 import StudentJobManagement from './pages/StudentJobManagement.jsx';
 import WriterJobListing from './pages/WriterJobListing.jsx';
 const { Title, Text, Paragraph } = Typography;
@@ -79,6 +80,7 @@ const AppRoutes = () => {
   const { user } = useAuth();
 
   return (
+            <>
               <Routes>
                 {/* Public routes */}
                 <Route path="/writers" element={
@@ -259,6 +261,8 @@ const AppRoutes = () => {
                 <Route path="/payment/callback" element={<PaymentSuccess />} />
 
               </Routes>
+              <MobileBottomTabs />
+            </>
   );
 };
 
@@ -269,8 +273,6 @@ const ConditionalFooter = () => {
   // Define unprotected routes where footer should be shown
   const unprotectedRoutes = [
     '/',
-    '/signin',
-    '/signup',
     '/terms',
     '/privacy',
     '/forgot-password',

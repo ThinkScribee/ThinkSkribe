@@ -234,7 +234,9 @@ const JobManagement = () => {
           border: '1px solid #e2e8f0',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
           transition: 'all 0.3s ease',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          width: '100%',
+          maxWidth: '100%'
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-4px)';
@@ -250,9 +252,11 @@ const JobManagement = () => {
               type="text"
               icon={<EyeOutlined />}
               onClick={() => handleViewJob(job)}
+              size={window.innerWidth < 768 ? 'small' : 'middle'}
               style={{ 
                 fontSize: window.innerWidth < 768 ? '12px' : '14px',
-                height: window.innerWidth < 768 ? '32px' : 'auto'
+                height: window.innerWidth < 768 ? '32px' : 'auto',
+                width: window.innerWidth < 768 ? '100%' : 'auto'
               }}
             >
               View
@@ -264,9 +268,11 @@ const JobManagement = () => {
                 type="text"
                 icon={<EditOutlined />}
                 onClick={() => handleEditJob(job)}
+                size={window.innerWidth < 768 ? 'small' : 'middle'}
                 style={{ 
                   fontSize: window.innerWidth < 768 ? '12px' : '14px',
-                  height: window.innerWidth < 768 ? '32px' : 'auto'
+                  height: window.innerWidth < 768 ? '32px' : 'auto',
+                  width: window.innerWidth < 768 ? '100%' : 'auto'
                 }}
               >
                 Edit
@@ -285,9 +291,11 @@ const JobManagement = () => {
                   type="text"
                   danger
                   icon={<DeleteOutlined />}
+                  size={window.innerWidth < 768 ? 'small' : 'middle'}
                   style={{ 
                     fontSize: window.innerWidth < 768 ? '12px' : '14px',
-                    height: window.innerWidth < 768 ? '32px' : 'auto'
+                    height: window.innerWidth < 768 ? '32px' : 'auto',
+                    width: window.innerWidth < 768 ? '100%' : 'auto'
                   }}
                 >
                   Delete
@@ -314,65 +322,94 @@ const JobManagement = () => {
           }
           description={
             <Space direction="vertical" style={{ width: '100%' }}>
-              <Paragraph ellipsis={{ rows: 2 }}>
+              <Paragraph 
+                ellipsis={{ 
+                  rows: window.innerWidth < 768 ? 2 : 2,
+                  expandable: false,
+                  symbol: '...'
+                }}
+                style={{
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  whiteSpace: 'normal',
+                  lineHeight: '1.4',
+                  fontSize: window.innerWidth < 768 ? '13px' : '14px'
+                }}
+              >
                 {job.description}
               </Paragraph>
               
-              <Space wrap>
-                <Tag color="blue">
+              <Space wrap style={{ marginBottom: '8px' }}>
+                <Tag color="blue" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {jobApi.getJobTypeDisplayName(job.jobType)}
                 </Tag>
-                <Tag color="green">
+                <Tag color="green" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {jobApi.getAcademicLevelDisplayName(job.academicLevel)}
                 </Tag>
-                <Tag color="purple">
+                <Tag color="purple" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {job.subject}
                 </Tag>
-                <Tag color="orange">
+                <Tag color="orange" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {job.priority}
                 </Tag>
               </Space>
 
-              <Row gutter={16}>
-                <Col span={8}>
-                  <Space>
-                    <DollarOutlined style={{ color: '#52c41a' }} />
-                    <Text strong style={{ color: '#52c41a' }}>
+              <Row gutter={window.innerWidth < 768 ? 8 : 16}>
+                <Col span={window.innerWidth < 768 ? 12 : 8}>
+                  <Space size="small">
+                    <DollarOutlined style={{ color: '#52c41a', fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                    <Text strong style={{ 
+                      color: '#52c41a',
+                      fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                      wordBreak: 'break-word'
+                    }}>
                       {jobApi.formatJobBudget(job.budget.amount, job.budget.currency)}
                     </Text>
                   </Space>
                 </Col>
-                <Col span={8}>
-                  <Space>
-                    <CalendarOutlined style={{ color: urgencyColor }} />
-                    <Text style={{ color: urgencyColor }}>
+                <Col span={window.innerWidth < 768 ? 12 : 8}>
+                  <Space size="small">
+                    <CalendarOutlined style={{ color: urgencyColor, fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                    <Text style={{ 
+                      color: urgencyColor,
+                      fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                      wordBreak: 'break-word'
+                    }}>
                       {timeRemaining}
                     </Text>
                   </Space>
                 </Col>
-                <Col span={8}>
-                  <Space>
-                    <Badge count={job.applications?.length || 0} showZero>
-                      <Text type="secondary">Applications</Text>
+                <Col span={window.innerWidth < 768 ? 24 : 8} style={{ marginTop: window.innerWidth < 768 ? '4px' : '0' }}>
+                  <Space size="small">
+                    <Badge count={job.applications?.length || 0} showZero size="small">
+                      <Text type="secondary" style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px' }}>
+                        Applications
+                      </Text>
                     </Badge>
                   </Space>
                 </Col>
               </Row>
 
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Space>
-                    <ClockCircleOutlined />
-                    <Text type="secondary">
+              <Row gutter={window.innerWidth < 768 ? 8 : 16} style={{ marginTop: '4px' }}>
+                <Col span={window.innerWidth < 768 ? 12 : 12}>
+                  <Space size="small">
+                    <ClockCircleOutlined style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                    <Text type="secondary" style={{ 
+                      fontSize: window.innerWidth < 768 ? '11px' : '13px',
+                      wordBreak: 'break-word'
+                    }}>
                       Posted {moment(job.createdAt).fromNow()}
                     </Text>
                   </Space>
                 </Col>
-                <Col span={12}>
+                <Col span={window.innerWidth < 768 ? 12 : 12}>
                   {job.assignedTo && (
-                    <Space>
-                      <UserOutlined />
-                      <Text type="secondary">
+                    <Space size="small">
+                      <UserOutlined style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                      <Text type="secondary" style={{ 
+                        fontSize: window.innerWidth < 768 ? '11px' : '13px',
+                        wordBreak: 'break-word'
+                      }}>
                         Assigned to: {job.assignedTo.name}
                       </Text>
                     </Space>
@@ -556,10 +593,13 @@ const JobManagement = () => {
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={16} md={16} lg={16} xl={16}>
-            <Search
+            <Input
               placeholder="Search your jobs..."
               allowClear
-              onSearch={handleSearch}
+              suffix={<SearchOutlined onClick={() => handleSearch(filters.search)} style={{ cursor: 'pointer', color: '#1890ff' }} />}
+              onPressEnter={(e) => handleSearch(e.target.value)}
+              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+              value={filters.search}
               style={{ width: '100%' }}
             />
           </Col>

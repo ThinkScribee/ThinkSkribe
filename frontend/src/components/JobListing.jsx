@@ -269,7 +269,9 @@ const JobListing = () => {
           border: '1px solid #e2e8f0',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
           transition: 'all 0.3s ease',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          width: '100%',
+          maxWidth: '100%'
         }}
         className="job-card job-card-mobile"
         onMouseEnter={(e) => {
@@ -286,9 +288,11 @@ const JobListing = () => {
               type="text"
               icon={<EyeOutlined />}
               onClick={() => handleJobView(job)}
+              size={window.innerWidth < 768 ? 'small' : 'middle'}
               style={{ 
                 fontSize: window.innerWidth < 768 ? '12px' : '14px',
-                height: window.innerWidth < 768 ? '32px' : 'auto'
+                height: window.innerWidth < 768 ? '32px' : 'auto',
+                width: window.innerWidth < 768 ? '100%' : 'auto'
               }}
             >
               View
@@ -299,10 +303,12 @@ const JobListing = () => {
               type="text"
               icon={<MessageOutlined />}
               onClick={() => handleChatWithStudent(job)}
+              size={window.innerWidth < 768 ? 'small' : 'middle'}
               style={{ 
                 color: '#52c41a',
                 fontSize: window.innerWidth < 768 ? '12px' : '14px',
-                height: window.innerWidth < 768 ? '32px' : 'auto'
+                height: window.innerWidth < 768 ? '32px' : 'auto',
+                width: window.innerWidth < 768 ? '100%' : 'auto'
               }}
             >
               Chat
@@ -313,9 +319,11 @@ const JobListing = () => {
               type="primary"
               icon={<SendOutlined />}
               onClick={() => handleApply(job)}
+              size={window.innerWidth < 768 ? 'small' : 'middle'}
               style={{ 
                 fontSize: window.innerWidth < 768 ? '12px' : '14px',
-                height: window.innerWidth < 768 ? '32px' : 'auto'
+                height: window.innerWidth < 768 ? '32px' : 'auto',
+                width: window.innerWidth < 768 ? '100%' : 'auto'
               }}
             >
               Apply
@@ -323,9 +331,11 @@ const JobListing = () => {
           ) : applicationStatus || (
             <Button 
               disabled
+              size={window.innerWidth < 768 ? 'small' : 'middle'}
               style={{ 
                 fontSize: window.innerWidth < 768 ? '12px' : '14px',
-                height: window.innerWidth < 768 ? '32px' : 'auto'
+                height: window.innerWidth < 768 ? '32px' : 'auto',
+                width: window.innerWidth < 768 ? '100%' : 'auto'
               }}
             >
               {job.status !== 'open' ? 'Closed' : 'Already Applied'}
@@ -348,62 +358,93 @@ const JobListing = () => {
           }
           description={
             <Space direction="vertical" style={{ width: '100%' }}>
-              <Paragraph ellipsis={{ rows: 2 }}>
+              <Paragraph 
+                ellipsis={{ 
+                  rows: window.innerWidth < 768 ? 2 : 2,
+                  expandable: false,
+                  symbol: '...'
+                }}
+                style={{
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  whiteSpace: 'normal',
+                  lineHeight: '1.4',
+                  fontSize: window.innerWidth < 768 ? '13px' : '14px'
+                }}
+              >
                 {job.description}
               </Paragraph>
               
-              <Space wrap className="job-tags">
-                <Tag color="blue">
+              <Space wrap className="job-tags" style={{ marginBottom: '8px' }}>
+                <Tag color="blue" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {jobApi.getJobTypeDisplayName(job.jobType)}
                 </Tag>
-                <Tag color="green">
+                <Tag color="green" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {jobApi.getAcademicLevelDisplayName(job.academicLevel)}
                 </Tag>
-                <Tag color="purple">
+                <Tag color="purple" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {job.subject}
                 </Tag>
-                <Tag color="orange">
+                <Tag color="orange" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {job.priority}
                 </Tag>
               </Space>
 
-              <Row gutter={16}>
-                <Col span={8}>
-                  <Space>
-                    <DollarOutlined style={{ color: '#52c41a' }} />
-                    <Text strong style={{ color: '#52c41a' }}>
+              <Row gutter={window.innerWidth < 768 ? 8 : 16}>
+                <Col span={window.innerWidth < 768 ? 12 : 8}>
+                  <Space size="small">
+                    <DollarOutlined style={{ color: '#52c41a', fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                    <Text strong style={{ 
+                      color: '#52c41a',
+                      fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                      wordBreak: 'break-word'
+                    }}>
                       {jobApi.formatJobBudget(job.budget.amount, job.budget.currency)}
                     </Text>
                   </Space>
                 </Col>
-                <Col span={8}>
-                  <Space>
-                    <CalendarOutlined style={{ color: urgencyColor }} />
-                    <Text style={{ color: urgencyColor }}>
+                <Col span={window.innerWidth < 768 ? 12 : 8}>
+                  <Space size="small">
+                    <CalendarOutlined style={{ color: urgencyColor, fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                    <Text style={{ 
+                      color: urgencyColor,
+                      fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                      wordBreak: 'break-word'
+                    }}>
                       {timeRemaining}
                     </Text>
                   </Space>
                 </Col>
-                <Col span={8}>
-                  <Space>
-                    <UserOutlined />
-                    <Text>{job.postedBy?.name}</Text>
+                <Col span={window.innerWidth < 768 ? 24 : 8} style={{ marginTop: window.innerWidth < 768 ? '4px' : '0' }}>
+                  <Space size="small">
+                    <UserOutlined style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                    <Text style={{ 
+                      fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                      wordBreak: 'break-word'
+                    }}>
+                      {job.postedBy?.name}
+                    </Text>
                   </Space>
                 </Col>
               </Row>
 
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Space>
-                    <Badge count={job.applications?.length || 0} showZero>
-                      <Text type="secondary">Applications</Text>
+              <Row gutter={window.innerWidth < 768 ? 8 : 16} style={{ marginTop: '4px' }}>
+                <Col span={window.innerWidth < 768 ? 12 : 12}>
+                  <Space size="small">
+                    <Badge count={job.applications?.length || 0} showZero size="small">
+                      <Text type="secondary" style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px' }}>
+                        Applications
+                      </Text>
                     </Badge>
                   </Space>
                 </Col>
-                <Col span={12}>
-                  <Space>
-                    <ClockCircleOutlined />
-                    <Text type="secondary">
+                <Col span={window.innerWidth < 768 ? 12 : 12}>
+                  <Space size="small">
+                    <ClockCircleOutlined style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px' }} />
+                    <Text type="secondary" style={{ 
+                      fontSize: window.innerWidth < 768 ? '11px' : '13px',
+                      wordBreak: 'break-word'
+                    }}>
                       Posted {moment(job.createdAt).fromNow()}
                     </Text>
                   </Space>
@@ -454,10 +495,13 @@ const JobListing = () => {
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-            <Search
+            <Input
               placeholder="Search jobs..."
               allowClear
-              onSearch={handleSearch}
+              suffix={<SearchOutlined onClick={() => handleSearch(filters.search)} style={{ cursor: 'pointer', color: '#1890ff' }} />}
+              onPressEnter={(e) => handleSearch(e.target.value)}
+              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+              value={filters.search}
               style={{ width: '100%' }}
             />
           </Col>
@@ -470,6 +514,7 @@ const JobListing = () => {
               onChange={(value) => handleFilterChange('jobType', value)}
             >
               <Option value="full-project">Full Project</Option>
+              <Option value="it_Report">IT/SIWES Report</Option>
               <Option value="term-paper">Term Paper</Option>
               <Option value="chapter">Chapter</Option>
               <Option value="assignment">Assignment</Option>

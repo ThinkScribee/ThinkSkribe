@@ -21,7 +21,8 @@ import {
   Divider,
   Tooltip,
   Statistic,
-  Layout
+  Layout,
+  Grid
 } from 'antd';
 import { 
   MessageOutlined, 
@@ -66,6 +67,8 @@ const StudentWriterList = () => {
   const [sortBy, setSortBy] = useState('rating');
   const navigate = useNavigate();
   const { processWriterData, updateWriterProfileData } = useWriterStore();
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
   
 
   useEffect(() => {
@@ -281,7 +284,7 @@ const StudentWriterList = () => {
         {/* Hero Section */}
         <div style={{
           background: 'linear-gradient(135deg, #015382 0%, #014361 50%, #012a3e 100%)',
-          padding: '80px 0',
+          padding: isMobile ? '48px 0 56px' : '80px 0',
           color: 'white',
           position: 'relative',
           overflow: 'hidden'
@@ -297,7 +300,7 @@ const StudentWriterList = () => {
             pointerEvents: 'none'
           }}></div>
           <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
-            <Row gutter={[32, 32]} align="middle">
+            <Row gutter={[isMobile ? 16 : 32, isMobile ? 16 : 32]} align="middle">
               <Col xs={24} lg={14}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -308,11 +311,12 @@ const StudentWriterList = () => {
                     level={1} 
                     style={{ 
                       color: 'white',
-                      fontSize: 'clamp(32px, 6vw, 56px)',
+                      fontSize: isMobile ? '28px' : 'clamp(32px, 6vw, 56px)',
                       fontWeight: '800',
-                      marginBottom: '20px',
+                      marginBottom: isMobile ? '12px' : '20px',
                       textShadow: '0 4px 8px rgba(0,0,0,0.3)',
-                      letterSpacing: '-1px'
+                      letterSpacing: '-1px',
+                      lineHeight: isMobile ? 1.2 : 1.3
                     }}
                   >
                     {title}
@@ -320,40 +324,40 @@ const StudentWriterList = () => {
                   </Title>
                   <Paragraph style={{ 
                     color: 'rgba(255,255,255,0.95)',
-                    fontSize: '22px',
-                    marginBottom: '40px',
-                    lineHeight: '1.7',
+                    fontSize: isMobile ? '15px' : '22px',
+                    marginBottom: isMobile ? '24px' : '40px',
+                    lineHeight: isMobile ? 1.55 : 1.7,
                     fontWeight: '400',
-                    maxWidth: '600px'
+                    maxWidth: isMobile ? '100%' : '600px'
                   }}>
                     Discover elite academic writers who will transform your ideas into scholarly excellence. 
                     Connect with verified experts tailored to your unique academic journey.
                   </Paragraph>
                   
                   {/* Enhanced Stats */}
-                  <Row gutter={[32, 20]}>
+                  <Row gutter={[isMobile ? 16 : 32, isMobile ? 12 : 20]}>
                     <Col xs={12} sm={8}>
                       <div style={{ 
                           textAlign: 'center',
                           background: 'rgba(255,255,255,0.15)',
                           backdropFilter: 'blur(25px)',
                           borderRadius: '20px',
-                          padding: '24px 20px',
+                          padding: isMobile ? '16px 14px' : '24px 20px',
                           border: '1px solid rgba(255,255,255,0.3)',
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                         transition: 'transform 0.3s ease'
                       }}>
                         <div style={{ 
-                          fontSize: '32px', 
+                          fontSize: isMobile ? '22px' : '32px', 
                           fontWeight: '800', 
                           color: 'white',
-                          marginBottom: '4px',
+                          marginBottom: '2px',
                           textShadow: '0 2px 4px rgba(0,0,0,0.2)'
                         }}>
                           {writers.length}+
                         </div>
                         <div style={{ 
-                          fontSize: '14px', 
+                          fontSize: isMobile ? '12px' : '14px', 
                           color: 'rgba(255,255,255,0.9)',
                           fontWeight: '500',
                           letterSpacing: '0.5px'
@@ -368,22 +372,22 @@ const StudentWriterList = () => {
                           background: 'rgba(255,255,255,0.15)',
                           backdropFilter: 'blur(25px)',
                           borderRadius: '20px',
-                          padding: '24px 20px',
+                          padding: isMobile ? '16px 14px' : '24px 20px',
                           border: '1px solid rgba(255,255,255,0.3)',
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                         transition: 'transform 0.3s ease'
                       }}>
                         <div style={{ 
-                          fontSize: '32px', 
+                          fontSize: isMobile ? '22px' : '32px', 
                           fontWeight: '800', 
                           color: 'white',
-                          marginBottom: '4px',
+                          marginBottom: '2px',
                           textShadow: '0 2px 4px rgba(0,0,0,0.2)'
                         }}>
                           4.8★
                         </div>
                         <div style={{ 
-                          fontSize: '14px', 
+                          fontSize: isMobile ? '12px' : '14px', 
                           color: 'rgba(255,255,255,0.9)',
                           fontWeight: '500',
                           letterSpacing: '0.5px'
@@ -398,22 +402,22 @@ const StudentWriterList = () => {
                           background: 'rgba(255,255,255,0.15)',
                           backdropFilter: 'blur(25px)',
                           borderRadius: '20px',
-                          padding: '24px 20px',
+                          padding: isMobile ? '16px 14px' : '24px 20px',
                           border: '1px solid rgba(255,255,255,0.3)',
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                         transition: 'transform 0.3s ease'
                       }}>
                         <div style={{ 
-                          fontSize: '32px', 
+                          fontSize: isMobile ? '22px' : '32px', 
                           fontWeight: '800', 
                           color: 'white',
-                          marginBottom: '4px',
+                          marginBottom: '2px',
                           textShadow: '0 2px 4px rgba(0,0,0,0.2)'
                         }}>
                           24/7
                         </div>
                         <div style={{ 
-                          fontSize: '14px', 
+                          fontSize: isMobile ? '12px' : '14px', 
                           color: 'rgba(255,255,255,0.9)',
                           fontWeight: '500',
                           letterSpacing: '0.5px'
@@ -425,6 +429,7 @@ const StudentWriterList = () => {
                   </Row>
                 </motion.div>
               </Col>
+              {!isMobile && (
               <Col xs={24} lg={10}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -479,6 +484,7 @@ const StudentWriterList = () => {
                   </div>
                 </motion.div>
               </Col>
+              )}
             </Row>
           </div>
         </div>
@@ -487,7 +493,7 @@ const StudentWriterList = () => {
         <div style={{ 
           background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
-          padding: '32px 0',
+          padding: isMobile ? '16px 0' : '32px 0',
           boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
           position: 'relative'
         }}>
@@ -500,13 +506,13 @@ const StudentWriterList = () => {
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   style={{ 
-                    borderRadius: '16px',
-                    height: '52px',
+                    borderRadius: '12px',
+                    height: isMobile ? '44px' : '52px',
                     border: '2px solid #e2e8f0',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                    fontSize: '16px'
+                    fontSize: isMobile ? '14px' : '16px'
                   }}
-                  size="large"
+                  size={isMobile ? 'middle' : 'large'}
                 />
               </Col>
               <Col xs={24} sm={8} md={6}>
@@ -516,10 +522,10 @@ const StudentWriterList = () => {
                   onChange={setSelectedSpecialty}
                   style={{ 
                     width: '100%', 
-                    borderRadius: '16px',
-                    fontSize: '16px'
+                    borderRadius: '12px',
+                    fontSize: isMobile ? '14px' : '16px'
                   }}
-                  size="large"
+                  size={isMobile ? 'middle' : 'large'}
                 >
                   <Option value="all">All Expertise Areas</Option>
                   {specialties.map(specialty => (
@@ -534,10 +540,10 @@ const StudentWriterList = () => {
                   onChange={setSortBy}
                   style={{ 
                     width: '100%', 
-                    borderRadius: '16px',
-                    fontSize: '16px'
+                    borderRadius: '12px',
+                    fontSize: isMobile ? '14px' : '16px'
                   }}
-                  size="large"
+                  size={isMobile ? 'middle' : 'large'}
                 >
                   <Option value="online">🟢 Online First</Option>
                   <Option value="rating">⭐ Highest Rated</Option>
@@ -547,13 +553,13 @@ const StudentWriterList = () => {
                 </Select>
               </Col>
               <Col xs={24} sm={24} md={6}>
-                <div style={{ textAlign: 'right' }}>
+                <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
                   <div style={{
                     background: 'linear-gradient(135deg, #015382 0%, #014361 100%)',
                     color: 'white',
-                    padding: '14px 24px',
-                    borderRadius: '20px',
-                    fontSize: '15px',
+                    padding: isMobile ? '10px 14px' : '14px 24px',
+                    borderRadius: isMobile ? '14px' : '20px',
+                    fontSize: isMobile ? '13px' : '15px',
                     fontWeight: '700',
                     boxShadow: '0 6px 20px rgba(1, 83, 130, 0.3)',
                     display: 'inline-block',
@@ -582,7 +588,7 @@ const StudentWriterList = () => {
                           className="writer-card-modern"
                           style={{
                             height: '100%',
-                            borderRadius: '12px',
+                            borderRadius: isMobile ? '10px' : '12px',
                             border: '1px solid #e2e8f0',
                             boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                             transition: 'all 0.2s ease',
@@ -590,25 +596,29 @@ const StudentWriterList = () => {
                             background: 'white',
                             cursor: 'pointer'
                           }}
-                          bodyStyle={{ padding: '20px' }}
+                          bodyStyle={{ padding: isMobile ? '14px' : '20px' }}
                           onClick={() => navigate(`/writers/${writer._id}`)}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
-                            e.currentTarget.style.borderColor = '#cbd5e1';
+                            if (!isMobile) {
+                              e.currentTarget.style.transform = 'translateY(-2px)';
+                              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                              e.currentTarget.style.borderColor = '#cbd5e1';
+                            }
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
-                            e.currentTarget.style.borderColor = '#e2e8f0';
+                            if (!isMobile) {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
+                              e.currentTarget.style.borderColor = '#e2e8f0';
+                            }
                           }}
                         >
                           {/* Clean Header */}
                           <div style={{
                             textAlign: 'center', 
                             borderBottom: '1px solid #f1f5f9',
-                            paddingBottom: '16px',
-                            marginBottom: '16px'
+                            paddingBottom: isMobile ? '12px' : '16px',
+                            marginBottom: isMobile ? '12px' : '16px'
                           }}>
                             <div style={{ position: 'relative', marginBottom: '12px' }}>
                               {writer.isOnline && (
@@ -616,8 +626,8 @@ const StudentWriterList = () => {
                               position: 'absolute',
                                   top: '-2px',
                                   right: '-2px',
-                                  width: '12px',
-                                  height: '12px',
+                                  width: isMobile ? '10px' : '12px',
+                                  height: isMobile ? '10px' : '12px',
                                   backgroundColor: '#10b981',
                                   borderRadius: '50%',
                                   border: '2px solid white',
@@ -625,7 +635,7 @@ const StudentWriterList = () => {
                             }}></div>
                               )}
                                 <Avatar
-                                size={64}
+                                size={isMobile ? 56 : 64}
                                   src={writer.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${writer.name}`}
                                   style={{
                                   backgroundColor: '#015382',
@@ -640,20 +650,20 @@ const StudentWriterList = () => {
                                   transform: 'translateX(50%)',
                                   backgroundColor: '#10b981',
                                     borderRadius: '50%',
-                                  width: '20px',
-                                  height: '20px',
+                                  width: isMobile ? '18px' : '20px',
+                                  height: isMobile ? '18px' : '20px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                   border: '2px solid white'
                                   }}>
-                                  <CheckCircleOutlined style={{ color: 'white', fontSize: '12px' }} />
+                                  <CheckCircleOutlined style={{ color: 'white', fontSize: isMobile ? '11px' : '12px' }} />
                                   </div>
                                 )}
                               </div>
                             <Title level={5} style={{ 
                               margin: '0 0 4px 0', 
-                              fontSize: '16px',
+                              fontSize: isMobile ? '15px' : '16px',
                               color: '#1e293b',
                               fontWeight: '600'
                               }}>
@@ -663,10 +673,10 @@ const StudentWriterList = () => {
                               <Rate 
                                 disabled 
                                 value={writer.rating || 0} 
-                                style={{ fontSize: '12px' }}
+                                style={{ fontSize: isMobile ? '11px' : '12px' }}
                               />
                               <Text style={{ 
-                                fontSize: '12px', 
+                                fontSize: isMobile ? '11px' : '12px', 
                                 color: '#64748b',
                                 fontWeight: '500'
                               }}>
@@ -674,7 +684,7 @@ const StudentWriterList = () => {
                               </Text>
                             </div>
                             <Text style={{ 
-                              fontSize: '12px', 
+                              fontSize: isMobile ? '11px' : '12px', 
                               color: '#64748b'
                             }}>
                               {writer.reviewCount || 0} reviews • {writer.projectsCompleted > 0 ? `${writer.projectsCompleted}+ projects` : 'New writer'}
@@ -684,17 +694,17 @@ const StudentWriterList = () => {
                           {/* Content */}
                           <div>
                             {/* Writer Bio */}
-                            <div style={{ marginBottom: '16px' }}>
+                            <div style={{ marginBottom: isMobile ? '12px' : '16px' }}>
                               <Text style={{ 
-                                fontSize: '13px', 
+                                fontSize: isMobile ? '12px' : '13px', 
                                 color: writer.writerProfile?.bio ? '#475569' : '#94a3b8',
                                 lineHeight: '1.4',
                                 display: 'block',
                                 fontStyle: writer.writerProfile?.bio ? 'normal' : 'italic'
                               }}>
                                 {writer.writerProfile?.bio ? (
-                                  (writer.writerProfile.bio.length > 80
-                                    ? `${writer.writerProfile.bio.substring(0, 80)}...`
+                                  (writer.writerProfile.bio.length > (isMobile ? 70 : 80)
+                                    ? `${writer.writerProfile.bio.substring(0, isMobile ? 70 : 80)}...`
                                     : writer.writerProfile.bio
                                   )
                                 ) : (
@@ -704,19 +714,19 @@ const StudentWriterList = () => {
                             </div>
 
                             {/* Specialties */}
-                            <div style={{ marginBottom: '16px' }}>
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            <div style={{ marginBottom: isMobile ? '12px' : '16px' }}>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? '4px' : '6px' }}>
                                 {(writer.writerProfile?.specialties || []).length > 0 ? (
                                   <>
                                     {writer.writerProfile.specialties.slice(0, 3).map((specialty, idx) => (
                                       <span 
                                         key={idx} 
                                         style={{ 
-                                          fontSize: '11px', 
+                                          fontSize: isMobile ? '10px' : '11px', 
                                           backgroundColor: '#f1f5f9',
                                           color: '#475569',
-                                          padding: '4px 8px',
-                                          borderRadius: '6px',
+                                          padding: isMobile ? '3px 6px' : '4px 8px',
+                                          borderRadius: isMobile ? '5px' : '6px',
                                           fontWeight: '500'
                                         }}
                                       >
@@ -725,11 +735,11 @@ const StudentWriterList = () => {
                                     ))}
                                     {writer.writerProfile.specialties.length > 3 && (
                                       <span style={{ 
-                                        fontSize: '11px', 
+                                        fontSize: isMobile ? '10px' : '11px', 
                                         backgroundColor: '#e2e8f0',
                                         color: '#64748b',
-                                        padding: '4px 8px',
-                                        borderRadius: '6px',
+                                        padding: isMobile ? '3px 6px' : '4px 8px',
+                                        borderRadius: isMobile ? '5px' : '6px',
                                         fontWeight: '500'
                                       }}>
                                         +{writer.writerProfile.specialties.length - 3}
@@ -738,11 +748,11 @@ const StudentWriterList = () => {
                                   </>
                                 ) : (
                                   <span style={{ 
-                                    fontSize: '11px', 
+                                    fontSize: isMobile ? '10px' : '11px', 
                                     backgroundColor: '#fef2f2',
                                     color: '#94a3b8',
-                                    padding: '4px 8px',
-                                    borderRadius: '6px',
+                                    padding: isMobile ? '3px 6px' : '4px 8px',
+                                    borderRadius: isMobile ? '5px' : '6px',
                                     fontWeight: '500',
                                     fontStyle: 'italic'
                                   }}>
@@ -756,29 +766,29 @@ const StudentWriterList = () => {
                             <div style={{ 
                               display: 'flex',
                               justifyContent: 'space-between',
-                              padding: '12px 0',
+                              padding: isMobile ? '8px 0' : '12px 0',
                               borderTop: '1px solid #f1f5f9',
-                              marginBottom: '16px'
+                              marginBottom: isMobile ? '12px' : '16px'
                             }}>
                               <div style={{ textAlign: 'center', flex: 1 }}>
                                 <div style={{ 
-                                  fontSize: '14px', 
+                                  fontSize: isMobile ? '13px' : '14px', 
                                   fontWeight: '600', 
                                   color: writer.projectsCompleted > 0 ? '#015382' : '#94a3b8'
                                 }}>
                                   {writer.projectsCompleted > 0 ? `${writer.projectsCompleted}+` : 'New'}
                                 </div>
                                 <div style={{ 
-                                  fontSize: '11px', 
+                                  fontSize: isMobile ? '10px' : '11px', 
                                   color: '#64748b'
                                 }}>
                                   Projects
                                 </div>
                               </div>
-                              <div style={{ width: '1px', background: '#e2e8f0', margin: '0 8px' }}></div>
+                              <div style={{ width: '1px', background: '#e2e8f0', margin: isMobile ? '0 6px' : '0 8px' }}></div>
                               <div style={{ textAlign: 'center', flex: 1 }}>
                                 <div style={{ 
-                                  fontSize: '14px', 
+                                  fontSize: isMobile ? '13px' : '14px', 
                                   fontWeight: '600', 
                                   color: writer.responseTime <= 4 ? '#10b981' : writer.responseTime <= 24 ? '#3b82f6' : '#f59e0b'
                                 }}>
@@ -789,7 +799,7 @@ const StudentWriterList = () => {
                                   }
                                 </div>
                                 <div style={{ 
-                                  fontSize: '11px', 
+                                  fontSize: isMobile ? '10px' : '11px', 
                                   color: '#64748b'
                                 }}>
                                   Response
@@ -809,9 +819,9 @@ const StudentWriterList = () => {
                               style={{
                                 backgroundColor: '#015382',
                                 border: 'none',
-                                borderRadius: '8px',
-                                height: '36px',
-                                fontSize: '14px',
+                                borderRadius: isMobile ? '7px' : '8px',
+                                height: isMobile ? '34px' : '36px',
+                                fontSize: isMobile ? '13px' : '14px',
                                 fontWeight: '500'
                               }}
                             >
@@ -835,8 +845,8 @@ const StudentWriterList = () => {
                       setPageSize(size);
                       setCurrentPage(1);
                     }}
-                    showSizeChanger
-                    showQuickJumper
+                    showSizeChanger={!isMobile}
+                    showQuickJumper={!isMobile}
                     showTotal={(total, range) => 
                       `${range[0]}-${range[1]} of ${total} writers`
                     }

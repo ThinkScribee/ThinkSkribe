@@ -443,7 +443,7 @@ const HeaderComponent = () => {
           <div className="p-4 border-t border-gray-200 bg-white flex-shrink-0">
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <Avatar
-                size={36}
+                size={screenSize.isMobile ? 50 : 58}
                 src={user?.avatar || ''}
                 icon={!user?.avatar && <UserOutlined />}
                 className="border-2 border-blue-100 flex-shrink-0"
@@ -516,8 +516,8 @@ const HeaderComponent = () => {
                 className="w-full h-10"
                 onClick={() => setDrawerVisible(false)}
                 style={{
-                  backgroundColor: 'var(--primary-color)',
-                  borderColor: 'var(--primary-color)',
+                  backgroundColor: '#3b82f6',
+                  borderColor: '#3b82f6',
                 }}
               >
                 Sign In
@@ -682,8 +682,22 @@ const HeaderComponent = () => {
         {/* THREE SECTION LAYOUT */}
         <div className="header-main-container">
           {/* LEFT SECTION: Logo Only on Mobile */}
-          <div className="header-left-section">
-            {/* Hamburger menu removed for mobile - navigation moved to bottom tabs */}
+          <div className="header-left-section" style={{ display: 'flex', alignItems: 'center' }}>
+            {/* Hamburger menu for landing page on mobile */}
+            {!isAuthenticated && screenSize.isMobile && (
+              <Button
+                type="text"
+                icon={<MenuOutlined />}
+                onClick={() => setDrawerVisible(true)}
+                className="mobile-menu-button"
+                style={{
+                  color: '#1e293b',
+                  fontSize: '18px',
+                  padding: '8px',
+                  marginRight: '8px'
+                }}
+              />
+            )}
 
             <Link to={isAuthenticated ? getDashboardLink() : '/'} className="header-logo">
               <img
@@ -827,7 +841,7 @@ const HeaderComponent = () => {
                       }}
                     >
                       <Avatar 
-                        size={screenSize.isMobile ? 20 : 24}
+                        size={screenSize.isMobile ? 43 : 50}
                         src={user?.avatar} 
                         icon={<UserOutlined />}
                         style={{
@@ -861,7 +875,7 @@ const HeaderComponent = () => {
                   <Button 
                     type="text" 
                     style={{ 
-                      color: 'var(--primary-color)', 
+                      color: '#3b82f6', 
                       fontWeight: isActive('/signin') ? '500' : 'normal',
                       height: '36px',
                       borderRadius: '8px'
@@ -874,8 +888,8 @@ const HeaderComponent = () => {
                   <Button 
                     type="primary" 
                     style={{ 
-                      backgroundColor: 'var(--primary-color)',
-                      borderColor: 'var(--primary-color)',
+                      backgroundColor: '#3b82f6',
+                      borderColor: '#3b82f6',
                       height: '36px',
                       borderRadius: '8px'
                     }}

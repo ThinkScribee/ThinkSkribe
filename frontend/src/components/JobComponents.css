@@ -16,6 +16,68 @@
   padding-bottom: 80px;
 }
 
+/* Text breaking and containment fixes */
+.job-card .ant-card-meta-title,
+.job-card .ant-card-meta-description,
+.job-management-header .ant-typography,
+.job-filters .ant-input,
+.job-filters .ant-select-selector {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+  white-space: normal !important;
+  line-height: 1.4 !important;
+}
+
+/* Clean search input styling */
+.job-filters .ant-input {
+  border-radius: 8px !important;
+  height: 40px !important;
+  border: 1px solid #d9d9d9 !important;
+  transition: all 0.3s !important;
+}
+
+.job-filters .ant-input:focus,
+.job-filters .ant-input:hover {
+  border-color: #40a9ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.job-filters .ant-input-suffix {
+  color: #bfbfbf !important;
+}
+
+.job-filters .ant-input-suffix:hover {
+  color: #1890ff !important;
+}
+
+/* Prevent text overflow in job cards */
+.job-card .ant-card-meta-title {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.job-card .ant-card-meta-description .ant-typography {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Container width fixes */
+.job-management-header,
+.job-filters,
+.job-card {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
 /* Enhanced mobile-first responsive design */
 @media (max-width: 768px) {
   /* Global mobile improvements */
@@ -73,6 +135,8 @@
   /* Typography improvements */
   .ant-typography {
     word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
   }
   
   /* Space improvements */
@@ -85,6 +149,7 @@
     border-radius: 6px !important;
     padding: 2px 8px !important;
     font-size: 12px !important;
+    word-break: break-word !important;
   }
   
   /* Progress bar improvements */
@@ -113,6 +178,221 @@
     min-width: 44px !important;
     min-height: 44px !important;
     line-height: 42px !important;
+  }
+
+  /* Job card specific mobile improvements */
+  .job-card-mobile .ant-card-meta-title {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .job-card-mobile .ant-card-meta-description {
+    font-size: 14px !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+
+  .job-card-mobile .ant-card-meta-description .ant-typography {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Action buttons mobile layout */
+  .job-card-mobile .ant-card-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 12px 16px !important;
+  }
+
+  .job-card-mobile .ant-card-actions > li {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .job-card-mobile .ant-card-actions > li > span {
+    width: 100% !important;
+    display: block !important;
+  }
+
+  .job-card-mobile .ant-card-actions .ant-btn {
+    width: 100% !important;
+    height: 40px !important;
+    font-size: 13px !important;
+    padding: 0 12px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    word-break: normal !important;
+  }
+
+  /* Job filters mobile improvements */
+  .job-filters .ant-input,
+  .job-filters .ant-select-selector,
+  .job-filters .ant-input-number {
+    height: 48px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Search box mobile fixes */
+  .job-filters .ant-input-search {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .job-filters .ant-input-search .ant-input {
+    height: 48px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+    border: 2px solid #e2e8f0 !important;
+    padding: 12px 48px 12px 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .job-filters .ant-input-search .ant-input-search-button {
+    height: 48px !important;
+    width: 48px !important;
+    border-radius: 0 8px 8px 0 !important;
+    border: 2px solid #e2e8f0 !important;
+    border-left: none !important;
+    background: #f8fafc !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    z-index: 2 !important;
+  }
+
+  .job-filters .ant-input-search .ant-input-search-button:hover {
+    background: #e2e8f0 !important;
+    border-color: #667eea !important;
+  }
+
+  /* Search box overlay fixes */
+  .ant-input-search {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .ant-input-search .ant-input {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .ant-input-search .ant-input-search-button {
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    z-index: 2 !important;
+  }
+
+/* Prevent search box from overlapping */
+.job-filters {
+  position: relative !important;
+  z-index: 1 !important;
+  background: white !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.job-filters .ant-card-body {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+
+  /* Job management header mobile */
+  .job-management-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    padding: 16px !important;
+  }
+
+  .job-management-header .ant-btn {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    word-break: normal !important;
+  }
+
+  .job-management-header .ant-typography {
+    text-align: center !important;
+    margin-bottom: 16px !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Modal mobile improvements */
+  .ant-modal {
+    margin: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .ant-modal-content {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+
+  .ant-modal-header {
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+  }
+
+  .ant-modal-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .ant-modal-body {
+    padding: 20px !important;
+    max-height: calc(100vh - 120px) !important;
+    overflow-y: auto !important;
+  }
+
+  /* Form mobile improvements */
+  .ant-form-item-label > label {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    word-break: break-word !important;
+  }
+
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker,
+  .ant-input-number {
+    height: 48px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+  }
+
+  .ant-input::placeholder,
+  .ant-select-selection-placeholder {
+    font-size: 16px !important;
+  }
+
+  /* TextArea mobile improvements */
+  .ant-input {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    word-break: break-word !important;
   }
 }
 
@@ -372,9 +652,30 @@
   .job-filters .ant-input,
   .job-filters .ant-select,
   .job-filters .ant-input-number {
-    height: 44px !important;
+    height: 48px !important;
     font-size: 16px !important;
     border-radius: 8px !important;
+  }
+
+  /* Clean search input mobile layout */
+  .job-filters .ant-input {
+    height: 48px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+    border: 2px solid #e2e8f0 !important;
+    padding: 12px 16px !important;
+    box-sizing: border-box !important;
+    background: white !important;
+  }
+
+  .job-filters .ant-input:focus {
+    border-color: #1890ff !important;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+  }
+
+  .job-filters .ant-input-suffix {
+    padding-right: 12px !important;
+    color: #1890ff !important;
   }
   
   /* Enhanced Modal Styling */

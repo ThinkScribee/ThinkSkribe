@@ -1457,6 +1457,7 @@ const WriterChat = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: isDesktop ? 16 : 12, minWidth: 0, flex: 1 }}>
                   <div style={{ position: 'relative' }}>
                     <Avatar
+                      size={isDesktop ? 40 : 36}
                       src={
                         selectedChat.participants.find((p) => p._id !== user._id)
                           .avatar ||
@@ -1932,7 +1933,7 @@ const WriterChat = () => {
                                           <div style={{ 
                                             marginTop: '8px', 
                                             fontSize: '14px',
-                                            color: isCurrentUser ? 'white' : '#1f2937',
+                                            color: 'inherit',
                                             lineHeight: '1.4'
                                           }}>
                                             {msg.content}
@@ -1945,7 +1946,7 @@ const WriterChat = () => {
                                             size="small"
                                             onClick={() => downloadFile(msg.fileUrl, fileName)}
                                             style={{
-                                              color: isCurrentUser ? 'rgba(255,255,255,0.8)' : '#667eea',
+                                              color: '#667eea',
                                               padding: 0
                                             }}
                                           >
@@ -1995,7 +1996,7 @@ const WriterChat = () => {
                                           <div style={{ 
                                             marginTop: '8px', 
                                             fontSize: '14px',
-                                            color: isCurrentUser ? 'white' : '#1f2937',
+                                            color: 'inherit',
                                             lineHeight: '1.4',
                                             wordWrap: 'break-word',
                                             overflowWrap: 'break-word'
@@ -2054,14 +2055,14 @@ const WriterChat = () => {
                                           </div>
                                         <div className="file-info" style={{ flex: 1, minWidth: 0 }}>
                                           <div className="file-name" style={{
-                                              fontSize: '14px',
-                                              fontWeight: 500,
-                                              color: isCurrentUser ? 'white' : '#1f2937',
-                                              marginBottom: '4px',
-                                              overflow: 'hidden',
-                                              textOverflow: 'ellipsis',
-                                              whiteSpace: 'nowrap'
-                                            }}>
+                                            fontSize: '14px',
+                                            fontWeight: 500,
+                                            color: 'inherit',
+                                            marginBottom: '4px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                          }}>
                                               {fileName}
                                             </div>
                                           <div className="file-size" style={{
@@ -2082,9 +2083,9 @@ const WriterChat = () => {
                                               e.stopPropagation();
                                               downloadFile(msg.fileUrl, fileName);
                                             }}
-                                            style={{
-                                              color: isCurrentUser ? 'rgba(255,255,255,0.8)' : '#667eea'
-                                            }}
+                                          style={{
+                                            color: '#667eea'
+                                          }}
                                           />
                                       </div>
                                     );
@@ -2204,7 +2205,18 @@ const WriterChat = () => {
                   </div>
                 )}
 
-                <div className="input-wrapper">
+                <div className="input-wrapper" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: '100%',
+                  maxWidth: 720,
+                  background: '#ffffff',
+                  borderRadius: 18,
+                  boxShadow: 'none',
+                  padding: '6px 10px',
+                  border: '1px solid #e5e7eb',
+                  margin: '0 auto'
+                }}>
                   {/* Emoji picker */}
                   <Popover
                     content={
@@ -2270,8 +2282,18 @@ const WriterChat = () => {
                     placement="topLeft"
                     overlayStyle={{ borderRadius: 12, overflow: 'hidden' }}
                   >
-                    <button className="action-button">
-                      <SmileOutlined style={{ fontSize: 20, color: '#6b7280' }} />
+                    <button className="action-button" style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 8,
+                      background: 'transparent',
+                      border: 'none',
+                      padding: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <SmileOutlined style={{ fontSize: 18, color: '#6b7280' }} />
                     </button>
                   </Popover>
 
@@ -2291,11 +2313,11 @@ const WriterChat = () => {
                       background: 'transparent',
                       outline: 'none',
                       resize: 'none',
-                       fontSize: '16px',
+                       fontSize: '15px',
                       lineHeight: '1.4',
                       flex: 1,
                       height: '24px',
-                      padding: '0 6px',
+                      padding: '6px 6px',
                       color: '#374151',
                       fontFamily: 'inherit',
                       overflow: 'hidden'
@@ -2461,8 +2483,18 @@ const WriterChat = () => {
                       }}
                       multiple={true}
                     >
-                      <button className="action-button" title="Upload File">
-                        <PaperClipOutlined style={{ fontSize: 20, color: '#6b7280' }} />
+                      <button className="action-button" title="Upload File" style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 8,
+                        background: 'transparent',
+                        border: 'none',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <PaperClipOutlined style={{ fontSize: 18, color: '#6b7280' }} />
                       </button>
                     </Upload>
 
@@ -2471,8 +2503,22 @@ const WriterChat = () => {
                       className="action-button send-button"
                       onClick={handleSend}
                       disabled={false}
+                      style={{
+                        background: '#015382',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 10,
+                        width: 36,
+                        height: 36,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: 'none',
+                        marginLeft: 6,
+                        transition: 'background 0.2s'
+                      }}
                     >
-                      <SendOutlined style={{ fontSize: 20, color: 'white' }} />
+                      <SendOutlined style={{ fontSize: 18, color: 'white' }} />
                     </button>
                   </div>
                 </div>
