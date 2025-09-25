@@ -11,6 +11,7 @@ import {
   publishWriter,
   unpublishWriter,
   getAllAgreements,
+  getAllJobs,
   fixPaymentStatuses, 
   fixPaymentCalculations,
   debugPayments
@@ -39,6 +40,8 @@ router.post('/writers/:id/unpublish', unpublishWriter);
 
 // Agreement Management
 router.get('/agreements', getAllAgreements);
+// Job Management
+router.get('/jobs', getAllJobs);
 
 // System Fixes
 router.post('/fix-payment-statuses', fixPaymentStatuses);

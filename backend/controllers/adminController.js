@@ -4,6 +4,7 @@ import Payment from '../models/Payment.js';
 import ServiceAgreement from '../models/ServiceAgreement.js';
 import Chat from '../models/Chat.js';
 import Notification from '../models/Notification.js';
+import Job from '../models/Job.js';
 
 export const getUsers = async (req, res, next) => {
   try {
@@ -853,6 +854,80 @@ export const debugPayments = async (req, res, next) => {
     });
   } catch (err) {
     console.error('❌ [Debug] Error:', err);
+    next(err);
+  }
+};
+
+/**
+ * @desc    Get all jobs with tracking info for admin
+ * @route   GET /api/admin/jobs
+ * @access  Private (Admin)
+ */
+export const getAllJobs = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 20, status, search, assigned } = req.query;
+
+    const query = {};
+
+    if (status) {
+      query.status = status;
+    }
+
+    if (assigned === 'true') {
+      query.assignedTo = { $ne: null };
+    } else if (assigned === 'false') {
+      query.assignedTo = null;
+    }
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { subject: { $regex: search, $options: 'i' } },
+        { tags: { $elemMatch: { $regex: search, $options: 'i' } } }
+      ];
+    }
+
+    const jobs = await Job.find(query)
+      .populate('postedBy', 'name email role')
+      .populate('assignedTo', 'name email role')
+      .populate('applications.writer', 'name email role')
+      .sort({ createdAt: -1 })
+      .limit(Number(limit))
+      .skip((Number(page) - 1) * Number(limit));
+
+    const total = await Job.countDocuments(query);
+
+    // Summary metrics
+    const [openCount, inProgressCount, completedCount, unassignedCount, assignedCount] = await Promise.all([
+      Job.countDocuments({ status: 'open' }),
+      Job.countDocuments({ status: 'in-progress' }),
+      Job.countDocuments({ status: 'completed' }),
+      Job.countDocuments({ assignedTo: null }),
+      Job.countDocuments({ assignedTo: { $ne: null } })
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        jobs,
+        summary: {
+          total,
+          open: openCount,
+          inProgress: inProgressCount,
+          completed: completedCount,
+          assigned: assignedCount,
+          unassigned: unassignedCount
+        },
+        pagination: {
+          currentPage: Number(page),
+          totalPages: Math.ceil(total / Number(limit)),
+          totalItems: total,
+          pageSize: Number(limit)
+        }
+      }
+    });
+  } catch (err) {
     next(err);
   }
 };

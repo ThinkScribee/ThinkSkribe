@@ -14,6 +14,19 @@ export const adminApi = {
     }
   },
 
+  // Get all jobs (admin)
+  getJobs: async (params = {}) => {
+    try {
+      console.log('🎯 [Admin API] Fetching jobs...', params);
+      const response = await client.get('/admin/jobs', { params });
+      console.log('✅ [Admin API] Jobs received:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ [Admin API] Error fetching jobs:', error);
+      throw error;
+    }
+  },
+
   // Get all users
   getUsers: async (params = {}) => {
     try {

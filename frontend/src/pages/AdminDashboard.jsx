@@ -324,6 +324,9 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [writers, setWriters] = useState([]);
   const [agreements, setAgreements] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [jobSummary, setJobSummary] = useState({});
+  const [jobFilters, setJobFilters] = useState({ status: 'all', assigned: 'all', search: '' });
   const [users, setUsers] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [writerFilter, setWriterFilter] = useState('all');
@@ -453,7 +456,8 @@ const AdminDashboard = () => {
         client.get('/admin/stats'),
         client.get('/admin/writers'),
         client.get('/admin/agreements'),
-        client.get('/admin/users')
+        client.get('/admin/users'),
+        adminApi.getJobs({ page: 1, limit: 20 })
       ]);
 
       console.log('📊 [Admin] Raw API results:', results);
@@ -517,6 +521,19 @@ const AdminDashboard = () => {
         setUsers([]);
       }
 
+      // Handle jobs
+      if (results[4].status === 'fulfilled') {
+        const jobsData = results[4].value;
+        const extractedJobs = jobsData.data?.data?.jobs || jobsData.data?.jobs || jobsData.jobs || [];
+        const summary = jobsData.data?.data?.summary || jobsData.data?.summary || jobsData.summary || {};
+        setJobs(Array.isArray(extractedJobs) ? extractedJobs : []);
+        setJobSummary(summary || {});
+        console.log('✅ [Admin] Jobs loaded:', extractedJobs.length);
+      } else {
+        console.error('❌ [Admin] Jobs failed:', results[4].reason);
+        setJobs([]);
+      }
+
       console.log('🎯 [Debug] Stats structure:', {
         writers: stats?.writers,
         revenue: stats?.revenue,
@@ -536,6 +553,23 @@ const AdminDashboard = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchJobs = async (overrides = {}) => {
+    try {
+      const params = { page: 1, limit: 20 };
+      const filters = { ...jobFilters, ...overrides };
+      if (filters.status && filters.status !== 'all') params.status = filters.status;
+      if (filters.assigned && filters.assigned !== 'all') params.assigned = filters.assigned;
+      if (filters.search) params.search = filters.search;
+      const res = await adminApi.getJobs(params);
+      const extractedJobs = res.data?.data?.jobs || res.data?.jobs || [];
+      const summary = res.data?.data?.summary || res.data?.summary || {};
+      setJobs(Array.isArray(extractedJobs) ? extractedJobs : []);
+      setJobSummary(summary || {});
+    } catch (error) {
+      notification.error({ message: 'Failed to load jobs' });
     }
   };
 
@@ -2454,6 +2488,136 @@ const AdminDashboard = () => {
                   </Card>
                 </Col>
               </Row>
+            </TabPane>
+          </Tabs>
+          {/* Jobs Tracking Tab */}
+          <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            size="large"
+            style={{ marginTop: 24 }}
+          >
+            <TabPane 
+              tab={
+                <span style={{ fontSize: '16px', fontWeight: '600' }}>
+                  <BookOutlined style={{ marginRight: '8px' }} />
+                  Job Tracking
+                </span>
+              } 
+              key="jobs"
+            >
+              <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+                <Col xs={24} sm={8}>
+                  <Input
+                    placeholder="Search title, subject, tag"
+                    prefix={<SearchOutlined />}
+                    value={jobFilters.search}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setJobFilters(prev => ({ ...prev, search: v }));
+                    }}
+                    onPressEnter={() => fetchJobs()}
+                  />
+                </Col>
+                <Col xs={12} sm={8}>
+                  <Select
+                    value={jobFilters.status}
+                    onChange={(v) => { setJobFilters(prev => ({ ...prev, status: v })); fetchJobs({ status: v }); }}
+                    style={{ width: '100%' }}
+                  >
+                    <Option value="all">All Statuses</Option>
+                    <Option value="open">Open</Option>
+                    <Option value="in-progress">In Progress</Option>
+                    <Option value="completed">Completed</Option>
+                    <Option value="cancelled">Cancelled</Option>
+                  </Select>
+                </Col>
+                <Col xs={12} sm={8}>
+                  <Select
+                    value={jobFilters.assigned}
+                    onChange={(v) => { setJobFilters(prev => ({ ...prev, assigned: v })); fetchJobs({ assigned: v }); }}
+                    style={{ width: '100%' }}
+                  >
+                    <Option value="all">All Assignment</Option>
+                    <Option value="true">Assigned</Option>
+                    <Option value="false">Unassigned</Option>
+                  </Select>
+                </Col>
+              </Row>
+
+              <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+                <Col xs={24} sm={12} md={6}><Card><Statistic title="Total Jobs" value={jobSummary.total || 0} /></Card></Col>
+                <Col xs={24} sm={12} md={6}><Card><Statistic title="Open" value={jobSummary.open || 0} /></Card></Col>
+                <Col xs={24} sm={12} md={6}><Card><Statistic title="In Progress" value={jobSummary.inProgress || 0} /></Card></Col>
+                <Col xs={24} sm={12} md={6}><Card><Statistic title="Completed" value={jobSummary.completed || 0} /></Card></Col>
+              </Row>
+
+              <Table
+                rowKey="_id"
+                dataSource={jobs}
+                columns={[
+                  {
+                    title: 'Title',
+                    dataIndex: 'title',
+                    key: 'title',
+                    render: (text, record) => (
+                      <div>
+                        <div style={{ fontWeight: 600 }}>{text}</div>
+                        <Text type="secondary">{record.subject}</Text>
+                      </div>
+                    )
+                  },
+                  {
+                    title: 'Poster',
+                    key: 'postedBy',
+                    render: (_, r) => r.postedBy?.name || '—'
+                  },
+                  {
+                    title: 'Assigned To',
+                    key: 'assignedTo',
+                    render: (_, r) => r.assignedTo?.name ? (
+                      <Space><Badge status="processing" /><span>{r.assignedTo?.name}</span></Space>
+                    ) : <Tag>Unassigned</Tag>
+                  },
+                  {
+                    title: 'Status',
+                    dataIndex: 'status',
+                    key: 'status',
+                    render: (status) => {
+                      const color = status === 'open' ? 'blue' : status === 'in-progress' ? 'gold' : status === 'completed' ? 'green' : 'red';
+                      return <Tag color={color} style={{ textTransform: 'capitalize' }}>{status}</Tag>;
+                    }
+                  },
+                  {
+                    title: 'Applications',
+                    key: 'applications',
+                    render: (r) => r.applications?.length || 0
+                  },
+                  {
+                    title: 'Views',
+                    key: 'views',
+                    render: (r) => r.metrics?.totalViews || 0
+                  },
+                  {
+                    title: 'Budget',
+                    key: 'budget',
+                    render: (r) => `₦${(r.budget?.amount || 0).toLocaleString()}`
+                  },
+                  {
+                    title: 'Deadline',
+                    dataIndex: 'deadline',
+                    key: 'deadline',
+                    render: (d) => d ? new Date(d).toLocaleDateString() : '—'
+                  },
+                  {
+                    title: 'Created',
+                    dataIndex: 'createdAt',
+                    key: 'createdAt',
+                    render: (d) => new Date(d).toLocaleDateString()
+                  }
+                ]}
+                pagination={{ pageSize: 10 }}
+              />
             </TabPane>
           </Tabs>
         </div>
