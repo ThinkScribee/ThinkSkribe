@@ -777,6 +777,51 @@ const AdminDashboard = () => {
     }
   };
 
+  // CSV Export function for students
+  const handleExportStudentsCSV = () => {
+    try {
+      const studentsOnly = filteredUsers.filter(u => u.role === 'student');
+      const csvData = studentsOnly.map(student => ({
+        name: student.name || '',
+        email: student.email || '',
+        phone: student.phone || '',
+        createdAt: student.createdAt ? new Date(student.createdAt).toISOString() : ''
+      }));
+
+      const headers = ['Name', 'Email', 'Phone', 'Joined'];
+      const csvContent = [
+        headers.join(','),
+        ...csvData.map(row => [
+          `"${row.name}"`,
+          `"${row.email}"`,
+          `"${row.phone}"`,
+          `"${row.createdAt}"`
+        ].join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `students_export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      notification.success({
+        message: 'Export Successful',
+        description: `Exported ${csvData.length} students to CSV file`
+      });
+    } catch (error) {
+      console.error('Export students error:', error);
+      notification.error({
+        message: 'Export Failed',
+        description: 'Failed to export students data'
+      });
+    }
+  };
+
   // Prepare chart data from real backend data
   const revenueChartData = stats?.revenue?.monthlyBreakdown?.map(item => ({
     month: `Month ${item._id.month}`,
@@ -1267,11 +1312,9 @@ const AdminDashboard = () => {
             activeKey={activeTab} 
             onChange={setActiveTab}
             size="large"
+            className="professional-tabs"
             style={{
-              '.ant-tabs-tab': {
-                fontSize: '16px',
-                fontWeight: '600'
-              }
+              marginTop: '24px'
             }}
           >
             <TabPane 
@@ -1596,7 +1639,7 @@ const AdminDashboard = () => {
                               </Text>
                             </div>
                           </div>
-                          <Tag color={user.role === 'student' ? 'blue' : user.role === 'writer' ? 'purple' : 'gold'} style={{ flexShrink: 0 }}>
+                          <Tag color={user.role === 'student' ? 'blue' : user.role === 'writer' ? 'blue' : 'gold'} style={{ flexShrink: 0 }}>
                             {user.role}
                           </Tag>
                         </div>
@@ -2111,6 +2154,22 @@ const AdminDashboard = () => {
                       <Option value="admins">Admins</Option>
                     </Select>
                   </Space>
+                  <Space>
+                    <Button 
+                      icon={<DownloadOutlined />}
+                      onClick={handleExportStudentsCSV}
+                      size="large"
+                      style={{
+                        borderRadius: '12px',
+                        height: '40px',
+                        background: 'linear-gradient(135deg, #52c41a 0%, #73d13d 100%)',
+                        border: 'none',
+                        color: 'white',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Export Students CSV
+                    </Button>
                   <Button 
                     icon={<ReloadOutlined />}
                     onClick={fetchUsers}
@@ -2123,6 +2182,7 @@ const AdminDashboard = () => {
                   >
                     Refresh
                   </Button>
+                  </Space>
                 </div>
 
                 {/* Test Buttons */}
@@ -2473,7 +2533,7 @@ const AdminDashboard = () => {
                       <Descriptions.Item 
                         label={<span style={{ fontWeight: '600' }}>Total Agreements</span>}
                       >
-                        <Tag color="purple" style={{ fontSize: '14px', padding: '4px 12px', borderRadius: '8px' }}>
+                        <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px', borderRadius: '8px' }}>
                           {stats?.data?.agreements?.total || 0}
                         </Tag>
                       </Descriptions.Item>
@@ -2495,6 +2555,7 @@ const AdminDashboard = () => {
             activeKey={activeTab}
             onChange={setActiveTab}
             size="large"
+            className="professional-tabs"
             style={{ marginTop: 24 }}
           >
             <TabPane 

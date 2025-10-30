@@ -1,0 +1,303 @@
+/* Professional Tab Styling with Custom Blue Theme - SPECIFIC TO JOBS PAGES ONLY */
+
+/* Ant Design Tabs Override - ONLY for jobs pages */
+.jobs-page .ant-tabs,
+.professional-tabs .ant-tabs {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* ONLY apply to specific jobs pages */
+.jobs-page .ant-tabs-tab,
+.professional-tabs .ant-tabs-tab {
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  padding: 12px 20px !important;
+  border-radius: 8px 8px 0 0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: none !important;
+  background: transparent !important;
+  color: #64748b !important;
+  position: relative !important;
+}
+
+.jobs-page .ant-tabs-tab:hover,
+.professional-tabs .ant-tabs-tab:hover {
+  color: #015382 !important;
+  background: rgba(1, 83, 130, 0.05) !important;
+  transform: translateY(-1px) !important;
+}
+
+.jobs-page .ant-tabs-tab-active,
+.professional-tabs .ant-tabs-tab-active {
+  color: #015382 !important;
+  background: rgba(1, 83, 130, 0.1) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(1, 83, 130, 0.15) !important;
+}
+
+.jobs-page .ant-tabs-tab-active::before,
+.professional-tabs .ant-tabs-tab-active::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #015382 0%, #017DB0 100%);
+  border-radius: 2px 2px 0 0;
+}
+
+.jobs-page .ant-tabs-ink-bar,
+.professional-tabs .ant-tabs-ink-bar {
+  background: linear-gradient(135deg, #015382 0%, #017DB0 100%) !important;
+  height: 3px !important;
+  border-radius: 2px !important;
+}
+
+.jobs-page .ant-tabs-content-holder,
+.professional-tabs .ant-tabs-content-holder {
+  background: #ffffff !important;
+  border-radius: 0 8px 8px 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-top: none !important;
+}
+
+.jobs-page .ant-tabs-tabpane,
+.professional-tabs .ant-tabs-tabpane {
+  padding: 24px !important;
+}
+
+/* Mobile Tab Styling - ONLY for jobs pages */
+@media (max-width: 768px) {
+  .jobs-page .ant-tabs-tab,
+  .professional-tabs .ant-tabs-tab {
+    font-size: 13px !important;
+    padding: 10px 16px !important;
+    margin: 0 2px !important;
+  }
+  
+  .jobs-page .ant-tabs-content-holder,
+  .professional-tabs .ant-tabs-content-holder {
+    border-radius: 0 0 8px 8px !important;
+  }
+  
+  .jobs-page .ant-tabs-tabpane,
+  .professional-tabs .ant-tabs-tabpane {
+    padding: 16px !important;
+  }
+}
+
+/* Professional Tab Icons - ONLY for jobs pages */
+.jobs-page .ant-tabs-tab .anticon,
+.professional-tabs .ant-tabs-tab .anticon {
+  margin-right: 8px !important;
+  font-size: 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+.jobs-page .ant-tabs-tab:hover .anticon,
+.professional-tabs .ant-tabs-tab:hover .anticon {
+  transform: scale(1.1) !important;
+}
+
+.jobs-page .ant-tabs-tab-active .anticon,
+.professional-tabs .ant-tabs-tab-active .anticon {
+  color: #015382 !important;
+}
+
+/* Tab Content Styling - ONLY for jobs pages */
+.jobs-page .ant-tabs-content,
+.professional-tabs .ant-tabs-content {
+  background: #ffffff !important;
+  border-radius: 0 8px 8px 8px !important;
+  min-height: 400px !important;
+}
+
+/* Professional Tab Navigation - ONLY for jobs pages */
+.jobs-page .ant-tabs-nav,
+.professional-tabs .ant-tabs-nav {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  border-radius: 8px 8px 0 0 !important;
+  padding: 8px 8px 0 8px !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.jobs-page .ant-tabs-nav::before,
+.professional-tabs .ant-tabs-nav::before {
+  display: none !important;
+}
+
+/* Enhanced Tab Hover Effects - ONLY for jobs pages */
+.jobs-page .ant-tabs-tab:hover,
+.professional-tabs .ant-tabs-tab:hover {
+  box-shadow: 0 4px 12px rgba(1, 83, 130, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+.jobs-page .ant-tabs-tab-active:hover,
+.professional-tabs .ant-tabs-tab-active:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(1, 83, 130, 0.2) !important;
+}
+
+/* Tab Badge Styling - ONLY for jobs pages */
+.jobs-page .ant-tabs-tab .ant-badge,
+.professional-tabs .ant-tabs-tab .ant-badge {
+  margin-left: 8px !important;
+}
+
+.jobs-page .ant-tabs-tab .ant-badge .ant-badge-count,
+.professional-tabs .ant-tabs-tab .ant-badge .ant-badge-count {
+  background: #015382 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 8px rgba(1, 83, 130, 0.3) !important;
+}
+
+/* Professional Tab Transitions - ONLY for jobs pages */
+.jobs-page .ant-tabs-tab,
+.professional-tabs .ant-tabs-tab {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.jobs-page .ant-tabs-ink-bar,
+.professional-tabs .ant-tabs-ink-bar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Tab Focus States - ONLY for jobs pages */
+.jobs-page .ant-tabs-tab:focus,
+.professional-tabs .ant-tabs-tab:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(1, 83, 130, 0.2) !important;
+  border-radius: 8px !important;
+}
+
+/* Professional Tab Container - ONLY for jobs pages */
+.jobs-page .ant-tabs,
+.professional-tabs .ant-tabs {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e2e8f0 !important;
+  overflow: hidden !important;
+}
+
+/* Jobs Page Specific Styling */
+.mobile-bottom-tabs-visible {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-bottom-tabs-visible .ant-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e2e8f0 !important;
+  margin-bottom: 16px !important;
+}
+
+.mobile-bottom-tabs-visible .ant-card-head {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.mobile-bottom-tabs-visible .ant-card-head-title {
+  color: #015382 !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+/* Professional Job Cards - ONLY for jobs pages */
+.jobs-page .ant-card,
+.professional-tabs .ant-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+.jobs-page .ant-card:hover,
+.professional-tabs .ant-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  border-color: #015382 !important;
+}
+
+/* Job Card Headers - ONLY for jobs pages */
+.jobs-page .ant-card-head,
+.professional-tabs .ant-card-head {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 16px 20px !important;
+}
+
+.jobs-page .ant-card-head-title,
+.professional-tabs .ant-card-head-title {
+  color: #015382 !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* Job Card Body - ONLY for jobs pages */
+.jobs-page .ant-card-body,
+.professional-tabs .ant-card-body {
+  padding: 20px !important;
+  background: #ffffff !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+/* Professional Buttons in Job Cards - ONLY for jobs pages */
+.jobs-page .ant-btn-primary,
+.professional-tabs .ant-btn-primary {
+  background: linear-gradient(135deg, #015382 0%, #017DB0 100%) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 2px 8px rgba(1, 83, 130, 0.2) !important;
+}
+
+.jobs-page .ant-btn-primary:hover,
+.professional-tabs .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #017DB0 0%, #015382 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(1, 83, 130, 0.3) !important;
+}
+
+/* Professional Input Styling - ONLY for jobs pages */
+.jobs-page .ant-input,
+.professional-tabs .ant-input {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.3s ease !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+.jobs-page .ant-input:focus,
+.professional-tabs .ant-input:focus {
+  border-color: #015382 !important;
+  box-shadow: 0 0 0 2px rgba(1, 83, 130, 0.1) !important;
+}
+
+/* Professional Select Styling - ONLY for jobs pages */
+.jobs-page .ant-select,
+.professional-tabs .ant-select {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+.jobs-page .ant-select .ant-select-selector,
+.professional-tabs .ant-select .ant-select-selector {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.jobs-page .ant-select-focused .ant-select-selector,
+.professional-tabs .ant-select-focused .ant-select-selector {
+  border-color: #015382 !important;
+  box-shadow: 0 0 0 2px rgba(1, 83, 130, 0.1) !important;
+}

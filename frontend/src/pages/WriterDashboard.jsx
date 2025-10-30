@@ -790,7 +790,7 @@ const WriterDashboard = () => {
             borderRadius: '16px',
             border: 'none',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-            background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)',
+            background: 'linear-gradient(135deg, #7c3aed 0%, #015382 100%)',
             color: 'white'
           }}
           hoverable

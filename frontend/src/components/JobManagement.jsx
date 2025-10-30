@@ -346,7 +346,7 @@ const JobManagement = () => {
                 <Tag color="green" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {jobApi.getAcademicLevelDisplayName(job.academicLevel)}
                 </Tag>
-                <Tag color="purple" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
+                <Tag color="blue" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {job.subject}
                 </Tag>
                 <Tag color="orange" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
@@ -535,7 +535,7 @@ const JobManagement = () => {
       }}>
         <Title level={window.innerWidth < 768 ? 3 : 2} style={{ 
           margin: 0,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #015382 0%, #017DB0 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
@@ -543,7 +543,7 @@ const JobManagement = () => {
           textAlign: window.innerWidth < 768 ? 'center' : 'left'
         }}>
           <Space>
-            <FileTextOutlined style={{ color: '#667eea' }} />
+            <FileTextOutlined style={{ color: '#015382' }} />
             My Jobs
           </Space>
         </Title>
@@ -562,19 +562,19 @@ const JobManagement = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '8px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #015382 0%, #017DB0 100%)',
             border: 'none',
             borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+            boxShadow: '0 4px 12px rgba(1, 83, 130, 0.3)',
             transition: 'all 0.3s ease'
           }}
           onMouseEnter={(e) => {
             e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.4)';
+            e.target.style.boxShadow = '0 8px 20px rgba(1, 83, 130, 0.4)';
           }}
           onMouseLeave={(e) => {
             e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+            e.target.style.boxShadow = '0 4px 12px rgba(1, 83, 130, 0.3)';
           }}
         >
           {window.innerWidth < 768 ? 'Post Job' : 'Post New Job'}

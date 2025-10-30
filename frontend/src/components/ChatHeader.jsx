@@ -63,7 +63,7 @@ const ChatHeader = () => {
   const userMenu = (
     <Menu className="w-80 rounded-2xl border-none shadow-2xl p-4 bg-white/95 backdrop-blur-sm">
       {/* User Profile Section */}
-      <div className="relative overflow-hidden p-6 bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 rounded-xl mb-4 text-white">
+      <div className="relative overflow-hidden p-6 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-xl mb-4 text-white">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative flex items-center gap-4">
           <div className="relative">
@@ -123,8 +123,8 @@ const ChatHeader = () => {
         
         {/* ✅ Hide messages menu item when user is actively in chat room */}
         {!isInChatRoom && (
-          <Menu.Item key="messages" className="rounded-xl my-1 p-3 hover:bg-purple-50 transition-all duration-200">
-            <Link to="/messages" className="flex items-center gap-3 text-gray-700 hover:text-purple-600 no-underline">
+          <Menu.Item key="messages" className="rounded-xl my-1 p-3 hover:bg-blue-50 transition-all duration-200">
+            <Link to="/messages" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 no-underline">
               <Badge count={3} size="small">
                 <MessageOutlined className="text-lg" />
               </Badge>
@@ -255,7 +255,7 @@ const ChatHeader = () => {
                     alt="App Icon" 
                     className="w-12 h-12 object-contain transition-transform duration-300 group-hover:rotate-6"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-blue-400/20 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
                 </div>
                 <img 
                   src="/Thinq-Scribe.png" 
@@ -345,7 +345,7 @@ const ChatHeader = () => {
                       icon={!user.avatar && <UserOutlined />}
                       className="border-3 border-blue-200 shadow-lg transition-all duration-300 group-hover:border-blue-300 group-hover:shadow-xl"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-blue-400/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
                   </div>
                   <div className="hidden lg:flex flex-col items-start">
                     <Text className="text-sm font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors duration-300">
@@ -409,11 +409,11 @@ const ChatHeader = () => {
           open={drawerVisible}
           bodyStyle={{ padding: 0 }}
           width={320}
-          className="[&_.ant-drawer-header]:bg-gradient-to-r [&_.ant-drawer-header]:from-blue-50 [&_.ant-drawer-header]:via-indigo-50 [&_.ant-drawer-header]:to-purple-50 [&_.ant-drawer-header]:backdrop-blur-sm"
+          className="[&_.ant-drawer-header]:bg-gradient-to-r [&_.ant-drawer-header]:from-blue-50 [&_.ant-drawer-header]:via-blue-50 [&_.ant-drawer-header]:to-blue-50 [&_.ant-drawer-header]:backdrop-blur-sm"
         >
           {/* Enhanced Mobile User Info */}
           {isAuthenticated && user && (
-            <div className="relative overflow-hidden p-6 bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 text-white">
+            <div className="relative overflow-hidden p-6 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white">
               <div className="absolute inset-0 bg-black/10"></div>
               <div className="relative flex items-center gap-4">
                 <Avatar

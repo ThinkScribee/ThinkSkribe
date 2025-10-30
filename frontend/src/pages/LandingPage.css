@@ -26,7 +26,12 @@
 }
 
 .landing-page {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   color: #374151;
   overflow-x: hidden;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -1006,13 +1011,17 @@ p.hero-description {
 }
 
 .hero-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   font-size: clamp(36px, 8vw, 64px) !important;
   line-height: 1.1 !important;
   margin-bottom: 32px !important;
   font-weight: 800 !important;
   color: white !important;
   text-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: -0.05em !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   animation: titleSlideIn 1.2s ease-out;
 }
 
@@ -1046,6 +1055,7 @@ p.hero-description {
 }
 
 .hero-subtitle {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   font-size: clamp(18px, 3vw, 22px) !important;
   line-height: 1.6 !important;
   margin-bottom: 40px !important;
@@ -1053,6 +1063,10 @@ p.hero-description {
   max-width: 600px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
   font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   animation: subtitleFadeIn 1.5s ease-out 0.3s both;
 }
 
@@ -1236,7 +1250,7 @@ p.hero-description {
 }
 
 .card-4 .card-icon {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #015382 100%);
 }
 
 .card-content {
@@ -1924,7 +1938,7 @@ p.stats-subtitle {
 }
 
 .satisfaction-icon {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #015382 100%);
 }
 
 .stat-content {
@@ -2195,7 +2209,7 @@ p.stats-subtitle {
 }
 
 .feature-icon-4 {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #015382 100%);
 }
 
 .feature-icon-5 {
@@ -2488,7 +2502,7 @@ p.stats-subtitle {
 }
 
 .tool-4 .tool-icon {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #015382 100%);
 }
 
 .tool-5 .tool-icon {

@@ -2558,7 +2558,7 @@ const WriterChat = () => {
                           {/* File icon based on type */}
                           {file.file?.type?.startsWith('image/') && <FileImageOutlined style={{ fontSize: 14, color: '#10b981', marginRight: '8px' }} />}
                           {file.file?.type?.startsWith('video/') && <VideoCameraOutlined style={{ fontSize: 14, color: '#f59e0b', marginRight: '8px' }} />}
-                          {file.file?.type?.startsWith('audio/') && <AudioOutlined style={{ fontSize: 14, color: '#8b5cf6', marginRight: '8px' }} />}
+                          {file.file?.type?.startsWith('audio/') && <AudioOutlined style={{ fontSize: 14, color: '#015382', marginRight: '8px' }} />}
                           {file.file?.type?.includes('pdf') && <FilePdfOutlined style={{ fontSize: 14, color: '#ef4444', marginRight: '8px' }} />}
                           {!file.file?.type?.startsWith('image/') && !file.file?.type?.startsWith('video/') && 
                            !file.file?.type?.startsWith('audio/') && !file.file?.type?.includes('pdf') && 

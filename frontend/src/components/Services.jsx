@@ -26,7 +26,7 @@ const Services = () => {
       features: ["PhD Writers", "Original Content", "Free Revisions", "24/7 Support"],
       badge: "Most Popular",
       badgeColor: "bg-accent text-accent-foreground",
-      gradient: "from-blue-500 to-purple-600"
+      gradient: "from-blue-500 to-blue-600"
     },
     {
       icon: <Brain className="w-10 h-10" />,

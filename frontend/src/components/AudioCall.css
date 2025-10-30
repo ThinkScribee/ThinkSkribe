@@ -1,7 +1,7 @@
 /* Enhanced Professional AudioCall Component Styles */
 
-/* Import system fonts for better performance */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+/* Professional Typography System - Inter Font Family */
+/* Note: Inter is already imported in index.css */
 
 /* CSS Variables for consistent theming */
 :root {

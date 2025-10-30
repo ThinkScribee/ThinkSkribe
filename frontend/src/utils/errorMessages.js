@@ -14,6 +14,11 @@ export const getErrorMessage = (error) => {
   
   switch (statusCode) {
     case 400:
+      // Check if it's an email already registered error
+      if (error.response?.data?.message?.toLowerCase().includes('email') && 
+          error.response?.data?.message?.toLowerCase().includes('already')) {
+        return 'Email already registered. Please use a different email or sign in.';
+      }
       return 'Invalid request. Please check your input and try again.';
     case 401:
       return 'Invalid email or password. Please check your credentials and try again.';
@@ -22,6 +27,11 @@ export const getErrorMessage = (error) => {
     case 404:
       return 'The requested resource was not found.';
     case 409:
+      // Check if it's an email already registered error
+      if (error.response?.data?.message?.toLowerCase().includes('email') && 
+          error.response?.data?.message?.toLowerCase().includes('already')) {
+        return 'Email already registered. Please use a different email or sign in.';
+      }
       return 'This resource already exists. Please try a different option.';
     case 422:
       return 'Invalid data provided. Please check your input and try again.';

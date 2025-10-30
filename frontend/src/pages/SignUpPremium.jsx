@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import HeaderComponent from '../components/HeaderComponent';
 import { influencerApi } from '../api/influencer.js';
+import { getAuthErrorMessage } from '../utils/errorMessages.js';
 
 const SignUpPremium = () => {
   const location = useLocation();
@@ -177,9 +178,8 @@ const SignUpPremium = () => {
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration error:', error);
-      const errorMessage = error.response?.data?.message || 
-                          error.message || 
-                          'Registration failed. Please try again.';
+      // Use the same error handling as AuthContext
+      const errorMessage = getAuthErrorMessage(error);
       setErrors({
         submit: errorMessage
       });

@@ -1,26 +1,126 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Abril+Fatface&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import './styles/TabStyles.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base typography with Manrope for body text */
+/* Professional Typography System - Inter Font Family */
+:root {
+  /* Font families */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+}
+
+/* Base typography with Inter for all text */
 body, * {
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  font-family: var(--font-primary) !important;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Abril Fatface for headings and bold elements */
-h1, h2, h3, h4, h5, h6, .heading, .font-heading, .hero-title, .section-title, strong, b, .font-bold {
-  font-family: 'Abril Fatface', serif !important;
+/* Professional heading hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.2 !important;
 }
 
-/* Professional typography improvements */
-.font-abril {
-  font-family: 'Abril Fatface', serif !important;
+h1 {
+  font-size: 2.5rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.05em !important;
 }
 
-.font-manrope {
-  font-family: 'Manrope', sans-serif !important;
+h2 {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.04em !important;
+}
+
+h3 {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.03em !important;
+}
+
+h4 {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+}
+
+h5 {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+}
+
+h6 {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Professional typography classes */
+.font-primary {
+  font-family: var(--font-primary) !important;
+}
+
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+/* Weight classes */
+.font-light { font-weight: 300 !important; }
+.font-normal { font-weight: 400 !important; }
+.font-medium { font-weight: 500 !important; }
+.font-semibold { font-weight: 600 !important; }
+.font-bold { font-weight: 700 !important; }
+.font-extrabold { font-weight: 800 !important; }
+.font-black { font-weight: 900 !important; }
+
+/* Special typography for hero sections */
+.hero-title {
+  font-family: var(--font-primary) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.05em !important;
+  line-height: 1.1 !important;
+}
+
+.section-title {
+  font-family: var(--font-primary) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.3 !important;
+}
+
+/* Professional body text */
+.body-text {
+  font-family: var(--font-primary) !important;
+  font-weight: 400 !important;
+  line-height: 1.6 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Caption and small text */
+.caption {
+  font-family: var(--font-primary) !important;
+  font-weight: 400 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Button text */
+.button-text {
+  font-family: var(--font-primary) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
 }
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 

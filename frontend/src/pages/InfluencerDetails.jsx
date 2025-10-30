@@ -557,7 +557,7 @@ const InfluencerDetails = () => {
                     </Col>
                     <Col xs={12} sm={6}>
                       <div className="text-center">
-                        <div className="text-lg sm:text-2xl font-bold text-purple-500 mb-1">
+                        <div className="text-lg sm:text-2xl font-bold text-blue-500 mb-1">
                           {influencer.stats?.conversionRate || 0}%
                         </div>
                         <div className="text-xs sm:text-sm text-gray-500">
@@ -815,7 +815,7 @@ const InfluencerDetails = () => {
                       </Timeline.Item>
                     )}
                     {referralUsers.length > 1 && (
-                      <Timeline.Item color="purple">
+                      <Timeline.Item color="blue">
                         <div>
                           <Text strong className={isMobile ? "text-sm" : ""}>
                             Latest Signup

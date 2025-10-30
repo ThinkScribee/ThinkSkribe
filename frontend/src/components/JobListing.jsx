@@ -382,7 +382,7 @@ const JobListing = () => {
                 <Tag color="green" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {jobApi.getAcademicLevelDisplayName(job.academicLevel)}
                 </Tag>
-                <Tag color="purple" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
+                <Tag color="blue" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
                   {job.subject}
                 </Tag>
                 <Tag color="orange" style={{ fontSize: window.innerWidth < 768 ? '11px' : '12px', margin: '2px' }}>
@@ -469,7 +469,7 @@ const JobListing = () => {
       }}>
         <Title level={window.innerWidth < 768 ? 3 : 2} style={{ 
           margin: 0,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #015382 0%, #017DB0 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
@@ -477,7 +477,7 @@ const JobListing = () => {
           textAlign: window.innerWidth < 768 ? 'center' : 'left'
         }}>
           <Space>
-            <FileTextOutlined style={{ color: '#667eea' }} />
+            <FileTextOutlined style={{ color: '#015382' }} />
             Available Jobs
           </Space>
         </Title>
