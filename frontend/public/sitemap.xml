@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Homepage - Highest Priority -->
+  <url>
+    <loc>https://thinqscribe.com/</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>ThinqScribe - Expert Academic Writing & AI Tools</image:title>
+      <image:caption>Connect with expert freelance academic writers and AI tools. Get professional help with essays, dissertations, and research papers from verified writers.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Public Pages - High Priority -->
+  <url>
+    <loc>https://thinqscribe.com/essay-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Professional Essay Writing Services</image:title>
+      <image:caption>Get expert essay writing help from qualified academic writers. Custom essays, research papers, and academic writing assistance with guaranteed quality and timely delivery.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/about-us</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>About ThinqScribe - Academic Writing Platform</image:title>
+      <image:caption>Learn about ThinqScribe's mission to connect students with expert academic writers and provide cutting-edge AI writing tools for academic success.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/thesis-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Expert Thesis Writing Services</image:title>
+      <image:caption>Professional thesis writing services from PhD-level writers. Get comprehensive thesis help with research, writing, and formatting for your academic success.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/dissertation-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Dissertation Writing Services</image:title>
+      <image:caption>Comprehensive dissertation writing services from experienced academic writers. Get help with research, methodology, analysis, and writing for your doctoral dissertation.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/research-paper-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Research Paper Writing Services</image:title>
+      <image:caption>Professional research paper writing services with proper citations and methodology. Get expert help with academic research and scholarly writing.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/term-paper-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Term Paper Writing Services</image:title>
+      <image:caption>Professional term paper writing services with thorough research and proper academic formatting. Get expert help for your academic term papers.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/seminar-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/article-critique-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/questionnaire-writing-services</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/our-writers</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Meet Our Expert Academic Writers</image:title>
+      <image:caption>Browse our team of qualified academic writers with PhD and Masters degrees. Find the perfect writer for your academic writing needs.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/quality-promise</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/contact-support</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- AI Tool Pages -->
+  <url>
+    <loc>https://thinqscribe.com/grammar-checker</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>AI Grammar Checker Tool</image:title>
+      <image:caption>Free AI-powered grammar checker to improve your writing. Check grammar, spelling, punctuation, and style with our advanced writing tool.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/citation-generator</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Free Citation Generator</image:title>
+      <image:caption>Generate accurate citations in APA, MLA, Chicago, and other formats. Free citation generator for academic papers and research.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/plagiarism-detector</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Plagiarism Detector Tool</image:title>
+      <image:caption>Free plagiarism detection tool to check your academic papers. Ensure originality and avoid plagiarism with our comprehensive checker.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/writing-enhancement</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/structure-analyzer</loc>
+    <lastmod>2025-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- Authentication Pages - Medium Priority -->
+  <url>
+    <loc>https://thinqscribe.com/signin</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Sign In to ThinqScribe</image:title>
+      <image:caption>Sign in to your ThinqScribe account to access academic writing services, AI tools, and connect with expert writers.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/signup</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Join ThinqScribe - Free Sign Up</image:title>
+      <image:caption>Create your free ThinqScribe account to access academic writing services, AI writing tools, and connect with professional writers.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/reset-password</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Legal Pages - Low Priority -->
+  <url>
+    <loc>https://thinqscribe.com/terms</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Terms of Service</image:title>
+      <image:caption>Read ThinqScribe's terms of service and user agreement for our academic writing platform and services.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/privacy</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <image:image>
+      <image:loc>https://thinqscribe.com/og-image.jpg</image:loc>
+      <image:title>Privacy Policy</image:title>
+      <image:caption>Learn how ThinqScribe protects your privacy and handles your personal information on our academic writing platform.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thinqscribe.com/not-authorized</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+  <!-- Legacy About Page -->
+  <url>
+    <loc>https://thinqscribe.com/about</loc>
+    <lastmod>2024-12-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Note: Protected routes are intentionally excluded from sitemap as they require authentication:
+       - /dashboard, /student/dashboard, /writer/dashboard, /admin/dashboard
+       - /chat/*, /profile, /notifications, /search, /writers (protected)
+       - /agreements/*, /payment/*, /assignments, /payments/history
+       - /admin/influencers, /admin/influencers/*
+       These pages should not be indexed by search engines as they require login.
+  -->
+</urlset>

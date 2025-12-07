@@ -1,0 +1,233 @@
+/* Mobile Bottom Tabs Styles */
+.mobile-bottom-tabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  display: none; /* Hidden by default, shown only on mobile */
+}
+
+.mobile-bottom-tabs-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 4px;
+  max-width: 100%;
+  margin: 0 auto;
+  gap: 4px;
+}
+
+.mobile-tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 8px 4px;
+  min-width: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  position: relative;
+  flex: 1;
+  max-width: 80px;
+  min-height: 60px;
+}
+
+.mobile-tab-item:hover {
+  background: rgba(1, 83, 130, 0.05);
+}
+
+.mobile-tab-item.active {
+  background: transparent;
+  color: #015382;
+  box-shadow: none;
+  transform: none;
+}
+
+.mobile-tab-item.active .mobile-tab-icon {
+  color: #015382;
+  transform: scale(1.1);
+}
+
+.mobile-tab-item.active .mobile-tab-label {
+  color: #015382;
+  font-weight: 600;
+}
+
+.mobile-tab-icon {
+  font-size: 20px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+}
+
+.mobile-tab-label {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Show bottom tabs only on mobile */
+@media (max-width: 768px) {
+  .mobile-bottom-tabs {
+    display: block;
+  }
+  
+  /* Add bottom padding to body when bottom tabs are visible */
+  body {
+    padding-bottom: 80px;
+  }
+  
+  /* Ensure content doesn't get hidden behind bottom tabs */
+  .main-content {
+    padding-bottom: 80px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .mobile-tab-item {
+    padding: 6px 2px;
+    min-width: 50px;
+    min-height: 56px;
+  }
+  
+  .mobile-tab-icon {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+  
+  .mobile-tab-label {
+    font-size: 9px;
+  }
+  
+  .mobile-bottom-tabs-container {
+    padding: 6px 2px;
+    gap: 2px;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobile-bottom-tabs {
+    display: none; /* Hide in landscape to save space */
+  }
+  
+  body {
+    padding-bottom: 0;
+  }
+  
+  .main-content {
+    padding-bottom: 0;
+  }
+}
+
+/* Badge positioning adjustments */
+.mobile-tab-item .ant-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-tab-item .ant-badge .ant-badge-count {
+  font-size: 10px;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #ff4d4f;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 77, 79, 0.3);
+}
+
+/* Active state enhancements */
+.mobile-tab-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background: #015382;
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 2px 4px rgba(1, 83, 130, 0.2);
+}
+
+/* Smooth transitions */
+.mobile-tab-item * {
+  transition: all 0.3s ease;
+}
+
+/* Active state animation */
+.mobile-tab-item.active {
+  animation: activeTabPulse 0.3s ease-out;
+}
+
+@keyframes activeTabPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Focus states for accessibility */
+.mobile-tab-item:focus {
+  outline: 2px solid #015382;
+  outline-offset: 2px;
+}
+
+.mobile-tab-item:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .mobile-bottom-tabs {
+    border-top: 2px solid #000;
+  }
+  
+  .mobile-tab-item.active {
+    background: #000;
+    color: #fff;
+  }
+  
+  .mobile-tab-item.active .mobile-tab-icon,
+  .mobile-tab-item.active .mobile-tab-label {
+    color: #fff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-tab-item,
+  .mobile-tab-icon,
+  .mobile-tab-label {
+    transition: none;
+  }
+}
